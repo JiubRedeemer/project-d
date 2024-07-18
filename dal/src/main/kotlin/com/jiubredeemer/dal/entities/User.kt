@@ -1,6 +1,8 @@
 package com.jiubredeemer.dal.entities
 
 import jakarta.persistence.*
+import org.hibernate.annotations.JdbcTypeCode
+import org.hibernate.type.SqlTypes
 import java.util.*
 
 @Entity
@@ -21,12 +23,10 @@ open class User {
     @Column(name = "password", nullable = false)
     open var password: String? = null
 
-    @Column(name = "salt", nullable = false)
-    open var salt: String? = null
-
     @Enumerated(EnumType.STRING)
-    @Column(name = "role", nullable = false)
-    open var role: Role = Role.USER
+    @Column(name = "roles", nullable = false)
+    @JdbcTypeCode(SqlTypes.JSON)
+    open var roles: List<Role> = listOf(Role.USER)
 }
 
 enum class Role {

@@ -1,6 +1,7 @@
 package com.jiubredeemer.auth.converter
 
 import com.jiubredeemer.auth.model.request.UserRegistration
+import com.jiubredeemer.dal.entities.Role
 import com.jiubredeemer.dal.entities.User
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.crypto.password.PasswordEncoder
@@ -16,7 +17,7 @@ class UserRegistrationConverter {
         user.username = registration.username
         user.email = registration.email
         user.password = encoder.encode(registration.password)
-        user.salt = "salt"
+        user.roles = listOf(Role.USER)
         return user
     }
 }

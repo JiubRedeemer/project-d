@@ -7,14 +7,12 @@ import com.jiubredeemer.auth.model.request.RefreshTokenRequest
 import com.jiubredeemer.auth.model.request.UserRegistration
 import com.jiubredeemer.auth.service.AuthenticationService
 import org.springframework.http.HttpStatus
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import org.springframework.web.server.ResponseStatusException
 
 @RestController
 @RequestMapping("/auth")
+//@CrossOrigin(origins = ["http://localhost:5173/"])
 class AuthController(
     private val authenticationService: AuthenticationService,
 ) {
