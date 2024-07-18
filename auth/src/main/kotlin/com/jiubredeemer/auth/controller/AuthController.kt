@@ -17,10 +17,16 @@ class AuthController(
     private val authenticationService: AuthenticationService,
 ) {
     @PostMapping
-    fun authenticate(
+    fun authenticateByCreds(
         @RequestBody authRequest: AuthenticationRequest
     ): AuthenticationResponse =
         authenticationService.authentication(authRequest)
+
+    @GetMapping
+    fun authenticateByToken(
+        @RequestHeader("X-Auth-Token") accessToken: String
+    ): AuthenticationResponse =
+        authenticationService.authentication(accessToken)
 
     @PostMapping("/registration")
     fun registration(

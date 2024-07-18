@@ -6,6 +6,7 @@ import com.jiubredeemer.auth.model.AuthenticationResponse
 import com.jiubredeemer.auth.model.request.AuthenticationRequest
 import com.jiubredeemer.auth.model.request.UserRegistration
 import com.jiubredeemer.auth.repository.RefreshTokenRepository
+import org.springframework.security.access.AccessDeniedException
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.userdetails.UserDetails
@@ -51,6 +52,23 @@ class AuthenticationService(
             accessToken = accessToken,
             refreshToken = refreshToken
         )
+    }
+
+    fun authentication(accessToken: String): AuthenticationResponse {
+        tokenService.extractEmail(accessToken)?.let { email ->
+            val tokenUserDetails = userDetailsService.loadUserByUsername(email)
+            if (!tokenService.isExpired(accessToken)) {
+                val newAccessToken = createAccessToken(tokenUserDetails)
+                val refreshToken = createRefreshToken(tokenUserDetails)
+                refreshTokenRepository.save(refreshToken, tokenUserDetails)
+                return AuthenticationResponse(
+                    accessToken = newAccessToken,
+                    refreshToken = refreshToken
+                )
+            }
+        }
+
+        throw AccessDeniedException("Invalid creds")
     }
 
     fun refreshAccessToken(refreshToken: String): String? {
