@@ -33,6 +33,9 @@ class SecurityConfiguration(
                 it
                     .requestMatchers("/auth", "/auth/refresh", "auth/registration", "/error")
                     .permitAll()
+                    .requestMatchers("/actuator/**", "swagger-ui/**", "/swagger-ui/**", "/swagger-ui.html",
+                        "/v3/api-docs/**", "/v3/api-docs**", "/swagger-ui/index.html**")
+                    .permitAll()
                     .requestMatchers(HttpMethod.POST, "/api/user")
                     .permitAll()
                     .requestMatchers("/api/user**")
