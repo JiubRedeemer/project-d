@@ -1,4 +1,4 @@
-package com.jiubredeemer.auth.model
+package com.jiubredeemer.auth.model.response
 
 data class AuthenticationResponse(
     val accessToken: String,

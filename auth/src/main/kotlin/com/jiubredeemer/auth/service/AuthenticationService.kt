@@ -2,7 +2,7 @@ package com.jiubredeemer.auth.service
 
 
 import com.jiubredeemer.auth.configuration.JwtConfig
-import com.jiubredeemer.auth.model.AuthenticationResponse
+import com.jiubredeemer.auth.model.response.AuthenticationResponse
 import com.jiubredeemer.auth.model.request.AuthenticationRequest
 import com.jiubredeemer.auth.model.request.UserRegistration
 import com.jiubredeemer.auth.repository.RefreshTokenRepository

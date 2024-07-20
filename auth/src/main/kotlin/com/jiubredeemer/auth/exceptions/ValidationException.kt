@@ -1,15 +1,20 @@
 package com.jiubredeemer.auth.exceptions
 
 class ValidationException() : RuntimeException() {
-    private var fieldName: String = ""
-    private var code: ErrorCode = ErrorCode.OTHER
+    override var message: String? = null
+    var fieldName: String = ""
+        private set
+    var code: ErrorCode = ErrorCode.OTHER
+        private set
 
     constructor(code: ErrorCode) : this() {
-        this.code = code;
+        this.message = code.name
+        this.code = code
     }
 
     constructor(code: ErrorCode, fieldName: String) : this() {
-        this.code = code;
+        this.message = code.name
+        this.code = code
         this.fieldName = fieldName
     }
 }

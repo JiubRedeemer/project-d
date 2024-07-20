@@ -1,7 +1,7 @@
 package com.jiubredeemer.auth.controller
 
-import com.jiubredeemer.auth.model.AuthenticationResponse
-import com.jiubredeemer.auth.model.TokenResponse
+import com.jiubredeemer.auth.model.response.AuthenticationResponse
+import com.jiubredeemer.auth.model.response.TokenResponse
 import com.jiubredeemer.auth.model.request.AuthenticationRequest
 import com.jiubredeemer.auth.model.request.RefreshTokenRequest
 import com.jiubredeemer.auth.model.request.UserRegistration

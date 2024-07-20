@@ -18,19 +18,19 @@ class UserValidator(
 
     private fun validateUniqueByEmail(registrationRequest: UserRegistration) {
         if (userRepository.findByEmail(registrationRequest.email) != null) {
-            throw ValidationException(ErrorCode.USER_EXISTS_BY_EMAIL)
+            throw ValidationException(ErrorCode.USER_EXISTS_BY_EMAIL, "email")
         }
     }
 
     private fun validateUniqueByUsername(registrationRequest: UserRegistration) {
         if (userRepository.findByUsername(registrationRequest.email) != null) {
-            throw ValidationException(ErrorCode.USER_EXISTS_BY_USERNAME)
+            throw ValidationException(ErrorCode.USER_EXISTS_BY_USERNAME, "username")
         }
     }
 
     private fun validateMatchingPassword(registrationRequest: UserRegistration) {
         if (registrationRequest.password != registrationRequest.matchingPassword) {
-            throw ValidationException(ErrorCode.PASSWORD_DO_NOT_MATCH)
+            throw ValidationException(ErrorCode.PASSWORD_DO_NOT_MATCH, "passwords")
         }
     }
 }
