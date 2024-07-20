@@ -1,3 +1,12 @@
 package com.jiubredeemer.auth.model.response
 
-data class ErrorResponse (val code: String?, val message: String?)
+import io.swagger.v3.oas.annotations.media.Schema
+
+@Schema(description = "Ответ с информацией об ошибке")
+data class ErrorResponse(
+    @Schema(description = "Код ошибки", example = "NOT_FOUND")
+    val code: String?,
+
+    @Schema(description = "Сообщение об ошибке", example = "Not Found")
+    val message: String?
+)
