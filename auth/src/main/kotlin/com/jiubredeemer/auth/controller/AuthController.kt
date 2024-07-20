@@ -12,7 +12,6 @@ import org.springframework.web.server.ResponseStatusException
 
 @RestController
 @RequestMapping("/auth")
-//@CrossOrigin(origins = ["http://localhost:5173/"])
 class AuthController(
     private val authenticationService: AuthenticationService,
 ) {
