@@ -13,7 +13,7 @@ class AuthAdviceController {
     fun handleValidationException(ex: ValidationException): ResponseEntity<ErrorResponse> {
 
         val errorMessage = ErrorResponse(
-            "" + ex.code + " field(s):" + ex.fieldName,
+            ex.code.name, ex.code.name + " field(s):" + ex.fieldName
         )
         return ResponseEntity(errorMessage, HttpStatus.NOT_ACCEPTABLE)
     }
