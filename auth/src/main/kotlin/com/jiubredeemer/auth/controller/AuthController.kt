@@ -33,7 +33,10 @@ class AuthController(
                 responseCode = "200", description = "Успешная аутентификация",
                 content = [Content(schema = Schema(implementation = AuthenticationResponse::class))]
             ),
-            ApiResponse(responseCode = "403", description = "Неверные учетные данные")
+            ApiResponse(
+                responseCode = "403", description = "Неверные учетные данные",
+                content = [Content(schema = Schema())]
+            )
         ]
     )
     @PostMapping
@@ -47,7 +50,10 @@ class AuthController(
                 responseCode = "200", description = "Успешная аутентификация",
                 content = [Content(schema = Schema(implementation = AuthenticationResponse::class))]
             ),
-            ApiResponse(responseCode = "403", description = "Неверный токен")
+            ApiResponse(
+                responseCode = "403", description = "Неверный токен",
+                content = [Content(schema = Schema())]
+            )
         ]
     )
     @GetMapping
@@ -58,10 +64,13 @@ class AuthController(
     @ApiResponses(
         value = [
             ApiResponse(
-                responseCode = "201", description = "Пользователь успешно зарегистрирован",
+                responseCode = "200", description = "Пользователь успешно зарегистрирован",
                 content = [Content(schema = Schema(implementation = AuthenticationResponse::class))]
             ),
-            ApiResponse(responseCode = "406", description = "Некорректные данные запроса")
+            ApiResponse(
+                responseCode = "406", description = "Некорректные данные запроса",
+                content = [Content(schema = Schema())]
+            )
         ]
     )
     @PostMapping("/registration")
@@ -75,7 +84,10 @@ class AuthController(
                 responseCode = "200", description = "Токен успешно обновлен",
                 content = [Content(schema = Schema(implementation = TokenResponse::class))]
             ),
-            ApiResponse(responseCode = "403", description = "Неверный refresh токен")
+            ApiResponse(
+                responseCode = "403", description = "Неверный refresh токен",
+                content = [Content(schema = Schema())]
+            )
         ]
     )
     @PostMapping("/refresh")

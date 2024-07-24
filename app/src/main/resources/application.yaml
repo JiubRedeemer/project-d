@@ -11,7 +11,8 @@ spring:
       password: user
     filter:
       order: -200
-
+  jpa:
+    open-in-view: false
 springdoc:
   show-actuator: false
   swagger-ui:

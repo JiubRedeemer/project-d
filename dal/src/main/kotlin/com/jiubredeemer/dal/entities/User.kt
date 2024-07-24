@@ -27,8 +27,16 @@ open class User {
     @Column(name = "roles", nullable = false)
     @JdbcTypeCode(SqlTypes.JSON)
     open var roles: List<Role> = listOf(Role.USER)
+
+    @OneToMany(mappedBy = "user", cascade = [CascadeType.ALL])
+    open var roomUsers: MutableSet<RoomUser> = mutableSetOf()
+
+    @OneToMany(mappedBy = "owner", cascade = [CascadeType.ALL])
+    open var rooms: MutableSet<Room> = mutableSetOf()
+
+    enum class Role {
+        USER, ADMIN
+    }
 }
 
-enum class Role {
-    USER, ADMIN
-}
+

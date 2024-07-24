@@ -2,7 +2,6 @@ package com.jiubredeemer.auth.configuration
 
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.http.HttpMethod
 import org.springframework.security.authentication.AuthenticationProvider
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
@@ -33,13 +32,13 @@ class SecurityConfiguration(
                 it
                     .requestMatchers("/auth", "/auth/refresh", "auth/registration", "/error")
                     .permitAll()
-                    .requestMatchers("/actuator/**", "swagger-ui/**", "/swagger-ui/**", "/swagger-ui.html",
-                        "/v3/api-docs/**", "/v3/api-docs**", "/swagger-ui/index.html**")
+                    .requestMatchers(
+                        "/actuator/**", "swagger-ui/**", "/swagger-ui/**", "/swagger-ui.html",
+                        "/v3/api-docs/**", "/v3/api-docs**", "/swagger-ui/index.html**"
+                    )
                     .permitAll()
-                    .requestMatchers(HttpMethod.POST, "/api/user")
-                    .permitAll()
-                    .requestMatchers("/api/user**")
-                    .hasRole("ADMIN")
+                    .requestMatchers("/api/**")
+                    .authenticated()
                     .anyRequest()
                     .fullyAuthenticated()
             }
