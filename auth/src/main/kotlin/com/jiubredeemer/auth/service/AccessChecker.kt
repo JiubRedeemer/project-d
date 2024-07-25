@@ -12,7 +12,10 @@ class AccessChecker(
     private val userRepository: UserRepository,
 ) {
     fun hasAnyRoleOrThrow(roles: List<User.Role>) {
-        getCurrentUser().roles.any { role: User.Role -> roles.contains(role) }
+        val hasRole = getCurrentUser().roles.any { role: User.Role -> roles.contains(role) }
+        if (!hasRole) {
+            throw AccessDeniedException("Not enough role to access this resource")
+        }
     }
 
     fun getCurrentUser(): User {

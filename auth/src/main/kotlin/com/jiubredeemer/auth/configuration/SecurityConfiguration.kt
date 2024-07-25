@@ -39,6 +39,8 @@ class SecurityConfiguration(
                     .permitAll()
                     .requestMatchers("/api/**")
                     .authenticated()
+                    .requestMatchers("/users/**")
+                    .authenticated()
                     .anyRequest()
                     .fullyAuthenticated()
             }
