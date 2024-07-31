@@ -1,6 +1,5 @@
 package com.jiubredeemer.app.rooms.controller
 
-import com.jiubredeemer.app.rooms.model.request.InviteUserRequest
 import com.jiubredeemer.app.rooms.model.request.CreateRoomRequest
 import com.jiubredeemer.app.rooms.model.response.CreateRoomResponse
 import com.jiubredeemer.app.rooms.model.response.RoomShortResponse
@@ -16,7 +15,7 @@ import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/api/rooms")
-@Tag(name = "Rooms API", description = "API для управления комнатами")
+@Tag(name = "Комнаты", description = "API для управления комнатами")
 class RoomApiController(
     private val roomApiService: RoomApiService,
 ) {
@@ -53,15 +52,11 @@ class RoomApiController(
             )
         ]
     )
-    @GetMapping("/my")
+    @GetMapping()
     @HasRoleOrThrow("ADMIN", "USER")
     fun readAllRoomsForCurrentUser(): List<RoomShortResponse> {
         return roomApiService.readAllForCurrentUser()
     }
 
-    @GetMapping("/addUser")
-    @HasRoleOrThrow("ADMIN", "USER")
-    fun inviteUser(@RequestBody inviteUserRequest: InviteUserRequest): Boolean {
-        return roomApiService.inviteUserToRoom(inviteUserRequest)
-    }
+
 }

@@ -13,4 +13,8 @@ interface RoomRepository : JpaRepository<Room, UUID> {
     @Query("select r from Room r inner join r.roomUsers roomUsers where roomUsers.user.id = :userId")
     fun findAllByUserId(@Param("userId") userId: UUID): List<Room>
 
+
+    @Query("select r from Room r where r.id = :id and r.owner.id = :ownerId")
+    fun findByIdAndOwnerId(@Param("id") id: UUID, @Param("ownerId") ownerId: UUID): Room?
+
 }

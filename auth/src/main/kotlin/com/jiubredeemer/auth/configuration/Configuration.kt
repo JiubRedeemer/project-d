@@ -2,7 +2,7 @@ package com.jiubredeemer.auth.configuration
 
 
 import com.jiubredeemer.auth.service.CustomUserDetailsService
-import com.jiubredeemer.dal.repository.UserRepository
+import com.jiubredeemer.dal.service.UserService
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -18,17 +18,17 @@ import org.springframework.security.crypto.password.PasswordEncoder
 @EnableConfigurationProperties(JwtConfig::class, CorsConfig::class)
 class Configuration {
     @Bean
-    fun userDetailsService(userRepository: UserRepository): UserDetailsService =
-        CustomUserDetailsService(userRepository)
+    fun userDetailsService(userService: UserService): UserDetailsService =
+        CustomUserDetailsService(userService)
 
     @Bean
     fun encoder(): PasswordEncoder = BCryptPasswordEncoder()
 
     @Bean
-    fun authenticationProvider(userRepository: UserRepository): AuthenticationProvider =
+    fun authenticationProvider(userService: UserService): AuthenticationProvider =
         DaoAuthenticationProvider()
             .also {
-                it.setUserDetailsService(userDetailsService(userRepository))
+                it.setUserDetailsService(userDetailsService(userService))
                 it.setPasswordEncoder(encoder())
             }
 

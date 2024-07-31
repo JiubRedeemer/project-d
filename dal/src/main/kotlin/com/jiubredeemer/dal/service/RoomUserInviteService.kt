@@ -2,8 +2,8 @@ package com.jiubredeemer.dal.service
 
 import com.jiubredeemer.common.exceptions.NotFoundException
 import com.jiubredeemer.dal.converter.RoomUserInviteConverter
-import com.jiubredeemer.dal.entities.RoomUser
 import com.jiubredeemer.dal.entities.RoomUserInvite
+import com.jiubredeemer.dal.entities.User
 import com.jiubredeemer.dal.models.RoomUserInviteDto
 import com.jiubredeemer.dal.repository.RoomRepository
 import com.jiubredeemer.dal.repository.RoomUserInviteRepository
@@ -21,36 +21,41 @@ class RoomUserInviteService(
     private val roomService: RoomService
 ) {
     @Transactional
+    fun getIncomingInvites(userId: UUID): List<RoomUserInviteDto> {
+        return roomUserInviteRepository.findByInvitedUserId(userId).map { roomUserInviteConverter.toDto(it) }
+    }
+
+    @Transactional
     fun createRoomUserInvite(roomUserInviteDto: RoomUserInviteDto) {
         val room = roomRepository.findById(roomUserInviteDto.roomId!!)
             .orElseThrow { NotFoundException("Room does not exist") }
         val owner = userRepository.findById(roomUserInviteDto.ownerId!!)
             .orElseThrow { NotFoundException("Room owner user does not exist") }
-        val invitedUser = userRepository.findById(roomUserInviteDto.invitedUserId!!)
-            .orElseThrow { NotFoundException("Invited user does not exist") }
-        val invite = roomUserInviteConverter.toEntity(room, owner, invitedUser)
+        val invitedUser: User = userRepository.findByEmail(roomUserInviteDto.invitedUserEmail!!)
+            ?: throw NotFoundException("Invited user does not exist")
+        val invite = roomUserInviteConverter.toEntity(room, owner, invitedUser, roomUserInviteDto.role!!)
         invite.status = RoomUserInvite.Status.PENDING
 
         roomUserInviteRepository.save(invite)
     }
 
     @Transactional
-    fun acceptRoomUserInvite(invitedUserId: UUID, roomId: UUID, role: RoomUser.Role) {
-        val invite = roomUserInviteRepository.findByRoomIdAndInvitedUserId(invitedUserId, roomId)
+    fun acceptRoomUserInvite(inviteId: UUID) {
+        val invite = roomUserInviteRepository.findById(inviteId)
             .orElseThrow { throw NotFoundException("Room invite not found") }
         if (invite.status != RoomUserInvite.Status.PENDING) {
             throw IllegalStateException("Room invite was already processed")
         }
         invite.status = RoomUserInvite.Status.ACCEPTED
 
-        roomService.addUser(roomId, invitedUserId, Collections.singletonList(role))
+        roomService.addUser(invite.room!!.id!!, invite.invitedUser!!.id!!, Collections.singletonList(invite.role!!))
 
         roomUserInviteRepository.save(invite)
     }
 
     @Transactional
-    fun declineRoomUserInvite(invitedUserId: UUID, roomId: UUID) {
-        val invite = roomUserInviteRepository.findByRoomIdAndInvitedUserId(invitedUserId, roomId)
+    fun declineRoomUserInvite(inviteId: UUID) {
+        val invite = roomUserInviteRepository.findById(inviteId)
             .orElseThrow { throw NotFoundException("Room invite not found") }
         if (invite.status != RoomUserInvite.Status.PENDING) {
             throw IllegalStateException("Room invite was already processed")
@@ -61,8 +66,8 @@ class RoomUserInviteService(
     }
 
     @Transactional
-    fun revokeRoomUserInvite(invitedUserId: UUID, roomId: UUID) {
-        val invite = roomUserInviteRepository.findByRoomIdAndInvitedUserId(invitedUserId, roomId)
+    fun revokeRoomUserInvite(inviteId: UUID) {
+        val invite = roomUserInviteRepository.findById(inviteId)
             .orElseThrow { throw NotFoundException("Room invite not found") }
         if (invite.status != RoomUserInvite.Status.PENDING) {
             throw IllegalStateException("Room invite was already processed")

@@ -10,8 +10,10 @@ import java.util.*
  * DTO for {@link com.jiubredeemer.dal.entities.RoomUserInvite}
  */
 data class RoomUserInviteDto(
+    var id: UUID? = null,
     var roomId: UUID? = null,
     var ownerId: UUID? = null,
+    var invitedUserEmail: String? = null,
     var invitedUserId: UUID? = null,
     var createDatetime: Timestamp? = null,
     var role: RoomUser.Role? = null,

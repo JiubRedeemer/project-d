@@ -1,12 +1,13 @@
 CREATE TABLE core.room_user_invites
 (
+    id              uuid                    NOT NULL,
     room_id         uuid                    NOT NULL,
     owner_id        uuid                    NOT NULL,
     invited_user_id uuid                    NOT NULL,
     create_datetime timestamp DEFAULT now() NOT NULL,
     role            text                    NOT NULL,
     status          text                    NOT NULL,
-    PRIMARY KEY (room_id, owner_id, invited_user_id)
+    PRIMARY KEY (id)
 );
 
 -- Добавление внешних ключей
@@ -21,7 +22,7 @@ ALTER TABLE core.room_user_invites
 CREATE INDEX idx_room_id ON core.room_user_invites (room_id);
 CREATE INDEX idx_owner_id ON core.room_user_invites (owner_id);
 CREATE INDEX idx_invited_user_id ON core.room_user_invites (invited_user_id);
-CREATE UNIQUE INDEX idx_invited_user_id ON core.room_user_invites (room_id, invited_user_id);
+CREATE UNIQUE INDEX idx_unique_room_id_invited_user_id ON core.room_user_invites (room_id, invited_user_id);
 
 -- Добавление комментариев
 COMMENT ON TABLE core.room_user_invites IS 'Таблица приглашений пользователей в комнаты';

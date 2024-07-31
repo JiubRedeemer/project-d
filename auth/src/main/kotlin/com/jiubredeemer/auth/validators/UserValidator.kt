@@ -3,12 +3,12 @@ package com.jiubredeemer.auth.validators
 import com.jiubredeemer.auth.exceptions.ErrorCode
 import com.jiubredeemer.auth.exceptions.ValidationException
 import com.jiubredeemer.auth.model.request.UserRegistration
-import com.jiubredeemer.dal.repository.UserRepository
+import com.jiubredeemer.dal.service.UserService
 import org.springframework.stereotype.Component
 
 @Component
 class UserValidator(
-    private val userRepository: UserRepository,
+    private val userService: UserService,
 ) {
     fun onRegistration(registrationRequest: UserRegistration) {
         validateMatchingPassword(registrationRequest)
@@ -17,13 +17,13 @@ class UserValidator(
     }
 
     private fun validateUniqueByEmail(registrationRequest: UserRegistration) {
-        if (userRepository.findByEmail(registrationRequest.email) != null) {
+        if (userService.getByEmail(registrationRequest.email) != null) {
             throw ValidationException(ErrorCode.USER_EXISTS_BY_EMAIL, "email")
         }
     }
 
     private fun validateUniqueByUsername(registrationRequest: UserRegistration) {
-        if (userRepository.findByUsername(registrationRequest.email) != null) {
+        if (userService.getByUsername(registrationRequest.email) != null) {
             throw ValidationException(ErrorCode.USER_EXISTS_BY_USERNAME, "username")
         }
     }
