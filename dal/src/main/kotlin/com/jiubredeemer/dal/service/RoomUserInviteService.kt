@@ -22,8 +22,14 @@ class RoomUserInviteService(
 ) {
     @Transactional
     fun getIncomingInvites(userId: UUID): List<RoomUserInviteDto> {
-        return roomUserInviteRepository.findByInvitedUserId(userId).map { roomUserInviteConverter.toDto(it) }
+        return roomUserInviteRepository.findPendingByInvitedUserId(userId).map { roomUserInviteConverter.toDto(it) }
     }
+
+    @Transactional
+    fun getIncomingInvitesCount(userId: UUID): Long {
+        return roomUserInviteRepository.countPendingByInvitedUserId(userId)
+    }
+
 
     @Transactional
     fun createRoomUserInvite(roomUserInviteDto: RoomUserInviteDto) {

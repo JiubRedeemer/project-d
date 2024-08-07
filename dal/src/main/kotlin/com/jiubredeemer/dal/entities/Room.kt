@@ -22,6 +22,9 @@ open class Room {
     @Column(name = "name", nullable = false, length = Integer.MAX_VALUE)
     open var name: String? = null
 
+    @Column(name = "description", nullable = true, length = Integer.MAX_VALUE)
+    open var description: String? = null
+
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @OnDelete(action = OnDeleteAction.CASCADE)

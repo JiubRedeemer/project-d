@@ -34,18 +34,18 @@ class RoomUserInviteValidator(
 
     fun onRevoke(inviteChangeStatusRequest: InviteChangeStatusRequest) {
         validateExists(inviteChangeStatusRequest)
-        validateOwner(inviteChangeStatusRequest.roomId)
+        validateOwner(inviteChangeStatusRequest.inviteId)
     }
 
     private fun validateExists(inviteChangeStatusRequest: InviteChangeStatusRequest) {
-        roomUserInviteRepository.findById(inviteChangeStatusRequest.roomId)
+        roomUserInviteRepository.findById(inviteChangeStatusRequest.inviteId)
             .orElseThrow { throw NotFoundException("Room does not exists") }
 
     }
 
     private fun validateInvited(inviteChangeStatusRequest: InviteChangeStatusRequest) {
-        roomUserInviteRepository.findByRoomIdAndInvitedUserId(
-            inviteChangeStatusRequest.roomId,
+        roomUserInviteRepository.findByInviteIdAndInvitedUserId(
+            inviteChangeStatusRequest.inviteId,
             accessChecker.getCurrentUser().id!!
         ) ?: throw AccessDeniedException("User has not access to this room")
     }

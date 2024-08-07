@@ -3,6 +3,7 @@ package com.jiubredeemer.app.invites.service
 import com.jiubredeemer.app.invites.converter.RoomInviteConverter
 import com.jiubredeemer.app.invites.model.request.InviteChangeStatusRequest
 import com.jiubredeemer.app.invites.model.request.InviteUserToRoomRequest
+import com.jiubredeemer.app.invites.model.response.RoomUserInviteCountResponse
 import com.jiubredeemer.app.invites.model.response.RoomUserInviteShortResponse
 import com.jiubredeemer.app.invites.validators.RoomUserInviteValidator
 import com.jiubredeemer.auth.service.AccessChecker
@@ -21,6 +22,11 @@ class InviteApiService(
             .map { roomInviteConverter.dtoToShortResponse(it) }
     }
 
+    fun getIncomingInvitesCount(): RoomUserInviteCountResponse {
+        val incomingInvitesCount = roomUserInviteService.getIncomingInvitesCount(accessChecker.getCurrentUser().id!!)
+        return RoomUserInviteCountResponse(incomingInvitesCount)
+    }
+
     fun inviteUserToRoom(inviteUserToRoomRequest: InviteUserToRoomRequest): Boolean {
         validator.onInvite(inviteUserToRoomRequest)
 
@@ -33,21 +39,23 @@ class InviteApiService(
     fun acceptInviteToRoom(inviteChangeStatusRequest: InviteChangeStatusRequest): Boolean {
         validator.onAccept(inviteChangeStatusRequest)
 
-        roomUserInviteService.acceptRoomUserInvite(inviteChangeStatusRequest.roomId)
+        roomUserInviteService.acceptRoomUserInvite(inviteChangeStatusRequest.inviteId)
         return true
     }
 
     fun declineInviteToRoom(inviteChangeStatusRequest: InviteChangeStatusRequest): Boolean {
         validator.onDecline(inviteChangeStatusRequest)
 
-        roomUserInviteService.declineRoomUserInvite(inviteChangeStatusRequest.roomId)
+        roomUserInviteService.declineRoomUserInvite(inviteChangeStatusRequest.inviteId)
         return true
     }
 
     fun revokeInviteToRoom(inviteChangeStatusRequest: InviteChangeStatusRequest): Boolean {
         validator.onRevoke(inviteChangeStatusRequest)
 
-        roomUserInviteService.revokeRoomUserInvite(inviteChangeStatusRequest.roomId)
+        roomUserInviteService.revokeRoomUserInvite(inviteChangeStatusRequest.inviteId)
         return true
     }
+
+
 }

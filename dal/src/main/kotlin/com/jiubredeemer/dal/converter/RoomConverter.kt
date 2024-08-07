@@ -15,6 +15,7 @@ class RoomConverter {
 
         val entity = Room()
         entity.name = model.name
+        entity.description = model.description
         entity.createDatetime = now
         entity.updateDatetime = now
         entity.lastActivityDatetime = now

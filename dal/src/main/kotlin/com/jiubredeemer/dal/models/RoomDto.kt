@@ -10,6 +10,7 @@ import java.util.*
 data class RoomDto(
     var id: UUID? = null,
     var name: String? = null,
+    var description: String? = null,
     var owner: UserDto? = null,
     var createDatetime: Timestamp? = null,
     var updateDatetime: Timestamp? = null,

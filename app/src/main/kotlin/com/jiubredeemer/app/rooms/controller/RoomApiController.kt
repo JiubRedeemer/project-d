@@ -57,6 +57,4 @@ class RoomApiController(
     fun readAllRoomsForCurrentUser(): List<RoomShortResponse> {
         return roomApiService.readAllForCurrentUser()
     }
-
-
 }

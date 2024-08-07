@@ -3,6 +3,7 @@ CREATE TABLE core.rooms
 (
     id                     uuid                              NOT NULL,
     name                   text      DEFAULT 'Комната'::text NOT NULL,
+    description            text,
     owner_id               uuid                              NOT NULL,
     create_datetime        timestamp DEFAULT now()           NOT NULL,
     update_datetime        timestamp DEFAULT now()           NOT NULL,
@@ -15,6 +16,7 @@ CREATE TABLE core.rooms
 COMMENT ON TABLE core.rooms IS 'Игровая комната';
 COMMENT ON COLUMN core.rooms.id IS 'Уникальный идентификатор комнаты в формате UUID';
 COMMENT ON COLUMN core.rooms.name IS 'Название комнаты. Значение по умолчанию — "Комната"';
+COMMENT ON COLUMN core.rooms.description IS 'Описание комнаты';
 COMMENT ON COLUMN core.rooms.owner_id IS 'Идентификатор владельца комнаты в формате UUID';
 COMMENT ON COLUMN core.rooms.create_datetime IS 'Время создания записи. По умолчанию устанавливается на текущее время';
 COMMENT ON COLUMN core.rooms.update_datetime IS 'Время последнего обновления записи. По умолчанию устанавливается на текущее время';

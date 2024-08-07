@@ -2,6 +2,7 @@ package com.jiubredeemer.app.invites.controller
 
 import com.jiubredeemer.app.invites.model.request.InviteChangeStatusRequest
 import com.jiubredeemer.app.invites.model.request.InviteUserToRoomRequest
+import com.jiubredeemer.app.invites.model.response.RoomUserInviteCountResponse
 import com.jiubredeemer.app.invites.model.response.RoomUserInviteShortResponse
 import com.jiubredeemer.app.invites.service.InviteApiService
 import com.jiubredeemer.auth.annotations.HasRoleOrThrow
@@ -35,6 +36,25 @@ class InviteApiController(private val inviteApiService: InviteApiService) {
     @HasRoleOrThrow("ADMIN", "USER")
     fun getIncomingInvites(): List<RoomUserInviteShortResponse> {
         return inviteApiService.getIncomingInvites()
+    }
+
+    @Operation(summary = "Получить количество входящих приглашений")
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200", description = "Количество входящих приглашений",
+                content = [Content(schema = Schema(implementation = RoomUserInviteCountResponse::class))]
+            ),
+            ApiResponse(
+                responseCode = "403", description = "Недостаточно прав",
+                content = [Content(schema = Schema())]
+            )
+        ]
+    )
+    @GetMapping("/rooms/count")
+    @HasRoleOrThrow("ADMIN", "USER")
+    fun getIncomingInvitesCount(): RoomUserInviteCountResponse {
+        return inviteApiService.getIncomingInvitesCount()
     }
 
     @Operation(summary = "Пригласить пользователя в комнату")
