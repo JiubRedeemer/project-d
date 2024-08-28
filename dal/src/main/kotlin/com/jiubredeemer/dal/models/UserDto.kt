@@ -1,17 +1,12 @@
 package com.jiubredeemer.dal.models
 
+import com.jiubredeemer.dal.entities.User
 import java.util.*
 
-open class UserDto {
-
-    open var id: UUID? = null
-
-
-    open var username: String? = null
-
-
-    open var email: String? = null
-
-
-    open var password: String? = null
-}
+data class UserDto(
+    var id: UUID? = null,
+    var username: String? = null,
+    var email: String? = null,
+    var password: String? = null,
+    var roles: List<User.Role>? = ArrayList()
+)

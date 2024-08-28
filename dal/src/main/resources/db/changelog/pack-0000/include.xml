@@ -7,5 +7,7 @@
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd
 ">
 
-    <include file="001-PD-0-initial.xml" relativeToChangelogFile="true"/>
+    <include file="001-PRO-0-initial.xml" relativeToChangelogFile="true"/>
+    <include file="002-PRO-11-room.xml" relativeToChangelogFile="true"/>
+    <include file="003-PRO-33-room-invite.xml" relativeToChangelogFile="true"/>
 </databaseChangeLog>

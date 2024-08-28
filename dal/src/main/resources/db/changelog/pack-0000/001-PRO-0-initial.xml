@@ -6,16 +6,16 @@
         http://www.liquibase.org/xml/ns/dbchangelog
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd
 ">
-    <changeSet id="Pre-Init" author="jiubredeemer">
+    <changeSet id="PRO-0:Pre-Init:24.07.2024" author="jiubredeemer">
         <sql>DROP SCHEMA IF EXISTS core cascade</sql>
     </changeSet>
 
-    <changeSet id="Init" author="jiubredeemer">
+    <changeSet id="PRO-0:Init:24.07.2024" author="jiubredeemer">
         <sql>CREATE SCHEMA core</sql>
     </changeSet>
 
-    <changeSet id="feature-1.0.0.Users" author="jiubredeemer">
-        <sqlFile path="001-PD-0-initial.sql" relativeToChangelogFile="true" splitStatements="false"/>
+    <changeSet id="PRO-0:Users:24.07.2024" author="jiubredeemer">
+        <sqlFile path="001-PRO-0-initial.sql" relativeToChangelogFile="true" splitStatements="false"/>
     </changeSet>
 
 </databaseChangeLog>
