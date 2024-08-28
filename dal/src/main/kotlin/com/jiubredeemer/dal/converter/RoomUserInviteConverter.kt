@@ -26,7 +26,10 @@ class RoomUserInviteConverter {
         val model = RoomUserInviteDto()
         model.id = entity.id
         model.roomId = entity.room?.id
+        model.roomName = entity.room?.name
+        model.roomDescription = entity.room?.description
         model.ownerId = entity.owner?.id
+        model.ownerUsername = entity.owner?.username
         model.invitedUserEmail = entity.invitedUser?.email
         model.invitedUserId = entity.invitedUser?.id
         model.createDatetime = entity.createDatetime

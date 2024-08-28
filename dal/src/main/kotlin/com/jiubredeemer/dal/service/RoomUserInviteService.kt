@@ -18,11 +18,13 @@ class RoomUserInviteService(
     private val userRepository: UserRepository,
     private val roomUserInviteConverter: RoomUserInviteConverter,
     private val roomUserInviteRepository: RoomUserInviteRepository,
-    private val roomService: RoomService
+    private val roomService: RoomService,
 ) {
     @Transactional
     fun getIncomingInvites(userId: UUID): List<RoomUserInviteDto> {
-        return roomUserInviteRepository.findPendingByInvitedUserId(userId).map { roomUserInviteConverter.toDto(it) }
+        return roomUserInviteRepository.findPendingByInvitedUserId(userId).map {
+            roomUserInviteConverter.toDto(it)
+        }
     }
 
     @Transactional

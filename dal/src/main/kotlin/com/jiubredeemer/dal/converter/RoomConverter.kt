@@ -8,7 +8,7 @@ import java.sql.Timestamp
 import java.time.LocalDateTime
 
 @Component
-class RoomConverter {
+class RoomConverter(private val userConverter: UserConverter) {
 
     fun toEntity(model: RoomDto): Room {
         val now = Timestamp.valueOf(LocalDateTime.now())
@@ -24,6 +24,16 @@ class RoomConverter {
 
     fun toDto(entity: Room): RoomDto {
         val model = RoomDto()
+        model.id = entity.id
+        model.name = entity.name
+        model.description = entity.description
+        model.createDatetime = entity.createDatetime
+        model.lastActivityDatetime = entity.lastActivityDatetime
+        model.updateDatetime = entity.updateDatetime
+        model.deleteDatetime = entity.deleteDatetime
+        if (entity.owner != null) {
+            model.owner = userConverter.toDto(entity.owner!!)
+        }
         BeanUtils.copyProperties(entity, model)
         return model
     }

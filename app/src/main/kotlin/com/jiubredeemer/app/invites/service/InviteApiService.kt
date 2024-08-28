@@ -19,7 +19,9 @@ class InviteApiService(
 ) {
     fun getIncomingInvites(): List<RoomUserInviteShortResponse> {
         return roomUserInviteService.getIncomingInvites(accessChecker.getCurrentUser().id!!)
-            .map { roomInviteConverter.dtoToShortResponse(it) }
+            .map {
+                roomInviteConverter.dtoToShortResponse(it)
+            }
     }
 
     fun getIncomingInvitesCount(): RoomUserInviteCountResponse {

@@ -7,8 +7,8 @@ import java.util.*
 data class RoomUserInviteShortResponse(
     @Schema(description = "UUID приглашения")
     val id: UUID,
-    @Schema(description = "UUID владельца приглашения")
-    val ownerId: UUID,
-    @Schema(description = "UUID комнаты")
-    val roomId: UUID
+    @Schema(description = "Владелец приглашения")
+    val owner: OwnerDto,
+    @Schema(description = "Комната")
+    val room: RoomDto
 )
