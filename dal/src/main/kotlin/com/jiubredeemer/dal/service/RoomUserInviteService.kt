@@ -10,6 +10,8 @@ import com.jiubredeemer.dal.repository.RoomUserInviteRepository
 import com.jiubredeemer.dal.repository.UserRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.sql.Timestamp
+import java.time.LocalDateTime
 import java.util.*
 
 @Service
@@ -35,6 +37,8 @@ class RoomUserInviteService(
 
     @Transactional
     fun createRoomUserInvite(roomUserInviteDto: RoomUserInviteDto) {
+        val now = Timestamp.valueOf(LocalDateTime.now())
+
         val room = roomRepository.findById(roomUserInviteDto.roomId!!)
             .orElseThrow { NotFoundException("Room does not exist") }
         val owner = userRepository.findById(roomUserInviteDto.ownerId!!)
@@ -43,6 +47,7 @@ class RoomUserInviteService(
             ?: throw NotFoundException("Invited user does not exist")
         val invite = roomUserInviteConverter.toEntity(room, owner, invitedUser, roomUserInviteDto.role!!)
         invite.status = RoomUserInvite.Status.PENDING
+        invite.createDatetime = now
 
         roomUserInviteRepository.save(invite)
     }

@@ -2,8 +2,10 @@ package com.jiubredeemer.dal.entities
 
 import jakarta.persistence.*
 import jakarta.validation.constraints.NotNull
+import org.hibernate.annotations.ColumnDefault
 import org.hibernate.annotations.JdbcTypeCode
 import org.hibernate.type.SqlTypes
+import java.sql.Timestamp
 
 @Entity
 @Table(name = "rooms_users", schema = "core")
@@ -20,6 +22,11 @@ open class RoomUser {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "room_id", nullable = false)
     open var room: Room? = null
+
+    @NotNull
+    @ColumnDefault("now()")
+    @Column(name = "create_datetime", nullable = false)
+    open var createDatetime: Timestamp? = null
 
     @NotNull
     @JdbcTypeCode(SqlTypes.JSON)

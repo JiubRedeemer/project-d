@@ -10,7 +10,7 @@ import java.util.*
 @Repository
 interface RoomRepository : JpaRepository<Room, UUID> {
 
-    @Query("select r from Room r inner join r.roomUsers roomUsers where roomUsers.user.id = :userId")
+    @Query("select r from Room r inner join r.roomUsers roomUsers where roomUsers.user.id = :userId order by roomUsers.createDatetime desc")
     fun findAllByUserId(@Param("userId") userId: UUID): List<Room>
 
 

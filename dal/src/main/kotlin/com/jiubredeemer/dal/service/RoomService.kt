@@ -12,6 +12,8 @@ import com.jiubredeemer.dal.repository.RoomsUserRepository
 import com.jiubredeemer.dal.repository.UserRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.sql.Timestamp
+import java.time.LocalDateTime
 import java.util.*
 
 /**
@@ -121,14 +123,17 @@ class RoomService(
     }
 
     private fun addRoomUser(user: User, createdRoom: Room, roles: List<RoomUser.Role>) {
-        val userRoomToCreate = RoomUser()
-        userRoomToCreate.user = user
-        userRoomToCreate.room = createdRoom
+        val now = Timestamp.valueOf(LocalDateTime.now())
+
+        val roomUserToCreate = RoomUser()
+        roomUserToCreate.user = user
+        roomUserToCreate.room = createdRoom
         val key = RoomsUserKey()
         key.roomId = createdRoom.id
         key.userId = user.id
-        userRoomToCreate.id = key
-        userRoomToCreate.roles = roles
-        roomsUserRepository.save(userRoomToCreate)
+        roomUserToCreate.id = key
+        roomUserToCreate.roles = roles
+        roomUserToCreate.createDatetime = now
+        roomsUserRepository.save(roomUserToCreate)
     }
 }

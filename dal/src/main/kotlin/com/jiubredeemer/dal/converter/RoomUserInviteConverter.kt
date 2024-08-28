@@ -6,18 +6,14 @@ import com.jiubredeemer.dal.entities.RoomUserInvite
 import com.jiubredeemer.dal.entities.User
 import com.jiubredeemer.dal.models.RoomUserInviteDto
 import org.springframework.stereotype.Component
-import java.sql.Timestamp
-import java.time.LocalDateTime
 
 @Component
 class RoomUserInviteConverter {
     fun toEntity(room: Room, owner: User, invitedUser: User, role: RoomUser.Role): RoomUserInvite {
-        val now = Timestamp.valueOf(LocalDateTime.now())
         val entity = RoomUserInvite()
         entity.room = room
         entity.owner = owner
         entity.invitedUser = invitedUser
-        entity.createDatetime = now
         entity.role = role
         return entity
     }
