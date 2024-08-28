@@ -18,6 +18,7 @@ class RoomUserInviteValidator(
 ) {
 
     fun onInvite(inviteUserToRoomRequest: InviteUserToRoomRequest) {
+        validateInvited(inviteUserToRoomRequest.roomId, inviteUserToRoomRequest.email)
         validateMandatoryFields(inviteUserToRoomRequest)
         validateOwner(inviteUserToRoomRequest.roomId)
     }
@@ -41,6 +42,11 @@ class RoomUserInviteValidator(
         roomUserInviteRepository.findById(inviteChangeStatusRequest.inviteId)
             .orElseThrow { throw NotFoundException("Room does not exists") }
 
+    }
+
+    private fun validateInvited(roomId: UUID, invitedUserEmail: String) {
+        roomUserInviteRepository.findByRoomIdAndUserEmail(roomId, invitedUserEmail)
+            .let { if (it != null) throw IllegalStateException("User already invited") }
     }
 
     private fun validateInvited(inviteChangeStatusRequest: InviteChangeStatusRequest) {

@@ -13,6 +13,10 @@ interface RoomUserInviteRepository : JpaRepository<RoomUserInvite, UUID> {
     @Query("select r from RoomUserInvite r where r.invitedUser.id = ?1 ")
     fun findByInvitedUserId(id: UUID): List<RoomUserInvite>
 
+    @Query("select r from RoomUserInvite r where r.room.id = ?1 and r.invitedUser.email = ?2")
+    fun findByRoomIdAndUserEmail(roomId: UUID, invitedUserEmail: String): RoomUserInvite?
+
+
     @Query("select r from RoomUserInvite r where r.invitedUser.id = ?1 and r.status = 'PENDING'")
     fun findPendingByInvitedUserId(id: UUID): List<RoomUserInvite>
 
