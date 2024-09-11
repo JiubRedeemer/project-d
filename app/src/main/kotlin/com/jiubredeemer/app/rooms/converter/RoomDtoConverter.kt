@@ -1,6 +1,6 @@
 package com.jiubredeemer.app.rooms.converter
 
-import com.jiubredeemer.app.rooms.exceptions.BrokenRoomException
+import com.jiubredeemer.app.rooms.exception.BrokenRoomException
 import com.jiubredeemer.app.rooms.model.request.CreateRoomRequest
 import com.jiubredeemer.app.rooms.model.response.RoomShortResponse
 import com.jiubredeemer.dal.models.RoomDto

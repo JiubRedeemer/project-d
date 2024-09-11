@@ -1,6 +1,6 @@
 package com.jiubredeemer.app.invites.converter
 
-import com.jiubredeemer.app.invites.exceptions.BrokenInviteException
+import com.jiubredeemer.app.invites.exception.BrokenInviteException
 import com.jiubredeemer.app.invites.model.request.InviteUserToRoomRequest
 import com.jiubredeemer.app.invites.model.response.OwnerDto
 import com.jiubredeemer.app.invites.model.response.RoomUserInviteShortResponse

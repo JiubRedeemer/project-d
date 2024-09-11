@@ -1,3 +1,6 @@
+server:
+  port: 8080
+
 spring:
   application:
     name: app
@@ -27,3 +30,7 @@ project-d:
   cors:
     allowed-urls: [ 'http://localhost:5173' ]
     allowed-methods: [ 'POST', 'GET', 'PUT', 'DELETE', 'PATCH' ]
+  integrations:
+    rule-book:
+      base-url: http://localhost:8081
+      rooms-url: /api/rooms

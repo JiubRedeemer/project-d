@@ -1,4 +1,4 @@
-package com.jiubredeemer.app.invites.validators
+package com.jiubredeemer.app.invites.validator
 
 import com.jiubredeemer.app.invites.model.request.InviteChangeStatusRequest
 import com.jiubredeemer.app.invites.model.request.InviteUserToRoomRequest

@@ -5,7 +5,7 @@ import com.jiubredeemer.app.invites.model.request.InviteChangeStatusRequest
 import com.jiubredeemer.app.invites.model.request.InviteUserToRoomRequest
 import com.jiubredeemer.app.invites.model.response.RoomUserInviteCountResponse
 import com.jiubredeemer.app.invites.model.response.RoomUserInviteShortResponse
-import com.jiubredeemer.app.invites.validators.RoomUserInviteValidator
+import com.jiubredeemer.app.invites.validator.RoomUserInviteValidator
 import com.jiubredeemer.auth.service.AccessChecker
 import com.jiubredeemer.dal.service.RoomUserInviteService
 import org.springframework.stereotype.Service

@@ -17,4 +17,6 @@ interface RoomRepository : JpaRepository<Room, UUID> {
     @Query("select r from Room r where r.id = :id and r.owner.id = :ownerId")
     fun findByIdAndOwnerId(@Param("id") id: UUID, @Param("ownerId") ownerId: UUID): Room?
 
+    @Query("select r from Room r where r.name = :name and r.owner.id = :ownerId")
+    fun findByNameAndOwnerId(@Param("name") name: String, @Param("ownerId") ownerId: UUID): Optional<Room>
 }

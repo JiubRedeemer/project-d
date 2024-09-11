@@ -1,5 +1,8 @@
 package com.jiubredeemer.app.rooms.service;
 
+import com.jiubredeemer.app.integration.RuleBookClient;
+import com.jiubredeemer.app.integration.dto.RoomDto;
+import com.jiubredeemer.app.integration.dto.RuleTypeEnum;
 import com.jiubredeemer.app.rooms.converter.RoomDtoConverter;
 import com.jiubredeemer.app.rooms.model.request.CreateRoomRequest;
 import com.jiubredeemer.app.rooms.model.response.CreateRoomResponse;
@@ -21,14 +24,16 @@ public class RoomApiService {
     private final AccessChecker accessProcessor;
     private final RoomService roomService;
     private final RoomValidator roomValidator;
+    private final RuleBookClient ruleBookClient;
 
     public RoomApiService(RoomDtoConverter roomDtoConverter,
                           AccessChecker accessProcessor,
-                          RoomService roomService, RoomValidator roomValidator) {
+                          RoomService roomService, RoomValidator roomValidator, RuleBookClient ruleBookClient) {
         this.roomDtoConverter = roomDtoConverter;
         this.accessProcessor = accessProcessor;
         this.roomService = roomService;
         this.roomValidator = roomValidator;
+        this.ruleBookClient = ruleBookClient;
     }
 
     public CreateRoomResponse create(CreateRoomRequest request) {
@@ -36,6 +41,7 @@ public class RoomApiService {
         final UserDto currentUser = getCurrentUser();
         final Room createdRoom = roomService.create(roomDtoConverter.createRequestToRoomDto(request),
                 Objects.requireNonNull(currentUser.getId()));
+        ruleBookClient.saveRoom(new RoomDto(createdRoom.getId(), createdRoom.getOwner().getId(), RuleTypeEnum.DND5E));
         return new CreateRoomResponse(createdRoom.getId());
     }
 
