@@ -41,7 +41,7 @@ public class RoomApiService {
         final UserDto currentUser = getCurrentUser();
         final Room createdRoom = roomService.create(roomDtoConverter.createRequestToRoomDto(request),
                 Objects.requireNonNull(currentUser.getId()));
-        ruleBookClient.saveRoom(new RoomDto(createdRoom.getId(), createdRoom.getOwner().getId(), RuleTypeEnum.DND5E));
+        ruleBookClient.persistRoom(new RoomDto(createdRoom.getId(), createdRoom.getOwner().getId(), RuleTypeEnum.DND5E));
         return new CreateRoomResponse(createdRoom.getId());
     }
 

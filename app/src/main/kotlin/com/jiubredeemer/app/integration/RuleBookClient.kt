@@ -15,14 +15,14 @@ class RuleBookClient(
     private val ruleBookProperty: RuleBookProperty
 ) {
 
-    fun saveRoom(roomDto: RoomDto?): RoomDto? {
+    fun persistRoom(roomDto: RoomDto?): RoomDto? {
         val headers = HttpHeaders()
         headers.set("Content-Type", "application/json")
         val requestEntity: HttpEntity<RoomDto> = HttpEntity(roomDto, headers)
 
         val responseEntity: ResponseEntity<RoomDto> = restTemplate.exchange(
             ruleBookProperty.baseUrl + ruleBookProperty.roomsUrl,
-            HttpMethod.POST,
+            HttpMethod.PUT,
             requestEntity,
             RoomDto::class.java
         )
