@@ -1,7 +1,7 @@
 package com.jiubredeemer.app.rooms.service;
 
 import com.jiubredeemer.app.integration.RuleBookClient;
-import com.jiubredeemer.app.integration.dto.RoomDto;
+import com.jiubredeemer.app.integration.dto.room.RoomCreateRequestDto;
 import com.jiubredeemer.app.integration.dto.RuleTypeEnum;
 import com.jiubredeemer.app.rooms.converter.RoomDtoConverter;
 import com.jiubredeemer.app.rooms.model.request.CreateRoomRequest;
@@ -41,7 +41,7 @@ public class RoomApiService {
         final UserDto currentUser = getCurrentUser();
         final Room createdRoom = roomService.create(roomDtoConverter.createRequestToRoomDto(request),
                 Objects.requireNonNull(currentUser.getId()));
-        ruleBookClient.persistRoom(new RoomDto(createdRoom.getId(), createdRoom.getOwner().getId(), RuleTypeEnum.DND5E));
+        ruleBookClient.persistRoom(new RoomCreateRequestDto(createdRoom.getId(), createdRoom.getOwner().getId(), RuleTypeEnum.DND5E));
         return new CreateRoomResponse(createdRoom.getId());
     }
 

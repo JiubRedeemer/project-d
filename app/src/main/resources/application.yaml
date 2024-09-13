@@ -34,3 +34,5 @@ project-d:
     rule-book:
       base-url: http://localhost:8081
       rooms-url: /api/rooms
+      races-url: /api/races
+      classes-url: /api/classes
