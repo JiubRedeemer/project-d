@@ -1,66 +1,61 @@
 package com.jiubredeemer.app.integration
 
+import com.jiubredeemer.app.integration.configuration.RuleBookProperty
 import com.jiubredeemer.app.integration.dto.clazz.ClassDto
 import com.jiubredeemer.app.integration.dto.race.RaceDto
+import com.jiubredeemer.app.integration.dto.race.request.RacesRequest
 import com.jiubredeemer.app.integration.dto.room.RoomCreateRequestDto
 import org.springframework.core.ParameterizedTypeReference
-import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
-import org.springframework.http.HttpMethod
-import org.springframework.http.ResponseEntity
+import org.springframework.http.HttpStatusCode
 import org.springframework.stereotype.Service
-import org.springframework.web.client.RestTemplate
+import org.springframework.web.client.RestClient
 import java.util.*
-
 
 @Service
 class RuleBookClient(
-    private val restTemplate: RestTemplate,
+    private val restClient: RestClient,
     private val ruleBookProperty: RuleBookProperty
 ) {
 
-    fun persistRoom(roomCreateRequestDto: RoomCreateRequestDto?): RoomCreateRequestDto? {
+    fun persistRoom(roomCreateRequestDto: RoomCreateRequestDto): RoomCreateRequestDto? {
         val headers = HttpHeaders()
         headers.set("Content-Type", "application/json")
-        val requestEntity: HttpEntity<RoomCreateRequestDto> = HttpEntity(roomCreateRequestDto, headers)
 
-        val responseEntity: ResponseEntity<RoomCreateRequestDto> = restTemplate.exchange(
-            ruleBookProperty.baseUrl + ruleBookProperty.roomsUrl,
-            HttpMethod.PUT,
-            requestEntity,
-            RoomCreateRequestDto::class.java
-        )
+        val response = restClient.put()
+            .uri(ruleBookProperty.baseUrl + ruleBookProperty.roomsUrl)
+            .headers { it.addAll(headers) }
+            .body(roomCreateRequestDto)  // Передача тела запроса
+            .retrieve()
+            .toEntity(RoomCreateRequestDto::class.java)  // Получаем ответ в виде RoomCreateRequestDto
 
-        return responseEntity.body
+        return if (response.statusCode == HttpStatusCode.valueOf(200)) response.body else null
     }
 
     fun getRacesForRoom(roomId: UUID): List<RaceDto>? {
         val headers = HttpHeaders()
         headers.set("Content-Type", "application/json")
-        val requestEntity: HttpEntity<UUID> = HttpEntity(roomId, headers)
 
-        val responseEntity: ResponseEntity<List<RaceDto>> = restTemplate.exchange(
-            ruleBookProperty.baseUrl + ruleBookProperty.racesUrl,
-            HttpMethod.GET,
-            requestEntity,
-            ParameterizedTypeReference.forType(ArrayList<RaceDto>().javaClass)
-        )
+        val response = restClient.post()
+            .uri(ruleBookProperty.baseUrl + ruleBookProperty.racesUrl)
+            .headers { it.addAll(headers) }
+            .body(RacesRequest(roomId))  // Передаем тело запроса
+            .retrieve()
+            .toEntity(object : ParameterizedTypeReference<List<RaceDto>>() {})  // Используем ParameterizedTypeReference
 
-        return responseEntity.body
+        return response.body
     }
 
     fun getClassesForRoom(roomId: UUID): List<ClassDto>? {
         val headers = HttpHeaders()
         headers.set("Content-Type", "application/json")
-        val requestEntity: HttpEntity<UUID> = HttpEntity(roomId, headers)
 
-        val responseEntity: ResponseEntity<List<ClassDto>> = restTemplate.exchange(
-            ruleBookProperty.baseUrl + ruleBookProperty.classesUrl,
-            HttpMethod.GET,
-            requestEntity,
-            ParameterizedTypeReference.forType(ArrayList<ClassDto>().javaClass)
-        )
+        val response = restClient.get()
+            .uri(ruleBookProperty.baseUrl + ruleBookProperty.classesUrl)
+            .headers { it.addAll(headers) }
+            .retrieve()
+            .toEntity(object : ParameterizedTypeReference<List<ClassDto>>() {})  // Используем ParameterizedTypeReference
 
-        return responseEntity.body
+        return response.body
     }
 }
