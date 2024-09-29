@@ -8,5 +8,5 @@ data class RaceDto(
     val name: String,
     val code: String,
     val description: String?,
-    val stats: RaceStatsDto? = null
+    val stats: RaceStatsDto
 )

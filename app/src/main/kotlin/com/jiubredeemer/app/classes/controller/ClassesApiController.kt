@@ -1,7 +1,8 @@
-package com.jiubredeemer.app.races.controller
+package com.jiubredeemer.app.classes.controller
 
+import com.jiubredeemer.app.classes.model.ClassCreateInfoDto
+import com.jiubredeemer.app.classes.service.ClassApiService
 import com.jiubredeemer.app.races.model.RaceCreateInfoDto
-import com.jiubredeemer.app.races.service.RaceApiService
 import com.jiubredeemer.auth.annotations.HasRoleOrThrow
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Content
@@ -17,16 +18,16 @@ import java.util.*
 
 @RestController
 @RequestMapping("/api/rooms")
-@Tag(name = "Расы", description = "API для управления расами")
-class RacesApiController(
-    private val raceApiService: RaceApiService
+@Tag(name = "Классы", description = "API для управления классами")
+class ClassesApiController(
+    private val classApiService: ClassApiService
 ) {
 
-    @Operation(summary = "Получить список названий и описаний рас для комнаты")
+    @Operation(summary = "Получить список названий и описаний классов для комнаты")
     @ApiResponses(
         value = [
             ApiResponse(
-                responseCode = "200", description = "Список рас доступных для комнаты",
+                responseCode = "200", description = "Список классов доступных для комнаты",
                 content = [Content(schema = Schema(implementation = RaceCreateInfoDto::class))]
             ),
             ApiResponse(
@@ -35,10 +36,10 @@ class RacesApiController(
             )
         ]
     )
-    @GetMapping("/{roomId}/races")
+    @GetMapping("/{roomId}/classes")
     @HasRoleOrThrow("ADMIN", "USER")
-    fun getRaces(@PathVariable roomId: UUID): List<RaceCreateInfoDto> {
-        return raceApiService.getRaces(roomId)
+    fun getClasses(@PathVariable roomId: UUID): List<ClassCreateInfoDto> {
+        return classApiService.getClasses(roomId)
     }
 
 }

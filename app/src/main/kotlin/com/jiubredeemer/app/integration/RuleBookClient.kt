@@ -50,9 +50,10 @@ class RuleBookClient(
         val headers = HttpHeaders()
         headers.set("Content-Type", "application/json")
 
-        val response = restClient.get()
+        val response = restClient.post()
             .uri(ruleBookProperty.baseUrl + ruleBookProperty.classesUrl)
             .headers { it.addAll(headers) }
+            .body(RacesRequest(roomId))  // Передаем тело запроса
             .retrieve()
             .toEntity(object : ParameterizedTypeReference<List<ClassDto>>() {})  // Используем ParameterizedTypeReference
 
