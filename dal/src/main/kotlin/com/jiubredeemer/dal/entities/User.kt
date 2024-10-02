@@ -3,6 +3,7 @@ package com.jiubredeemer.dal.entities
 import jakarta.persistence.*
 import org.hibernate.annotations.JdbcTypeCode
 import org.hibernate.type.SqlTypes
+import java.sql.Timestamp
 import java.util.*
 
 @Entity
@@ -22,6 +23,9 @@ open class User {
 
     @Column(name = "password", nullable = false)
     open var password: String? = null
+
+    @Column(name = "registration_date", nullable = false)
+    open var registrationDate: Timestamp? = null
 
     @Enumerated(EnumType.STRING)
     @Column(name = "roles", nullable = false)

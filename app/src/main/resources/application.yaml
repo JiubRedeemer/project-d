@@ -36,3 +36,4 @@ project-d:
       rooms-url: /api/rooms
       races-url: /api/races
       classes-url: /api/classes
+      abilities-url: /api/abilities

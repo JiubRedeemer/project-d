@@ -9,5 +9,6 @@ data class RuleBookProperty(
     var baseUrl: String = "",
     var roomsUrl: String = "",
     var racesUrl: String = "",
-    var classesUrl: String = ""
+    var classesUrl: String = "",
+    var abilitiesUrl: String = ""
 )

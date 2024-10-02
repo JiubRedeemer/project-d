@@ -6,6 +6,8 @@ import com.jiubredeemer.auth.validators.UserValidator
 import com.jiubredeemer.dal.entities.User
 import com.jiubredeemer.dal.repository.UserRepository
 import org.springframework.stereotype.Service
+import java.sql.Timestamp
+import java.time.LocalDateTime
 
 @Service
 class RegistrationService(
@@ -16,6 +18,7 @@ class RegistrationService(
     fun registration(registrationRequest: UserRegistration): User? {
         userValidator.onRegistration(registrationRequest)
         val userModel: User = userRegistrationConverter.convertToUser(registrationRequest)
+        userModel.registrationDate = Timestamp.valueOf(LocalDateTime.now())
         return userRepository.save(userModel)
     }
 }
