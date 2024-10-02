@@ -6,6 +6,9 @@ import com.jiubredeemer.app.integration.dto.clazz.ClassDto
 import com.jiubredeemer.app.integration.dto.race.RaceDto
 import com.jiubredeemer.app.integration.dto.request.RequestByRoomId
 import com.jiubredeemer.app.integration.dto.room.RoomCreateRequestDto
+import com.jiubredeemer.app.integration.dto.skill.SkillByClassRequest
+import com.jiubredeemer.app.integration.dto.skill.SkillByCodeRequest
+import com.jiubredeemer.app.integration.dto.skill.SkillDto
 import com.jiubredeemer.common.exceptions.IntegrationAccessException
 import com.jiubredeemer.dal.service.RoomService
 import org.springframework.core.ParameterizedTypeReference
@@ -47,9 +50,9 @@ class RuleBookClient(
         val response = restClient.post()
             .uri(ruleBookProperty.baseUrl + ruleBookProperty.racesUrl)
             .headers { it.addAll(headers) }
-            .body(RequestByRoomId(roomId))  // Передаем тело запроса
+            .body(RequestByRoomId(roomId))
             .retrieve()
-            .toEntity(object : ParameterizedTypeReference<List<RaceDto>>() {})  // Используем ParameterizedTypeReference
+            .toEntity(object : ParameterizedTypeReference<List<RaceDto>>() {})
 
         return response.body
     }
@@ -61,10 +64,10 @@ class RuleBookClient(
         val response = restClient.post()
             .uri(ruleBookProperty.baseUrl + ruleBookProperty.classesUrl)
             .headers { it.addAll(headers) }
-            .body(RequestByRoomId(roomId))  // Передаем тело запроса
+            .body(RequestByRoomId(roomId))
             .retrieve()
             .toEntity(object :
-                ParameterizedTypeReference<List<ClassDto>>() {})  // Используем ParameterizedTypeReference
+                ParameterizedTypeReference<List<ClassDto>>() {})
 
         return response.body
     }
@@ -76,10 +79,54 @@ class RuleBookClient(
         val response = restClient.post()
             .uri(ruleBookProperty.baseUrl + ruleBookProperty.abilitiesUrl)
             .headers { it.addAll(headers) }
-            .body(RequestByRoomId(roomId))  // Передаем тело запроса
+            .body(RequestByRoomId(roomId))
             .retrieve()
             .toEntity(object :
-                ParameterizedTypeReference<List<AbilityDto>>() {})  // Используем ParameterizedTypeReference
+                ParameterizedTypeReference<List<AbilityDto>>() {})
+
+        return response.body
+    }
+
+    fun getSkillsForRoom(roomId: UUID): List<SkillDto>? {
+        val headers = HttpHeaders()
+        headers.set("Content-Type", "application/json")
+
+        val response = restClient.post()
+            .uri(ruleBookProperty.baseUrl + ruleBookProperty.skillsUrl)
+            .headers { it.addAll(headers) }
+            .body(RequestByRoomId(roomId))
+            .retrieve()
+            .toEntity(object :
+                ParameterizedTypeReference<List<SkillDto>>() {})
+
+        return response.body
+    }
+
+    fun getSkillByCodeForRoom(roomId: UUID, code: String): SkillDto? {
+        val headers = HttpHeaders()
+        headers.set("Content-Type", "application/json")
+
+        val response = restClient.post()
+            .uri(ruleBookProperty.baseUrl + ruleBookProperty.skillsByCodeUrl)
+            .headers { it.addAll(headers) }
+            .body(SkillByCodeRequest(roomId, code))
+            .retrieve()
+            .toEntity(object :
+                ParameterizedTypeReference<SkillDto>() {})
+        return response.body
+    }
+
+    fun getSkillsByClassForRoom(roomId: UUID, classCode: String): List<SkillDto>? {
+        val headers = HttpHeaders()
+        headers.set("Content-Type", "application/json")
+
+        val response = restClient.post()
+            .uri(ruleBookProperty.baseUrl + ruleBookProperty.skillsByClassUrl)
+            .headers { it.addAll(headers) }
+            .body(SkillByClassRequest(roomId, classCode))
+            .retrieve()
+            .toEntity(object :
+                ParameterizedTypeReference<List<SkillDto>>() {})
 
         return response.body
     }

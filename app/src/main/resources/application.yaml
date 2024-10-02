@@ -37,3 +37,6 @@ project-d:
       races-url: /api/races
       classes-url: /api/classes
       abilities-url: /api/abilities
+      skills-url: /api/skills
+      skills-by-code-url: /api/skills/byCode
+      skills-by-class-url: /api/skills/byClass
