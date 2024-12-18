@@ -40,3 +40,6 @@ project-d:
       skills-url: /api/skills
       skills-by-code-url: /api/skills/byCode
       skills-by-class-url: /api/skills/byClass
+    character-sheet:
+      base-url: http://localhost:8082
+      rooms-url: /api/rooms

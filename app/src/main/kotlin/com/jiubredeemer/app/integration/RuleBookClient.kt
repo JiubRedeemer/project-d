@@ -10,7 +10,6 @@ import com.jiubredeemer.app.integration.dto.skill.SkillByClassRequest
 import com.jiubredeemer.app.integration.dto.skill.SkillByCodeRequest
 import com.jiubredeemer.app.integration.dto.skill.SkillDto
 import com.jiubredeemer.common.exceptions.IntegrationAccessException
-import com.jiubredeemer.dal.service.RoomService
 import org.springframework.core.ParameterizedTypeReference
 import org.springframework.http.HttpHeaders
 import org.springframework.stereotype.Service
@@ -21,7 +20,6 @@ import java.util.*
 class RuleBookClient(
     private val restClient: RestClient,
     private val ruleBookProperty: RuleBookProperty,
-    private val roomService: RoomService
 ) {
 
     fun persistRoom(roomCreateRequestDto: RoomCreateRequestDto): RoomCreateRequestDto? {
@@ -37,8 +35,6 @@ class RuleBookClient(
                 .toEntity(RoomCreateRequestDto::class.java)
             return response.body
         } catch (e: Exception) {
-            roomService.delete(roomId = roomCreateRequestDto.roomId) //  Если не получилось заперсистить в книге правил,
-            // мы не даём пользователю сохранить комнату
             throw IntegrationAccessException("Rulebook dont response, cause: ${e.message}")
         }
     }
@@ -129,5 +125,18 @@ class RuleBookClient(
                 ParameterizedTypeReference<List<SkillDto>>() {})
 
         return response.body
+    }
+
+    fun deleteRoom(id: UUID) {
+        val headers = HttpHeaders()
+        headers.set("Content-Type", "application/json")
+
+        try {
+            restClient.delete()
+                .uri(ruleBookProperty.baseUrl + ruleBookProperty.roomsUrl + id)
+                .headers { it.addAll(headers) }
+        } catch (e: Exception) {
+            throw IntegrationAccessException("Rulebook dont response, cause: ${e.message}")
+        }
     }
 }
