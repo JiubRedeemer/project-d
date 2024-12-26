@@ -1,9 +1,9 @@
 package com.jiubredeemer.app.integration
 
+import com.jiubredeemer.app.charactersheet.character.dto.CreateCharacterRequest
 import com.jiubredeemer.app.integration.configuration.CharacterSheetProperty
 import com.jiubredeemer.app.integration.dto.room.RoomCreateRequestDto
 import com.jiubredeemer.common.exceptions.IntegrationAccessException
-import com.jiubredeemer.dal.service.RoomService
 import org.springframework.http.HttpHeaders
 import org.springframework.stereotype.Service
 import org.springframework.web.client.RestClient
@@ -13,7 +13,6 @@ import java.util.*
 class CharacterSheetClient(
     private val restClient: RestClient,
     private val characterSheetProperty: CharacterSheetProperty,
-    private val roomService: RoomService
 ) {
 
     fun persistRoom(roomCreateRequestDto: RoomCreateRequestDto): RoomCreateRequestDto? {
@@ -29,9 +28,7 @@ class CharacterSheetClient(
                 .toEntity(RoomCreateRequestDto::class.java)
             return response.body
         } catch (e: Exception) {
-            roomService.delete(roomId = roomCreateRequestDto.roomId) //  Если не получилось заперсистить в книге правил,
-            // мы не даём пользователю сохранить комнату
-            throw IntegrationAccessException("CharacterSheet dont response, cause: ${e.message}")
+            throw IntegrationAccessException("CharacterSheet don't response, cause: ${e.message}")
         }
     }
 
@@ -43,7 +40,23 @@ class CharacterSheetClient(
                 .uri(characterSheetProperty.baseUrl + characterSheetProperty.roomsUrl + id)
                 .headers { it.addAll(headers) }
         } catch (e: Exception) {
-            throw IntegrationAccessException("CharacterSheet dont response, cause: ${e.message}")
+            throw IntegrationAccessException("CharacterSheet don't response, cause: ${e.message}")
+        }
+    }
+
+    fun createCharacter(roomId: UUID, createCharacterRequest: CreateCharacterRequest): UUID? {
+        val headers = HttpHeaders()
+        headers.set("Content-Type", "application/json")
+        try {
+            val response = restClient.put()
+                .uri(characterSheetProperty.baseUrl + characterSheetProperty.charactersUrl)
+                .headers { it.addAll(headers) }
+                .body(createCharacterRequest)
+                .retrieve()
+                .toEntity(UUID::class.java)
+            return response.body
+        } catch (e: Exception) {
+            throw IntegrationAccessException("CharacterSheet don't response, cause: ${e.message}")
         }
     }
 }
