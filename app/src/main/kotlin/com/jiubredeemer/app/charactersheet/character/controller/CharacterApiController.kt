@@ -1,8 +1,9 @@
 package com.jiubredeemer.app.charactersheet.character.controller
 
-import com.jiubredeemer.app.charactersheet.character.dto.CreateCharacterRequest
+import com.jiubredeemer.app.charactersheet.character.dto.CharacterDto
+import com.jiubredeemer.app.integration.charactersheet.dto.character.CreateCharacterRequest
 import com.jiubredeemer.app.charactersheet.character.service.CharacterApiService
-import com.jiubredeemer.auth.annotations.HasRoleOrThrow
+import com.jiubredeemer.auth.annotation.HasRoleOrThrow
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.web.bind.annotation.*
 import java.util.*
@@ -20,7 +21,7 @@ class CharacterApiController(
     fun createCharacter(
         @PathVariable roomId: UUID,
         @RequestBody createCharacterRequest: CreateCharacterRequest
-    ): UUID? {
+    ): CharacterDto? {
         return characterApiService.createCharacter(roomId, createCharacterRequest)
     }
 }

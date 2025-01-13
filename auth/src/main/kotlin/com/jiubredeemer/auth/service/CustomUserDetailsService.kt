@@ -1,6 +1,6 @@
 package com.jiubredeemer.auth.service
 
-import com.jiubredeemer.dal.models.UserDto
+import com.jiubredeemer.dal.model.UserDto
 import com.jiubredeemer.dal.service.UserService
 import org.springframework.security.core.userdetails.User
 import org.springframework.security.core.userdetails.UserDetails

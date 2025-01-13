@@ -1,7 +1,7 @@
 package com.jiubredeemer.app.charactersheet.character.mapper
 
-import com.jiubredeemer.app.integration.dto.ability.AbilityDto
-import com.jiubredeemer.app.rulebook.abilities.dto.AbilityResponse
+import com.jiubredeemer.app.integration.rulebook.dto.ability.AbilityDto
+import com.jiubredeemer.app.rulebook.ability.dto.AbilityResponse
 import org.springframework.stereotype.Component
 
 @Component

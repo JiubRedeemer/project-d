@@ -1,7 +1,7 @@
 package com.jiubredeemer.auth.converter
 
 import com.jiubredeemer.auth.model.request.UserRegistration
-import com.jiubredeemer.dal.entities.User
+import com.jiubredeemer.dal.entity.User
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Component

@@ -1,8 +1,9 @@
 package com.jiubredeemer.app.charactersheet.character.service
 
-import com.jiubredeemer.app.charactersheet.character.dto.CreateCharacterRequest
-import com.jiubredeemer.app.integration.CharacterSheetClient
-import com.jiubredeemer.app.rooms.service.RoomAccessChecker
+import com.jiubredeemer.app.charactersheet.character.dto.CharacterDto
+import com.jiubredeemer.app.integration.charactersheet.dto.character.CreateCharacterRequest
+import com.jiubredeemer.app.integration.charactersheet.CharacterSheetClient
+import com.jiubredeemer.app.room.service.RoomAccessChecker
 import com.jiubredeemer.auth.service.AccessChecker
 import org.springframework.stereotype.Service
 import java.util.*
@@ -13,9 +14,10 @@ class CharacterApiService(
     private val accessChecker: AccessChecker,
     private val characterSheetClient: CharacterSheetClient,
 ) {
-    fun createCharacter(roomId: UUID, createCharacterRequest: CreateCharacterRequest): UUID? {
+    fun createCharacter(roomId: UUID, createCharacterRequest: CreateCharacterRequest): CharacterDto? {
         roomAccessChecker.hasAccessOrThrow(roomId, accessChecker.getCurrentUser().id!!)
-        val characterUUID: UUID? = characterSheetClient.createCharacter(roomId, createCharacterRequest)
+        createCharacterRequest.userId = accessChecker.getCurrentUser().id!!
+        val characterUUID: CharacterDto? = characterSheetClient.createCharacter(roomId, createCharacterRequest)
         return characterUUID
     }
 

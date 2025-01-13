@@ -2,8 +2,8 @@ package com.jiubredeemer.auth.service
 
 import com.jiubredeemer.auth.model.request.UserRegistration
 import com.jiubredeemer.auth.converter.UserRegistrationConverter
-import com.jiubredeemer.auth.validators.UserValidator
-import com.jiubredeemer.dal.entities.User
+import com.jiubredeemer.auth.validator.UserValidator
+import com.jiubredeemer.dal.entity.User
 import com.jiubredeemer.dal.repository.UserRepository
 import org.springframework.stereotype.Service
 import java.sql.Timestamp

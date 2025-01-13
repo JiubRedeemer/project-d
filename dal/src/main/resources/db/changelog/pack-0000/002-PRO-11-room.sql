@@ -1,5 +1,5 @@
--- Создание таблицы core.rooms
-CREATE TABLE core.rooms
+-- Создание таблицы core.room
+CREATE TABLE core.room
 (
     id                     uuid                              NOT NULL,
     name                   text      DEFAULT 'Комната'::text NOT NULL,
@@ -9,22 +9,22 @@ CREATE TABLE core.rooms
     update_datetime        timestamp DEFAULT now()           NOT NULL,
     delete_datetime        timestamp,
     last_activity_datetime timestamp DEFAULT now()           NOT NULL,
-    CONSTRAINT rooms_pkey PRIMARY KEY (id)
+    CONSTRAINT room_pkey PRIMARY KEY (id)
 );
 
--- Добавление комментариев для таблицы core.rooms и её столбцов
-COMMENT ON TABLE core.rooms IS 'Игровая комната';
-COMMENT ON COLUMN core.rooms.id IS 'Уникальный идентификатор комнаты в формате UUID';
-COMMENT ON COLUMN core.rooms.name IS 'Название комнаты. Значение по умолчанию — "Комната"';
-COMMENT ON COLUMN core.rooms.description IS 'Описание комнаты';
-COMMENT ON COLUMN core.rooms.owner_id IS 'Идентификатор владельца комнаты в формате UUID';
-COMMENT ON COLUMN core.rooms.create_datetime IS 'Время создания записи. По умолчанию устанавливается на текущее время';
-COMMENT ON COLUMN core.rooms.update_datetime IS 'Время последнего обновления записи. По умолчанию устанавливается на текущее время';
-COMMENT ON COLUMN core.rooms.delete_datetime IS 'Время удаления записи, если она была удалена. Может быть NULL';
-COMMENT ON COLUMN core.rooms.last_activity_datetime IS 'Время последней активности в комнате. По умолчанию устанавливается на текущее время';
+-- Добавление комментариев для таблицы core.room и её столбцов
+COMMENT ON TABLE core.room IS 'Игровая комната';
+COMMENT ON COLUMN core.room.id IS 'Уникальный идентификатор комнаты в формате UUID';
+COMMENT ON COLUMN core.room.name IS 'Название комнаты. Значение по умолчанию — "Комната"';
+COMMENT ON COLUMN core.room.description IS 'Описание комнаты';
+COMMENT ON COLUMN core.room.owner_id IS 'Идентификатор владельца комнаты в формате UUID';
+COMMENT ON COLUMN core.room.create_datetime IS 'Время создания записи. По умолчанию устанавливается на текущее время';
+COMMENT ON COLUMN core.room.update_datetime IS 'Время последнего обновления записи. По умолчанию устанавливается на текущее время';
+COMMENT ON COLUMN core.room.delete_datetime IS 'Время удаления записи, если она была удалена. Может быть NULL';
+COMMENT ON COLUMN core.room.last_activity_datetime IS 'Время последней активности в комнате. По умолчанию устанавливается на текущее время';
 
--- Создание таблицы core.rooms_users
-CREATE TABLE core.rooms_users
+-- Создание таблицы core.room_user
+CREATE TABLE core.room_user
 (
     user_id uuid  NOT NULL,
     room_id uuid  NOT NULL,
@@ -32,20 +32,20 @@ CREATE TABLE core.rooms_users
     PRIMARY KEY (user_id, room_id)
 );
 
--- Добавление комментариев для таблицы core.rooms_users и её столбцов
-COMMENT ON TABLE core.rooms_users IS 'Таблица связи пользователей и комнат';
-COMMENT ON COLUMN core.rooms_users.user_id IS 'Уникальный идентификатор пользователя';
-COMMENT ON COLUMN core.rooms_users.room_id IS 'Уникальный идентификатор комнаты';
-COMMENT ON COLUMN core.rooms_users.roles IS 'Список ролей пользователя в комнате, например: [MASTER, PLAYER, MODERATOR]';
+-- Добавление комментариев для таблицы core.room_user и её столбцов
+COMMENT ON TABLE core.room_user IS 'Таблица связи пользователей и комнат';
+COMMENT ON COLUMN core.room_user.user_id IS 'Уникальный идентификатор пользователя';
+COMMENT ON COLUMN core.room_user.room_id IS 'Уникальный идентификатор комнаты';
+COMMENT ON COLUMN core.room_user.roles IS 'Список ролей пользователя в комнате, например: [MASTER, PLAYER, MODERATOR]';
 
 -- Создание индексов
-CREATE INDEX rooms_owner_id ON core.rooms (owner_id);
-CREATE INDEX rooms_users_room_id ON core.rooms_users (room_id, user_id);
+CREATE INDEX room_owner_id ON core.room (owner_id);
+CREATE INDEX room_user_room_id ON core.room_user (room_id, user_id);
 
 -- Добавление внешних ключей
-ALTER TABLE core.rooms_users
-    ADD CONSTRAINT room_user_FK FOREIGN KEY (room_id) REFERENCES core.rooms (id);
-ALTER TABLE core.rooms
-    ADD CONSTRAINT rooms_owner_id_fkey FOREIGN KEY (owner_id) REFERENCES core.users (id) ON UPDATE NO ACTION ON DELETE CASCADE;
-ALTER TABLE core.rooms_users
-    ADD CONSTRAINT FKrooms_user134359 FOREIGN KEY (user_id) REFERENCES core.users (id);
+ALTER TABLE core.room_user
+    ADD CONSTRAINT room_user_FK FOREIGN KEY (room_id) REFERENCES core.room (id);
+ALTER TABLE core.room
+    ADD CONSTRAINT room_owner_id_fkey FOREIGN KEY (owner_id) REFERENCES core.user (id) ON UPDATE NO ACTION ON DELETE CASCADE;
+ALTER TABLE core.room_user
+    ADD CONSTRAINT FKroom_user134359 FOREIGN KEY (user_id) REFERENCES core.user (id);

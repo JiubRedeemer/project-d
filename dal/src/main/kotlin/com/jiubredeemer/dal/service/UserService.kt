@@ -1,7 +1,7 @@
 package com.jiubredeemer.dal.service
 
 import com.jiubredeemer.dal.converter.UserConverter
-import com.jiubredeemer.dal.models.UserDto
+import com.jiubredeemer.dal.model.UserDto
 import com.jiubredeemer.dal.repository.UserRepository
 import org.springframework.stereotype.Service
 import java.util.UUID

@@ -1,6 +1,6 @@
 package com.jiubredeemer.dal.repository
 
-import com.jiubredeemer.dal.entities.RoomUserInvite
+import com.jiubredeemer.dal.entity.RoomUserInvite
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
 import org.springframework.stereotype.Repository

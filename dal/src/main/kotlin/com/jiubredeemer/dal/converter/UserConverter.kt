@@ -1,7 +1,7 @@
 package com.jiubredeemer.dal.converter
 
-import com.jiubredeemer.dal.entities.User
-import com.jiubredeemer.dal.models.UserDto
+import com.jiubredeemer.dal.entity.User
+import com.jiubredeemer.dal.model.UserDto
 import org.springframework.stereotype.Component
 
 @Component

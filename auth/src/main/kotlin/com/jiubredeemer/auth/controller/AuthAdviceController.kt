@@ -1,7 +1,7 @@
 package com.jiubredeemer.auth.controller
 
-import com.jiubredeemer.auth.exceptions.ErrorCode
-import com.jiubredeemer.auth.exceptions.ValidationException
+import com.jiubredeemer.auth.exception.ErrorCode
+import com.jiubredeemer.auth.exception.ValidationException
 import com.jiubredeemer.auth.model.response.ErrorResponse
 import io.jsonwebtoken.ExpiredJwtException
 import org.springframework.http.HttpStatus

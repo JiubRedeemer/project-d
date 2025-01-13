@@ -1,12 +1,12 @@
 package com.jiubredeemer.dal.service
 
-import com.jiubredeemer.common.exceptions.NotFoundException
+import com.jiubredeemer.common.exception.NotFoundException
 import com.jiubredeemer.dal.converter.RoomConverter
-import com.jiubredeemer.dal.entities.Room
-import com.jiubredeemer.dal.entities.RoomUser
-import com.jiubredeemer.dal.entities.RoomsUserKey
-import com.jiubredeemer.dal.entities.User
-import com.jiubredeemer.dal.models.RoomDto
+import com.jiubredeemer.dal.entity.Room
+import com.jiubredeemer.dal.entity.RoomUser
+import com.jiubredeemer.dal.entity.RoomsUserKey
+import com.jiubredeemer.dal.entity.User
+import com.jiubredeemer.dal.model.RoomDto
 import com.jiubredeemer.dal.repository.RoomRepository
 import com.jiubredeemer.dal.repository.RoomsUserRepository
 import com.jiubredeemer.dal.repository.UserRepository

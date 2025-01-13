@@ -1,7 +1,7 @@
 package com.jiubredeemer.dal.repository
 
-import com.jiubredeemer.dal.entities.RoomUser
-import com.jiubredeemer.dal.entities.RoomsUserKey
+import com.jiubredeemer.dal.entity.RoomUser
+import com.jiubredeemer.dal.entity.RoomsUserKey
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.query.Param

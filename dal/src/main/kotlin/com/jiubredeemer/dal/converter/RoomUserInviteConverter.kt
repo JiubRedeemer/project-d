@@ -1,10 +1,10 @@
 package com.jiubredeemer.dal.converter
 
-import com.jiubredeemer.dal.entities.Room
-import com.jiubredeemer.dal.entities.RoomUser
-import com.jiubredeemer.dal.entities.RoomUserInvite
-import com.jiubredeemer.dal.entities.User
-import com.jiubredeemer.dal.models.RoomUserInviteDto
+import com.jiubredeemer.dal.entity.Room
+import com.jiubredeemer.dal.entity.RoomUser
+import com.jiubredeemer.dal.entity.RoomUserInvite
+import com.jiubredeemer.dal.entity.User
+import com.jiubredeemer.dal.model.RoomUserInviteDto
 import org.springframework.stereotype.Component
 
 @Component

@@ -1,7 +1,7 @@
 package com.jiubredeemer.auth.controller
 
-import com.jiubredeemer.auth.annotations.HasRoleOrThrow
-import com.jiubredeemer.dal.models.UserDto
+import com.jiubredeemer.auth.annotation.HasRoleOrThrow
+import com.jiubredeemer.dal.model.UserDto
 import com.jiubredeemer.dal.service.UserService
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping

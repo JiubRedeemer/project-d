@@ -1,7 +1,7 @@
 package com.jiubredeemer.auth.service
 
-import com.jiubredeemer.dal.entities.User
-import com.jiubredeemer.dal.models.UserDto
+import com.jiubredeemer.dal.entity.User
+import com.jiubredeemer.dal.model.UserDto
 import com.jiubredeemer.dal.service.UserService
 import org.springframework.security.access.AccessDeniedException
 import org.springframework.security.core.context.SecurityContextHolder

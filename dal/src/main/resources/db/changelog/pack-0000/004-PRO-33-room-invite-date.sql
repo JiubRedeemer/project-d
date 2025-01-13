@@ -1,5 +1,5 @@
-alter table core.rooms_users
+alter table core.room_user
     add create_datetime timestamp default now() not null;
 
-comment on column core.rooms_users.create_datetime is 'Дата создания';
+comment on column core.room_user.create_datetime is 'Дата создания';
 

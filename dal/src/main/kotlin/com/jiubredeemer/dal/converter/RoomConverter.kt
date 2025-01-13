@@ -1,7 +1,7 @@
 package com.jiubredeemer.dal.converter
 
-import com.jiubredeemer.dal.entities.Room
-import com.jiubredeemer.dal.models.RoomDto
+import com.jiubredeemer.dal.entity.Room
+import com.jiubredeemer.dal.model.RoomDto
 import org.springframework.beans.BeanUtils
 import org.springframework.stereotype.Component
 import java.sql.Timestamp
