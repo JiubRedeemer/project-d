@@ -44,3 +44,6 @@ project-d:
       base-url: http://localhost:8082
       rooms-url: /api/rooms
       characters-url: /api/characters
+      header-url: /header
+      subheader-url: /subheader
+      abilities-url: /abilities

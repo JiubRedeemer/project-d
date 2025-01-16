@@ -8,5 +8,8 @@ import org.springframework.stereotype.Component
 data class CharacterSheetProperty(
     var baseUrl: String = "",
     var roomsUrl: String = "",
-    var charactersUrl: String = ""
+    var charactersUrl: String = "",
+    var headerUrl: String = "",
+    var subheaderUrl: String = "",
+    var abilitiesUrl: String = ""
 )

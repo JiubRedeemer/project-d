@@ -93,4 +93,49 @@ class CharacterSheetClient(
             throw IntegrationAccessException("CharacterSheet don't response, cause: ${e.message}")
         }
     }
+
+    fun getHeaderInfoByCharacterId(characterId: UUID): CharacterDto? {
+        val headers = HttpHeaders()
+        headers.set("Content-Type", "application/json")
+        try {
+            val response = restClient.post()
+                .uri(characterSheetProperty.baseUrl + characterSheetProperty.charactersUrl + "/" + characterId + "/" + characterSheetProperty.headerUrl)
+                .headers { it.addAll(headers) }
+                .retrieve()
+                .toEntity(CharacterDto::class.java)
+            return response.body
+        } catch (e: Exception) {
+            throw IntegrationAccessException("CharacterSheet don't response, cause: ${e.message}")
+        }
+    }
+
+    fun getSubheaderInfoByCharacterId(characterId: UUID): CharacterDto? {
+        val headers = HttpHeaders()
+        headers.set("Content-Type", "application/json")
+        try {
+            val response = restClient.post()
+                .uri(characterSheetProperty.baseUrl + characterSheetProperty.charactersUrl + "/" + characterId + "/" + characterSheetProperty.subheaderUrl)
+                .headers { it.addAll(headers) }
+                .retrieve()
+                .toEntity(CharacterDto::class.java)
+            return response.body
+        } catch (e: Exception) {
+            throw IntegrationAccessException("CharacterSheet don't response, cause: ${e.message}")
+        }
+    }
+
+    fun getAbilitiesAndSkillsInfoByCharacterId(characterId: UUID): CharacterDto? {
+        val headers = HttpHeaders()
+        headers.set("Content-Type", "application/json")
+        try {
+            val response = restClient.post()
+                .uri(characterSheetProperty.baseUrl + characterSheetProperty.charactersUrl + "/" + characterId + "/" + characterSheetProperty.abilitiesUrl)
+                .headers { it.addAll(headers) }
+                .retrieve()
+                .toEntity(CharacterDto::class.java)
+            return response.body
+        } catch (e: Exception) {
+            throw IntegrationAccessException("CharacterSheet don't response, cause: ${e.message}")
+        }
+    }
 }

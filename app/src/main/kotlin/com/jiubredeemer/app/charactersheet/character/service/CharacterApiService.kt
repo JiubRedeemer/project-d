@@ -33,4 +33,22 @@ class CharacterApiService(
         val character: CharacterDto? = characterSheetClient.findByCharacterId(characterId)
         return character
     }
+
+    fun getHeaderInfoByCharacterId(roomId: UUID, characterId: UUID): CharacterDto? {
+        roomAccessChecker.hasAccessOrThrow(roomId, accessChecker.getCurrentUser().id!!)
+        val character: CharacterDto? = characterSheetClient.getHeaderInfoByCharacterId(characterId)
+        return character
+    }
+
+    fun getSubheaderInfoByCharacterId(roomId: UUID, characterId: UUID): CharacterDto? {
+        roomAccessChecker.hasAccessOrThrow(roomId, accessChecker.getCurrentUser().id!!)
+        val character: CharacterDto? = characterSheetClient.getSubheaderInfoByCharacterId(characterId)
+        return character
+    }
+
+    fun getAbilitiesAndSkillsInfoByCharacterId(roomId: UUID, characterId: UUID): CharacterDto? {
+        roomAccessChecker.hasAccessOrThrow(roomId, accessChecker.getCurrentUser().id!!)
+        val character: CharacterDto? = characterSheetClient.getAbilitiesAndSkillsInfoByCharacterId(characterId)
+        return character
+    }
 }

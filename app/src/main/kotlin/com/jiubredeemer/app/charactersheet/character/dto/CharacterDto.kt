@@ -8,11 +8,14 @@ data class CharacterDto(
     val userId: UUID?,
     val name: String?,
     val clazzCode: String?,
+    val clazzInfo: ClassInfoDto?,
     val raceCode: String?,
+    val raceInfo: RaceInfoDto?,
     val proficiencyBonus: Int?,
     val armoryClass: Int?,
     val speed: Int?,
     val inspiration: Int?,
+    val initiative: Int?,
     val abilities: List<AbilityShort>?,
     val skills: List<SkillShort>?,
     val characterBio: CharacterBio?,
@@ -51,6 +54,17 @@ data class CharacterDto(
     data class LevelDto(
         var characterId: UUID?,
         val level: Long?,
-        val xp: Long?
+        val xp: Long?,
+        val nextLevelXp: Long?
+    )
+
+    data class ClassInfoDto(
+        var code: String?,
+        val name: String?,
+    )
+
+    data class RaceInfoDto(
+        var code: String?,
+        val name: String?,
     )
 }

@@ -41,4 +41,31 @@ class CharacterApiController(
     ): CharacterDto? {
         return characterApiService.findByCharacterId(roomId, characterId)
     }
+
+    @GetMapping("/characters/{characterId}/header")
+    @HasRoleOrThrow("ADMIN", "USER")
+    fun getHeaderInfoByCharacterId(
+        @PathVariable roomId: UUID,
+        @PathVariable characterId: UUID,
+    ): CharacterDto? {
+        return characterApiService.getHeaderInfoByCharacterId(roomId, characterId)
+    }
+
+    @GetMapping("/characters/{characterId}/subheader")
+    @HasRoleOrThrow("ADMIN", "USER")
+    fun getSubheaderInfoByCharacterId(
+        @PathVariable roomId: UUID,
+        @PathVariable characterId: UUID,
+    ): CharacterDto? {
+        return characterApiService.getSubheaderInfoByCharacterId(roomId, characterId)
+    }
+
+    @GetMapping("/characters/{characterId}/abilities")
+    @HasRoleOrThrow("ADMIN", "USER")
+    fun getAbilitiesAndSkillsInfoByCharacterId(
+        @PathVariable roomId: UUID,
+        @PathVariable characterId: UUID,
+    ): CharacterDto? {
+        return characterApiService.getAbilitiesAndSkillsInfoByCharacterId(roomId, characterId)
+    }
 }
