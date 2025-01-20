@@ -1,7 +1,7 @@
 package com.jiubredeemer.app.rulebook.ability.controller
 
 
-import com.jiubredeemer.app.rulebook.ability.dto.AbilityResponse
+import com.jiubredeemer.app.integration.rulebook.dto.ability.AbilityDto
 import com.jiubredeemer.app.rulebook.ability.service.AbilityApiService
 import com.jiubredeemer.app.rulebook.race.model.RaceCreateInfoDto
 import com.jiubredeemer.auth.annotation.HasRoleOrThrow
@@ -39,7 +39,7 @@ class AbilityApiController(
     )
     @GetMapping("/{roomId}/abilities")
     @HasRoleOrThrow("ADMIN", "USER")
-    fun getAbilities(@PathVariable roomId: UUID): List<AbilityResponse> {
+    fun getAbilities(@PathVariable roomId: UUID): List<AbilityDto> {
         return abilityApiService.getAbilities(roomId)
     }
 
