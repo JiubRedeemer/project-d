@@ -32,18 +32,22 @@ project-d:
     allowed-methods: [ 'POST', 'GET', 'PUT', 'DELETE', 'PATCH' ]
   integrations:
     rule-book:
+      api-url: api
       base-url: http://localhost:8081
-      rooms-url: /api/rooms
-      races-url: /api/races
-      classes-url: /api/classes
-      abilities-url: /api/abilities
-      skills-url: /api/skills
-      skills-by-code-url: /api/skills/byCode
-      skills-by-class-url: /api/skills/byClass
+      rooms-url: rooms
+      races-url: races
+      classes-url: classes
+      abilities-url: abilities
+      skills-url: skills
+      skills-by-code-url: byCode
+      skills-by-class-url: byClass
     character-sheet:
+      api-url: api
       base-url: http://localhost:8082
-      rooms-url: /api/rooms
-      characters-url: /api/characters
-      header-url: /header
-      subheader-url: /subheader
-      abilities-url: /abilities
+      rooms-url: rooms
+      characters-url: characters
+      header-url: header
+      subheader-url: subheader
+      abilities-url: abilities
+      bonus-url: bonus
+      health-url: health

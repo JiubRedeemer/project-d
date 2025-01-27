@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component
 @Component
 @ConfigurationProperties(prefix = "project-d.integrations.rule-book")
 data class RuleBookProperty(
+    var apiUrl: String = "",
     var baseUrl: String = "",
     var roomsUrl: String = "",
     var racesUrl: String = "",

@@ -13,9 +13,12 @@ data class CharacterDto(
     val raceInfo: RaceInfoDto?,
     val proficiencyBonus: Int?,
     val armoryClass: Int?,
+    val bonusArmoryClass: Int?,
     val speed: Int?,
+    val bonusSpeed: Int?,
     val inspiration: Int?,
     val initiative: Int?,
+    val bonusInitiative: Int?,
     val abilities: List<AbilityShort>?,
     val skills: List<SkillShort>?,
     val characterBio: CharacterBio?,
@@ -24,7 +27,8 @@ data class CharacterDto(
 ) {
     data class AbilityShort(
         val code: String?,
-        val value: Long?
+        val value: Long?,
+        val bonusValue: Long?
     )
 
     data class SkillShort(
@@ -48,7 +52,8 @@ data class CharacterDto(
         val characterId: UUID?,
         val currentHp: Long?,
         val maxHp: Long?,
-        val tempHp: Long?
+        val tempHp: Long?,
+        val bonusValue: Long?
     )
 
     data class LevelDto(

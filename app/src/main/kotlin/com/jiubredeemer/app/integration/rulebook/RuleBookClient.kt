@@ -1,11 +1,11 @@
 package com.jiubredeemer.app.integration.rulebook
 
 import com.jiubredeemer.app.integration.configuration.RuleBookProperty
+import com.jiubredeemer.app.integration.dto.request.RequestByRoomId
+import com.jiubredeemer.app.integration.dto.room.RoomCreateRequestDto
 import com.jiubredeemer.app.integration.rulebook.dto.ability.AbilityDto
 import com.jiubredeemer.app.integration.rulebook.dto.clazz.ClazzDto
 import com.jiubredeemer.app.integration.rulebook.dto.race.RaceDto
-import com.jiubredeemer.app.integration.dto.request.RequestByRoomId
-import com.jiubredeemer.app.integration.dto.room.RoomCreateRequestDto
 import com.jiubredeemer.app.integration.rulebook.dto.skill.SkillByClassRequest
 import com.jiubredeemer.app.integration.rulebook.dto.skill.SkillByCodeRequest
 import com.jiubredeemer.app.integration.rulebook.dto.skill.SkillDto
@@ -14,6 +14,7 @@ import org.springframework.core.ParameterizedTypeReference
 import org.springframework.http.HttpHeaders
 import org.springframework.stereotype.Service
 import org.springframework.web.client.RestClient
+import org.springframework.web.util.UriComponentsBuilder
 import java.util.*
 
 @Service
@@ -21,14 +22,18 @@ class RuleBookClient(
     private val restClient: RestClient,
     private val ruleBookProperty: RuleBookProperty,
 ) {
+    private val headers = HttpHeaders().apply { set("Content-Type", "application/json") }
 
     fun persistRoom(roomCreateRequestDto: RoomCreateRequestDto): RoomCreateRequestDto? {
-        val headers = HttpHeaders()
-        headers.set("Content-Type", "application/json")
+        val uri = UriComponentsBuilder
+            .fromHttpUrl(ruleBookProperty.baseUrl)
+            .pathSegment(ruleBookProperty.apiUrl)
+            .pathSegment(ruleBookProperty.roomsUrl)
+            .toUriString()
 
         try {
             val response = restClient.put()
-                .uri(ruleBookProperty.baseUrl + ruleBookProperty.roomsUrl)
+                .uri(uri)
                 .headers { it.addAll(headers) }
                 .body(roomCreateRequestDto)
                 .retrieve()
@@ -40,11 +45,14 @@ class RuleBookClient(
     }
 
     fun getRacesForRoom(roomId: UUID): List<RaceDto>? {
-        val headers = HttpHeaders()
-        headers.set("Content-Type", "application/json")
+        val uri = UriComponentsBuilder
+            .fromHttpUrl(ruleBookProperty.baseUrl)
+            .pathSegment(ruleBookProperty.apiUrl)
+            .pathSegment(ruleBookProperty.racesUrl)
+            .toUriString()
 
         val response = restClient.post()
-            .uri(ruleBookProperty.baseUrl + ruleBookProperty.racesUrl)
+            .uri(uri)
             .headers { it.addAll(headers) }
             .body(RequestByRoomId(roomId))
             .retrieve()
@@ -54,11 +62,14 @@ class RuleBookClient(
     }
 
     fun getClassesForRoom(roomId: UUID): List<ClazzDto>? {
-        val headers = HttpHeaders()
-        headers.set("Content-Type", "application/json")
+        val uri = UriComponentsBuilder
+            .fromHttpUrl(ruleBookProperty.baseUrl)
+            .pathSegment(ruleBookProperty.apiUrl)
+            .pathSegment(ruleBookProperty.classesUrl)
+            .toUriString()
 
         val response = restClient.post()
-            .uri(ruleBookProperty.baseUrl + ruleBookProperty.classesUrl)
+            .uri(uri)
             .headers { it.addAll(headers) }
             .body(RequestByRoomId(roomId))
             .retrieve()
@@ -69,11 +80,14 @@ class RuleBookClient(
     }
 
     fun getAbilitiesForRoom(roomId: UUID): List<AbilityDto>? {
-        val headers = HttpHeaders()
-        headers.set("Content-Type", "application/json")
+        val uri = UriComponentsBuilder
+            .fromHttpUrl(ruleBookProperty.baseUrl)
+            .pathSegment(ruleBookProperty.apiUrl)
+            .pathSegment(ruleBookProperty.abilitiesUrl)
+            .toUriString()
 
         val response = restClient.post()
-            .uri(ruleBookProperty.baseUrl + ruleBookProperty.abilitiesUrl)
+            .uri(uri)
             .headers { it.addAll(headers) }
             .body(RequestByRoomId(roomId))
             .retrieve()
@@ -84,11 +98,14 @@ class RuleBookClient(
     }
 
     fun getSkillsForRoom(roomId: UUID): List<SkillDto>? {
-        val headers = HttpHeaders()
-        headers.set("Content-Type", "application/json")
+        val uri = UriComponentsBuilder
+            .fromHttpUrl(ruleBookProperty.baseUrl)
+            .pathSegment(ruleBookProperty.apiUrl)
+            .pathSegment(ruleBookProperty.skillsUrl)
+            .toUriString()
 
         val response = restClient.post()
-            .uri(ruleBookProperty.baseUrl + ruleBookProperty.skillsUrl)
+            .uri(uri)
             .headers { it.addAll(headers) }
             .body(RequestByRoomId(roomId))
             .retrieve()
@@ -99,11 +116,15 @@ class RuleBookClient(
     }
 
     fun getSkillByCodeForRoom(roomId: UUID, code: String): SkillDto? {
-        val headers = HttpHeaders()
-        headers.set("Content-Type", "application/json")
+        val uri = UriComponentsBuilder
+            .fromHttpUrl(ruleBookProperty.baseUrl)
+            .pathSegment(ruleBookProperty.apiUrl)
+            .pathSegment(ruleBookProperty.skillsUrl)
+            .pathSegment(ruleBookProperty.skillsByCodeUrl)
+            .toUriString()
 
         val response = restClient.post()
-            .uri(ruleBookProperty.baseUrl + ruleBookProperty.skillsByCodeUrl)
+            .uri(uri)
             .headers { it.addAll(headers) }
             .body(SkillByCodeRequest(roomId, code))
             .retrieve()
@@ -113,11 +134,15 @@ class RuleBookClient(
     }
 
     fun getSkillsByClassForRoom(roomId: UUID, classCode: String): List<SkillDto>? {
-        val headers = HttpHeaders()
-        headers.set("Content-Type", "application/json")
+        val uri = UriComponentsBuilder
+            .fromHttpUrl(ruleBookProperty.baseUrl)
+            .pathSegment(ruleBookProperty.apiUrl)
+            .pathSegment(ruleBookProperty.skillsUrl)
+            .pathSegment(ruleBookProperty.skillsByClassUrl)
+            .toUriString()
 
         val response = restClient.post()
-            .uri(ruleBookProperty.baseUrl + ruleBookProperty.skillsByClassUrl)
+            .uri(uri)
             .headers { it.addAll(headers) }
             .body(SkillByClassRequest(roomId, classCode))
             .retrieve()
@@ -128,12 +153,16 @@ class RuleBookClient(
     }
 
     fun deleteRoom(id: UUID) {
-        val headers = HttpHeaders()
-        headers.set("Content-Type", "application/json")
-
         try {
+            val uri = UriComponentsBuilder
+                .fromHttpUrl(ruleBookProperty.baseUrl)
+                .pathSegment(ruleBookProperty.apiUrl)
+                .pathSegment(ruleBookProperty.roomsUrl)
+                .pathSegment(id.toString())
+                .toUriString()
+
             restClient.delete()
-                .uri(ruleBookProperty.baseUrl + ruleBookProperty.roomsUrl + id)
+                .uri(uri)
                 .headers { it.addAll(headers) }
         } catch (e: Exception) {
             throw IntegrationAccessException("Rulebook dont response, cause: ${e.message}")
