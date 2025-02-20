@@ -1,6 +1,7 @@
 package com.jiubredeemer.app.charactersheet.character.controller
 
 import com.jiubredeemer.app.charactersheet.character.dto.CharacterDto
+import com.jiubredeemer.app.charactersheet.character.dto.UpdateCurrentHealthRequest
 import com.jiubredeemer.app.charactersheet.character.service.CharacterApiService
 import com.jiubredeemer.app.integration.charactersheet.dto.character.BonusValueUpdateRequest
 import com.jiubredeemer.app.integration.charactersheet.dto.character.CreateCharacterRequest
@@ -70,7 +71,7 @@ class CharacterApiController(
         return characterApiService.getAbilitiesAndSkillsInfoByCharacterId(roomId, characterId)
     }
 
-    @GetMapping("/characters/{characterId}/abilities/{code}/bonus")
+    @PatchMapping("/characters/{characterId}/abilities/{code}/bonus")
     @HasRoleOrThrow("ADMIN", "USER")
     fun updateAbilityBonusValue(
         @PathVariable roomId: UUID,
@@ -81,7 +82,7 @@ class CharacterApiController(
         characterApiService.updateAbilityBonusValue(roomId, characterId, code, bonusValueUpdateRequest)
     }
 
-    @GetMapping("/characters/{characterId}/health/bonus")
+    @PatchMapping("/characters/{characterId}/health/bonus")
     @HasRoleOrThrow("ADMIN", "USER")
     fun updateHealthBonusValue(
         @PathVariable roomId: UUID,
@@ -91,7 +92,17 @@ class CharacterApiController(
         characterApiService.updateHealthBonusValue(roomId, characterId, bonusValueUpdateRequest)
     }
 
-    @GetMapping("/characters/{characterId}/armoryClass/bonus")
+    @PatchMapping("/characters/{characterId}/health/updateCurrent")
+    @HasRoleOrThrow("ADMIN", "USER")
+    fun updateCurrentHealthById(
+        @PathVariable roomId: UUID,
+        @PathVariable characterId: UUID,
+        @RequestBody updateCurrentHealthRequest: UpdateCurrentHealthRequest
+    ) {
+        characterApiService.updateCurrentHealthById(roomId, characterId, updateCurrentHealthRequest)
+    }
+
+    @PatchMapping("/characters/{characterId}/armoryClass/bonus")
     @HasRoleOrThrow("ADMIN", "USER")
     fun updateArmoryClassBonusValue(
         @PathVariable roomId: UUID,
@@ -101,7 +112,7 @@ class CharacterApiController(
         characterApiService.updateArmoryClassBonusValue(roomId, characterId, bonusValueUpdateRequest)
     }
 
-    @GetMapping("/characters/{characterId}/speed/bonus")
+    @PatchMapping("/characters/{characterId}/speed/bonus")
     @HasRoleOrThrow("ADMIN", "USER")
     fun updateSpeedBonusValue(
         @PathVariable roomId: UUID,
@@ -111,7 +122,7 @@ class CharacterApiController(
         characterApiService.updateSpeedBonusValue(roomId, characterId, bonusValueUpdateRequest)
     }
 
-    @GetMapping("/characters/{characterId}/initiative/bonus")
+    @PatchMapping("/characters/{characterId}/initiative/bonus")
     @HasRoleOrThrow("ADMIN", "USER")
     fun updateInitiativeBonusValue(
         @PathVariable roomId: UUID,
@@ -120,4 +131,6 @@ class CharacterApiController(
     ) {
         characterApiService.updateInitiativeBonusValue(roomId, characterId, bonusValueUpdateRequest)
     }
+
+
 }

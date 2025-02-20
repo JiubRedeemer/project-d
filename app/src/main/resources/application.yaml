@@ -51,3 +51,4 @@ project-d:
       abilities-url: abilities
       bonus-url: bonus
       health-url: health
+      update-current-health: updateCurrent

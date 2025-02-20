@@ -1,6 +1,7 @@
 package com.jiubredeemer.app.charactersheet.character.service
 
 import com.jiubredeemer.app.charactersheet.character.dto.CharacterDto
+import com.jiubredeemer.app.charactersheet.character.dto.UpdateCurrentHealthRequest
 import com.jiubredeemer.app.integration.charactersheet.CharacterSheetClient
 import com.jiubredeemer.app.integration.charactersheet.dto.character.BonusValueUpdateRequest
 import com.jiubredeemer.app.integration.charactersheet.dto.character.CreateCharacterRequest
@@ -81,5 +82,14 @@ class CharacterApiService(
     ) {
         roomAccessChecker.hasAccessOrThrow(roomId, accessChecker.getCurrentUser().id!!)
         characterSheetClient.updateAbilityBonusValue(characterId, code, bonusValueUpdateRequest)
+    }
+
+    fun updateCurrentHealthById(
+        roomId: UUID,
+        characterId: UUID,
+        updateCurrentHealthRequest: UpdateCurrentHealthRequest
+    ) {
+        roomAccessChecker.hasAccessOrThrow(roomId, accessChecker.getCurrentUser().id!!)
+        characterSheetClient.updateCurrentHealthById(characterId, updateCurrentHealthRequest)
     }
 }

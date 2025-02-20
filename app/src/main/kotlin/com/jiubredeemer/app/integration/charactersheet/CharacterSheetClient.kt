@@ -1,6 +1,7 @@
 package com.jiubredeemer.app.integration.charactersheet
 
 import com.jiubredeemer.app.charactersheet.character.dto.CharacterDto
+import com.jiubredeemer.app.charactersheet.character.dto.UpdateCurrentHealthRequest
 import com.jiubredeemer.app.integration.charactersheet.dto.character.BonusValueUpdateRequest
 import com.jiubredeemer.app.integration.charactersheet.dto.character.CreateCharacterRequest
 import com.jiubredeemer.app.integration.charactersheet.dto.character.FindCharacterByUserIdAndRoomIdRequest
@@ -287,6 +288,26 @@ class CharacterSheetClient(
                 .retrieve()
         } catch (e: Exception) {
             throw IntegrationAccessException("CharacterSheet don't response on updateArmoryClassBonusValue, cause: ${e.message}")
+        }
+    }
+
+    fun updateCurrentHealthById(characterId: UUID, updateCurrentHealthRequest: UpdateCurrentHealthRequest) {
+        try {
+            val uri = UriComponentsBuilder
+                .fromHttpUrl(characterSheetProperty.baseUrl)
+                .pathSegment(characterSheetProperty.apiUrl)
+                .pathSegment(characterSheetProperty.charactersUrl)
+                .pathSegment(characterId.toString())
+                .pathSegment(characterSheetProperty.healthUrl)
+                .pathSegment(characterSheetProperty.updateCurrentHealth)
+                .toUriString()
+            restClient.patch()
+                .uri(uri)
+                .headers { it.addAll(headers) }
+                .body(updateCurrentHealthRequest)
+                .retrieve()
+        } catch (e: Exception) {
+            throw IntegrationAccessException("CharacterSheet don't response on updateCurrentHealthById, cause: ${e.message}")
         }
     }
 }
