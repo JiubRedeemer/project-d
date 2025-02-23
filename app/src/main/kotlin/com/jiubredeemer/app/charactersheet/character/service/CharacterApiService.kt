@@ -5,6 +5,7 @@ import com.jiubredeemer.app.charactersheet.character.dto.UpdateCurrentHealthRequ
 import com.jiubredeemer.app.integration.charactersheet.CharacterSheetClient
 import com.jiubredeemer.app.integration.charactersheet.dto.character.BonusValueUpdateRequest
 import com.jiubredeemer.app.integration.charactersheet.dto.character.CreateCharacterRequest
+import com.jiubredeemer.app.integration.charactersheet.dto.character.UpdateMasteryRequest
 import com.jiubredeemer.app.room.service.RoomAccessChecker
 import com.jiubredeemer.auth.service.AccessChecker
 import org.springframework.stereotype.Service
@@ -91,5 +92,15 @@ class CharacterApiService(
     ) {
         roomAccessChecker.hasAccessOrThrow(roomId, accessChecker.getCurrentUser().id!!)
         characterSheetClient.updateCurrentHealthById(characterId, updateCurrentHealthRequest)
+    }
+
+    fun updateSkillMasteryByCode(
+        roomId: UUID,
+        characterId: UUID,
+        code: String,
+        request: UpdateMasteryRequest
+    ) {
+        roomAccessChecker.hasAccessOrThrow(roomId, accessChecker.getCurrentUser().id!!)
+        characterSheetClient.updateSkillMasteryByCode(characterId, code, request)
     }
 }

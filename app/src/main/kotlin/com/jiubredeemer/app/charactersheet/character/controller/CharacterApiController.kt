@@ -5,6 +5,7 @@ import com.jiubredeemer.app.charactersheet.character.dto.UpdateCurrentHealthRequ
 import com.jiubredeemer.app.charactersheet.character.service.CharacterApiService
 import com.jiubredeemer.app.integration.charactersheet.dto.character.BonusValueUpdateRequest
 import com.jiubredeemer.app.integration.charactersheet.dto.character.CreateCharacterRequest
+import com.jiubredeemer.app.integration.charactersheet.dto.character.UpdateMasteryRequest
 import com.jiubredeemer.auth.annotation.HasRoleOrThrow
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.web.bind.annotation.*
@@ -130,6 +131,17 @@ class CharacterApiController(
         @RequestBody bonusValueUpdateRequest: BonusValueUpdateRequest
     ) {
         characterApiService.updateInitiativeBonusValue(roomId, characterId, bonusValueUpdateRequest)
+    }
+
+    @PatchMapping("/characters/{characterId}/skills/{code}/mastery")
+    @HasRoleOrThrow("ADMIN", "USER")
+    fun updateSkillMasteryByCode(
+        @PathVariable roomId: UUID,
+        @PathVariable characterId: UUID,
+        @PathVariable code: String,
+        @RequestBody request: UpdateMasteryRequest
+    ) {
+        characterApiService.updateSkillMasteryByCode(roomId, characterId, code, request)
     }
 
 

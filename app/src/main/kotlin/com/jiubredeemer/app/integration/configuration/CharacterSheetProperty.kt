@@ -15,8 +15,10 @@ data class CharacterSheetProperty(
     var abilitiesUrl: String = "",
     var bonusUrl: String = "",
     var healthUrl: String = "",
-    var updateCurrentHealth: String = "",
+    var updateCurrentHealthUrl: String = "",
     var armoryClassUrl: String = "",
     var speedUrl: String = "",
-    var initiativeUrl: String = ""
+    var initiativeUrl: String = "",
+    var skillsUrl: String = "",
+    var updateMasteryUrl: String = ""
 )

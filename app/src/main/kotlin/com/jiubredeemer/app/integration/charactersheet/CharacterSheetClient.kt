@@ -5,6 +5,7 @@ import com.jiubredeemer.app.charactersheet.character.dto.UpdateCurrentHealthRequ
 import com.jiubredeemer.app.integration.charactersheet.dto.character.BonusValueUpdateRequest
 import com.jiubredeemer.app.integration.charactersheet.dto.character.CreateCharacterRequest
 import com.jiubredeemer.app.integration.charactersheet.dto.character.FindCharacterByUserIdAndRoomIdRequest
+import com.jiubredeemer.app.integration.charactersheet.dto.character.UpdateMasteryRequest
 import com.jiubredeemer.app.integration.configuration.CharacterSheetProperty
 import com.jiubredeemer.app.integration.dto.room.RoomCreateRequestDto
 import com.jiubredeemer.common.exception.IntegrationAccessException
@@ -299,7 +300,7 @@ class CharacterSheetClient(
                 .pathSegment(characterSheetProperty.charactersUrl)
                 .pathSegment(characterId.toString())
                 .pathSegment(characterSheetProperty.healthUrl)
-                .pathSegment(characterSheetProperty.updateCurrentHealth)
+                .pathSegment(characterSheetProperty.updateCurrentHealthUrl)
                 .toUriString()
             restClient.patch()
                 .uri(uri)
@@ -308,6 +309,27 @@ class CharacterSheetClient(
                 .retrieve()
         } catch (e: Exception) {
             throw IntegrationAccessException("CharacterSheet don't response on updateCurrentHealthById, cause: ${e.message}")
+        }
+    }
+
+    fun updateSkillMasteryByCode(characterId: UUID, code: String, request: UpdateMasteryRequest) {
+        try {
+            val uri = UriComponentsBuilder
+                .fromHttpUrl(characterSheetProperty.baseUrl)
+                .pathSegment(characterSheetProperty.apiUrl)
+                .pathSegment(characterSheetProperty.charactersUrl)
+                .pathSegment(characterId.toString())
+                .pathSegment(characterSheetProperty.skillsUrl)
+                .pathSegment(code)
+                .pathSegment(characterSheetProperty.updateMasteryUrl)
+                .toUriString()
+            restClient.patch()
+                .uri(uri)
+                .headers { it.addAll(headers) }
+                .body(request)
+                .retrieve()
+        } catch (e: Exception) {
+            throw IntegrationAccessException("CharacterSheet don't response on updateMasteryByCode, cause: ${e.message}")
         }
     }
 }
