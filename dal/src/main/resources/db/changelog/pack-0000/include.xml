@@ -11,4 +11,5 @@
     <include file="002-PRO-11-room.xml" relativeToChangelogFile="true"/>
     <include file="003-PRO-33-room-invite.xml" relativeToChangelogFile="true"/>
     <include file="004-PRO-33-room-invite-date.xml" relativeToChangelogFile="true"/>
+    <include file="005-PRO-58-file-storage.xml" relativeToChangelogFile="true"/>
 </databaseChangeLog>

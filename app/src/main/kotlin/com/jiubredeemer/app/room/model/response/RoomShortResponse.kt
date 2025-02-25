@@ -7,5 +7,6 @@ data class RoomShortResponse(
     val id: UUID,
     val name: String,
     val description: String?,
+    val filePath: String?,
     val lastActivityDate: Timestamp
 )

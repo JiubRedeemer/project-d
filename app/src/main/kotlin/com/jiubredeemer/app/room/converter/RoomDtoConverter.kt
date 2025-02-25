@@ -12,6 +12,7 @@ class RoomDtoConverter {
         val roomDto = RoomDto()
         roomDto.name = createRoomRequest.name
         roomDto.description = createRoomRequest.description
+        roomDto.filePath = createRoomRequest.filePath
         return roomDto
     }
 
@@ -20,6 +21,7 @@ class RoomDtoConverter {
             roomDto.id ?: throw BrokenRoomException("Room hasn't id"),
             roomDto.name ?: throw BrokenRoomException("Room hasn't name"),
             roomDto.description,
+            roomDto.filePath,
             roomDto.lastActivityDatetime ?: throw BrokenRoomException("Room hasn't lastActivityDatetime")
         )
     }

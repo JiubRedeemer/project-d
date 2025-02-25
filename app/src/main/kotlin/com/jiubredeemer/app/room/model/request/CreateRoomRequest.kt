@@ -8,4 +8,6 @@ data class CreateRoomRequest(
     val name: String? = null,
     @Schema(description = "Описание комнаты", example = "Днд Олега")
     val description: String? = null,
+    @Schema(description = "Ссылка на файл изображения комнаты", example = "Днд Олега")
+    val filePath: String? = null,
 )
