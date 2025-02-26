@@ -25,6 +25,9 @@ open class Room {
     @Column(name = "description", nullable = true, length = Integer.MAX_VALUE)
     open var description: String? = null
 
+    @Column(name = "filepath", nullable = true, length = Integer.MAX_VALUE)
+    open var filePath: String? = null
+
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @OnDelete(action = OnDeleteAction.CASCADE)

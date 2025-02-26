@@ -16,6 +16,7 @@ class RoomConverter(private val userConverter: UserConverter) {
         val entity = Room()
         entity.name = model.name
         entity.description = model.description
+        entity.filePath = model.filePath
         entity.createDatetime = now
         entity.updateDatetime = now
         entity.lastActivityDatetime = now
@@ -27,6 +28,7 @@ class RoomConverter(private val userConverter: UserConverter) {
         model.id = entity.id
         model.name = entity.name
         model.description = entity.description
+        model.filePath = entity.filePath
         model.createDatetime = entity.createDatetime
         model.lastActivityDatetime = entity.lastActivityDatetime
         model.updateDatetime = entity.updateDatetime
