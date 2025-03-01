@@ -1,5 +1,6 @@
 package com.jiubredeemer.app.charactersheet.character.service
 
+import com.jiubredeemer.app.charactersheet.character.dto.CharacterBioUpdateRequest
 import com.jiubredeemer.app.charactersheet.character.dto.CharacterDto
 import com.jiubredeemer.app.charactersheet.character.dto.UpdateCurrentHealthRequest
 import com.jiubredeemer.app.integration.charactersheet.CharacterSheetClient
@@ -55,6 +56,12 @@ class CharacterApiService(
         return character
     }
 
+    fun getBioByCharacterId(roomId: UUID, characterId: UUID): CharacterDto? {
+        roomAccessChecker.hasAccessOrThrow(roomId, accessChecker.getCurrentUser().id!!)
+        val character: CharacterDto? = characterSheetClient.getBioByCharacterId(characterId)
+        return character
+    }
+
     fun updateInitiativeBonusValue(roomId: UUID, characterId: UUID, bonusValueUpdateRequest: BonusValueUpdateRequest) {
         roomAccessChecker.hasAccessOrThrow(roomId, accessChecker.getCurrentUser().id!!)
         characterSheetClient.updateInitiativeBonusValue(characterId, bonusValueUpdateRequest)
@@ -102,5 +109,15 @@ class CharacterApiService(
     ) {
         roomAccessChecker.hasAccessOrThrow(roomId, accessChecker.getCurrentUser().id!!)
         characterSheetClient.updateSkillMasteryByCode(characterId, code, request)
+    }
+
+    fun updateBioByCharacterId(
+        roomId: UUID,
+        characterId: UUID,
+        section: String,
+        characterBioUpdateRequest: CharacterBioUpdateRequest
+    ): CharacterDto? {
+        roomAccessChecker.hasAccessOrThrow(roomId, accessChecker.getCurrentUser().id!!)
+        return characterSheetClient.updateBioByCharacterId(characterId, section, characterBioUpdateRequest)
     }
 }

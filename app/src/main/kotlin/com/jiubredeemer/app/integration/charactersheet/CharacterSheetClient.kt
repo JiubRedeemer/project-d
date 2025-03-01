@@ -1,5 +1,6 @@
 package com.jiubredeemer.app.integration.charactersheet
 
+import com.jiubredeemer.app.charactersheet.character.dto.CharacterBioUpdateRequest
 import com.jiubredeemer.app.charactersheet.character.dto.CharacterDto
 import com.jiubredeemer.app.charactersheet.character.dto.UpdateCurrentHealthRequest
 import com.jiubredeemer.app.integration.charactersheet.dto.character.BonusValueUpdateRequest
@@ -175,6 +176,52 @@ class CharacterSheetClient(
         }
     }
 
+    fun getBioByCharacterId(characterId: UUID): CharacterDto? {
+        try {
+            val uri = UriComponentsBuilder
+                .fromHttpUrl(characterSheetProperty.baseUrl)
+                .pathSegment(characterSheetProperty.apiUrl)
+                .pathSegment(characterSheetProperty.charactersUrl)
+                .pathSegment(characterId.toString())
+                .pathSegment(characterSheetProperty.bioUrl)
+                .toUriString()
+            val response = restClient.get()
+                .uri(uri)
+                .headers { it.addAll(headers) }
+                .retrieve()
+                .toEntity(CharacterDto::class.java)
+            return response.body
+        } catch (e: Exception) {
+            throw IntegrationAccessException("CharacterSheet don't response on getPersonalityByCharacterId, cause: ${e.message}")
+        }
+    }
+
+    fun updateBioByCharacterId(
+        characterId: UUID,
+        section: String,
+        characterBioUpdateRequest: CharacterBioUpdateRequest
+    ): CharacterDto? {
+        try {
+            val uri = UriComponentsBuilder
+                .fromHttpUrl(characterSheetProperty.baseUrl)
+                .pathSegment(characterSheetProperty.apiUrl)
+                .pathSegment(characterSheetProperty.charactersUrl)
+                .pathSegment(characterId.toString())
+                .pathSegment(characterSheetProperty.bioUrl)
+                .pathSegment(section)
+                .toUriString()
+            val response = restClient.patch()
+                .uri(uri)
+                .headers { it.addAll(headers) }
+                .body(characterBioUpdateRequest)
+                .retrieve()
+                .toEntity(CharacterDto::class.java)
+            return response.body
+        } catch (e: Exception) {
+            throw IntegrationAccessException("CharacterSheet don't response on updateBioByCharacterId, cause: ${e.message}")
+        }
+    }
+
     fun updateAbilityBonusValue(
         characterId: UUID,
         abilityCode: String,
@@ -332,4 +379,6 @@ class CharacterSheetClient(
             throw IntegrationAccessException("CharacterSheet don't response on updateMasteryByCode, cause: ${e.message}")
         }
     }
+
+
 }

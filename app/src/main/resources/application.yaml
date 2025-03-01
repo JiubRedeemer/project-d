@@ -49,6 +49,7 @@ project-d:
       header-url: header
       subheader-url: subheader
       abilities-url: abilities
+      bio-url: bio
       bonus-url: bonus
       health-url: health
       update-current-health-url: updateCurrent

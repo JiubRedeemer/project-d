@@ -1,5 +1,6 @@
 package com.jiubredeemer.app.charactersheet.character.controller
 
+import com.jiubredeemer.app.charactersheet.character.dto.CharacterBioUpdateRequest
 import com.jiubredeemer.app.charactersheet.character.dto.CharacterDto
 import com.jiubredeemer.app.charactersheet.character.dto.UpdateCurrentHealthRequest
 import com.jiubredeemer.app.charactersheet.character.service.CharacterApiService
@@ -70,6 +71,26 @@ class CharacterApiController(
         @PathVariable characterId: UUID,
     ): CharacterDto? {
         return characterApiService.getAbilitiesAndSkillsInfoByCharacterId(roomId, characterId)
+    }
+
+    @GetMapping("/characters/{characterId}/bio")
+    @HasRoleOrThrow("ADMIN", "USER")
+    fun getBioByCharacterId(
+        @PathVariable roomId: UUID,
+        @PathVariable characterId: UUID,
+    ): CharacterDto? {
+        return characterApiService.getBioByCharacterId(roomId, characterId)
+    }
+
+    @PatchMapping("/characters/{characterId}/bio/{section}")
+    @HasRoleOrThrow("ADMIN", "USER")
+    fun updateBioByCharacterId(
+        @PathVariable roomId: UUID,
+        @PathVariable characterId: UUID,
+        @PathVariable section: String,
+        @RequestBody characterBioUpdateRequest: CharacterBioUpdateRequest,
+    ): CharacterDto? {
+        return characterApiService.updateBioByCharacterId(roomId, characterId, section, characterBioUpdateRequest)
     }
 
     @PatchMapping("/characters/{characterId}/abilities/{code}/bonus")

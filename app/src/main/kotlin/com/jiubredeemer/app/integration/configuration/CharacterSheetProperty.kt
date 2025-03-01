@@ -13,6 +13,7 @@ data class CharacterSheetProperty(
     var headerUrl: String = "",
     var subheaderUrl: String = "",
     var abilitiesUrl: String = "",
+    var bioUrl: String = "",
     var bonusUrl: String = "",
     var healthUrl: String = "",
     var updateCurrentHealthUrl: String = "",
