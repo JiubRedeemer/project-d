@@ -45,7 +45,8 @@ data class CharacterDto(
         val ideals: String?,
         val personality: String?,
         val relationships: String?,
-        val weaknesses: String?
+        val weaknesses: String?,
+        val avatar: String?
     )
 
     data class HealhDto(
