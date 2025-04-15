@@ -55,3 +55,13 @@ project-d:
       update-current-health-url: updateCurrent
       skills-url: skills
       update-mastery-url: updateMastery
+      armory-class-url: armoryClass
+      speed-url: speed
+      initiative-url: initiative
+    itemstorage:
+      api-url: api
+      base-url: http://localhost:8083
+      inventory-url: inventory
+      equip-url: equip
+      count-url: count
+      money-url: money
