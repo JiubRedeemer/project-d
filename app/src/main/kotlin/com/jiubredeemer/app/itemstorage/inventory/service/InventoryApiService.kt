@@ -2,7 +2,7 @@ package com.jiubredeemer.app.itemstorage.inventory.service
 
 import com.jiubredeemer.app.integration.itemstorage.ItemstorageClient
 import com.jiubredeemer.app.itemstorage.inventory.dto.inventory.InventoryDto
-import com.jiubredeemer.app.itemstorage.inventory.dto.money.MoneyDto
+import com.jiubredeemer.app.itemstorage.inventory.dto.inventory.InventoryItemDto
 import com.jiubredeemer.app.room.service.RoomAccessChecker
 import com.jiubredeemer.auth.service.AccessChecker
 import com.jiubredeemer.common.exception.NotFoundException
@@ -17,14 +17,14 @@ class InventoryApiService(
 ) {
     fun getInventoryByCharacterId(roomId: UUID, characterId: UUID): InventoryDto {
         roomAccessChecker.hasAccessOrThrow(roomId, accessChecker.getCurrentUser().id!!)
-        val inventoryDto: InventoryDto = itemstorageClient.findInventoryByCharacterId(characterId)
+        val inventoryDto: InventoryDto = itemstorageClient.findInventoryByCharacterId(roomId, characterId)
             ?: throw NotFoundException("Inventory not found by character id: $characterId")
         return inventoryDto
     }
 
     fun equipItemByCharacterIdAndItemId(roomId: UUID, characterId: UUID, itemId: UUID): InventoryDto {
         roomAccessChecker.hasAccessOrThrow(roomId, accessChecker.getCurrentUser().id!!)
-        val inventoryDto: InventoryDto = itemstorageClient.equipItemByCharacterIdAndItemId(characterId, itemId)
+        val inventoryDto: InventoryDto = itemstorageClient.equipItemByCharacterIdAndItemId(roomId, characterId, itemId)
             ?: throw NotFoundException("Inventory not found by character id: $characterId")
         return inventoryDto
     }
@@ -36,30 +36,27 @@ class InventoryApiService(
         count: Long
     ): InventoryDto {
         roomAccessChecker.hasAccessOrThrow(roomId, accessChecker.getCurrentUser().id!!)
-        val inventoryDto: InventoryDto = itemstorageClient.changeItemCountByCharacterIdAndItemId(characterId, itemId, count)
+        val inventoryDto: InventoryDto = itemstorageClient.changeItemCountByCharacterIdAndItemId(roomId, characterId, itemId, count)
             ?: throw NotFoundException("Inventory not found by character id: $characterId")
         return inventoryDto
     }
 
-    fun changeMoneyCount(
+    fun deleteItemFromInventory(
         roomId: UUID,
         characterId: UUID,
-        moneyDto: MoneyDto
-    ): MoneyDto {
+        itemId: UUID,
+    ): InventoryDto {
         roomAccessChecker.hasAccessOrThrow(roomId, accessChecker.getCurrentUser().id!!)
-        val result: MoneyDto = itemstorageClient.changeMoneyCount(characterId, moneyDto)
-            ?: throw NotFoundException("MoneyDto not found by character id: $characterId")
-        return result
+        val inventoryDto: InventoryDto = itemstorageClient.deleteItemFromInventory(roomId, characterId, itemId)
+            ?: throw NotFoundException("Inventory not found by character id: $characterId")
+        return inventoryDto
     }
 
-    fun findMoneyByCharacterId(
-        roomId: UUID,
-        characterId: UUID,
-    ): MoneyDto {
+    fun getInventoryItem(roomId: UUID, characterId: UUID, itemId: UUID): InventoryItemDto {
         roomAccessChecker.hasAccessOrThrow(roomId, accessChecker.getCurrentUser().id!!)
-        val result: MoneyDto = itemstorageClient.findMoneyByCharacterId(characterId)
-            ?: throw NotFoundException("MoneyDto not found by character id: $characterId")
-        return result
+        val inventoryDto: InventoryItemDto = itemstorageClient.getInventoryItem(roomId, characterId, itemId)
+            ?: throw NotFoundException("Inventory Item not found by id: $itemId")
+        return inventoryDto
     }
 
 

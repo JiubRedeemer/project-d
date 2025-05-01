@@ -68,7 +68,7 @@ class AuthController(
                 content = [Content(schema = Schema(implementation = AuthenticationResponse::class))]
             ),
             ApiResponse(
-                responseCode = "406", description = "Некорректные данные запроса",
+                responseCode = "422", description = "Некорректные данные запроса",
                 content = [Content(schema = Schema())]
             )
         ]

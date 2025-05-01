@@ -2,6 +2,7 @@ package com.jiubredeemer.app.integration.itemstorage
 
 import com.jiubredeemer.app.integration.configuration.ItemstorageProperty
 import com.jiubredeemer.app.itemstorage.inventory.dto.inventory.InventoryDto
+import com.jiubredeemer.app.itemstorage.inventory.dto.inventory.InventoryItemDto
 import com.jiubredeemer.app.itemstorage.inventory.dto.money.MoneyDto
 import com.jiubredeemer.common.exception.IntegrationAccessException
 import org.springframework.http.HttpHeaders
@@ -16,11 +17,12 @@ class ItemstorageClient(
     private val restClient: RestClient
 ) {
     private val headers = HttpHeaders().apply { set("Content-Type", "application/json") }
-    fun findInventoryByCharacterId(characterId: UUID): InventoryDto? {
+    fun findInventoryByCharacterId(roomId: UUID, characterId: UUID): InventoryDto? {
         try {
             val uri = UriComponentsBuilder
                 .fromHttpUrl(itemstorageProperty.baseUrl)
                 .pathSegment(itemstorageProperty.apiUrl)
+                .pathSegment(roomId.toString())
                 .pathSegment(itemstorageProperty.inventoryUrl)
                 .pathSegment(characterId.toString())
                 .toUriString()
@@ -35,11 +37,12 @@ class ItemstorageClient(
         }
     }
 
-    fun equipItemByCharacterIdAndItemId(characterId: UUID, itemId: UUID): InventoryDto? {
+    fun equipItemByCharacterIdAndItemId(roomId: UUID, characterId: UUID, itemId: UUID): InventoryDto? {
         try {
             val uri = UriComponentsBuilder
                 .fromHttpUrl(itemstorageProperty.baseUrl)
                 .pathSegment(itemstorageProperty.apiUrl)
+                .pathSegment(roomId.toString())
                 .pathSegment(itemstorageProperty.inventoryUrl)
                 .pathSegment(characterId.toString())
                 .pathSegment(itemstorageProperty.equipUrl)
@@ -56,11 +59,12 @@ class ItemstorageClient(
         }
     }
 
-    fun changeItemCountByCharacterIdAndItemId(characterId: UUID, itemId: UUID, count: Long): InventoryDto? {
+    fun changeItemCountByCharacterIdAndItemId(roomId: UUID, characterId: UUID, itemId: UUID, count: Long): InventoryDto? {
         try {
             val uri = UriComponentsBuilder
                 .fromHttpUrl(itemstorageProperty.baseUrl)
                 .pathSegment(itemstorageProperty.apiUrl)
+                .pathSegment(roomId.toString())
                 .pathSegment(itemstorageProperty.inventoryUrl)
                 .pathSegment(characterId.toString())
                 .pathSegment(itemId.toString())
@@ -78,11 +82,33 @@ class ItemstorageClient(
         }
     }
 
-    fun findMoneyByCharacterId(characterId: UUID): MoneyDto? {
+    fun deleteItemFromInventory(roomId: UUID, characterId: UUID, itemId: UUID): InventoryDto? {
         try {
             val uri = UriComponentsBuilder
                 .fromHttpUrl(itemstorageProperty.baseUrl)
                 .pathSegment(itemstorageProperty.apiUrl)
+                .pathSegment(roomId.toString())
+                .pathSegment(itemstorageProperty.inventoryUrl)
+                .pathSegment(characterId.toString())
+                .pathSegment(itemId.toString())
+                .toUriString()
+            val response = restClient.delete()
+                .uri(uri)
+                .headers { it.addAll(headers) }
+                .retrieve()
+                .toEntity(InventoryDto::class.java)
+            return response.body
+        } catch (e: Exception) {
+            throw IntegrationAccessException("Itemstorage don't response on deleteItemFromInventory, cause: ${e.message}")
+        }
+    }
+
+    fun findMoneyByCharacterId(roomId: UUID, characterId: UUID): MoneyDto? {
+        try {
+            val uri = UriComponentsBuilder
+                .fromHttpUrl(itemstorageProperty.baseUrl)
+                .pathSegment(itemstorageProperty.apiUrl)
+                .pathSegment(roomId.toString())
                 .pathSegment(itemstorageProperty.inventoryUrl)
                 .pathSegment(characterId.toString())
                 .pathSegment(itemstorageProperty.moneyUrl)
@@ -98,11 +124,12 @@ class ItemstorageClient(
         }
     }
 
-    fun changeMoneyCount(characterId: UUID, moneyDto: MoneyDto): MoneyDto? {
+    fun changeMoneyCount(roomId: UUID, characterId: UUID, moneyDto: MoneyDto): MoneyDto? {
         try {
             val uri = UriComponentsBuilder
                 .fromHttpUrl(itemstorageProperty.baseUrl)
                 .pathSegment(itemstorageProperty.apiUrl)
+                .pathSegment(roomId.toString())
                 .pathSegment(itemstorageProperty.inventoryUrl)
                 .pathSegment(characterId.toString())
                 .pathSegment(itemstorageProperty.moneyUrl)
@@ -116,6 +143,28 @@ class ItemstorageClient(
             return response.body
         } catch (e: Exception) {
             throw IntegrationAccessException("Itemstorage don't response on changeMoneyCount, cause: ${e.message}")
+        }
+    }
+
+    fun getInventoryItem(roomId: UUID, characterId: UUID, itemId: UUID): InventoryItemDto? {
+        try {
+            val uri = UriComponentsBuilder
+                .fromHttpUrl(itemstorageProperty.baseUrl)
+                .pathSegment(itemstorageProperty.apiUrl)
+                .pathSegment(roomId.toString())
+                .pathSegment(itemstorageProperty.inventoryUrl)
+                .pathSegment(characterId.toString())
+                .pathSegment(itemstorageProperty.itemsUrl)
+                .pathSegment(itemId.toString())
+                .toUriString()
+            val response = restClient.get()
+                .uri(uri)
+                .headers { it.addAll(headers) }
+                .retrieve()
+                .toEntity(InventoryItemDto::class.java)
+            return response.body
+        } catch (e: Exception) {
+            throw IntegrationAccessException("Itemstorage don't response on getInventoryItem, cause: ${e.message}")
         }
     }
 }

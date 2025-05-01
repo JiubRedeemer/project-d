@@ -1,7 +1,7 @@
 package com.jiubredeemer.app.itemstorage.inventory.controller
 
 import com.jiubredeemer.app.itemstorage.inventory.dto.inventory.InventoryDto
-import com.jiubredeemer.app.itemstorage.inventory.dto.money.MoneyDto
+import com.jiubredeemer.app.itemstorage.inventory.dto.inventory.InventoryItemDto
 import com.jiubredeemer.app.itemstorage.inventory.service.InventoryApiService
 import com.jiubredeemer.auth.annotation.HasRoleOrThrow
 import io.swagger.v3.oas.annotations.Operation
@@ -17,7 +17,7 @@ import java.util.*
 @RequestMapping("/api/rooms")
 @Tag(name = "Инвентарь", description = "API для управления инвентарем")
 class InventoryApiController(
-    private val inventoryApiService: InventoryApiService
+    private val inventoryApiService: InventoryApiService,
 ) {
 
     @Operation(summary = "Получить инвентарь персонажа")
@@ -37,6 +37,25 @@ class InventoryApiController(
     @HasRoleOrThrow("ADMIN", "USER")
     fun getInventory(@PathVariable roomId: UUID, @PathVariable characterId: UUID): InventoryDto {
         return inventoryApiService.getInventoryByCharacterId(roomId, characterId)
+    }
+
+    @Operation(summary = "Получить предмет инвентаря персонажа")
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200", description = "Предмет инвентаря персонажа",
+                content = [Content(schema = Schema(implementation = InventoryItemDto::class))]
+            ),
+            ApiResponse(
+                responseCode = "403", description = "Недостаточно прав",
+                content = [Content(schema = Schema())]
+            )
+        ]
+    )
+    @GetMapping("/{roomId}/inventory/{characterId}/items/{itemId}")
+    @HasRoleOrThrow("ADMIN", "USER")
+    fun getInventoryItem(@PathVariable roomId: UUID, @PathVariable characterId: UUID, @PathVariable itemId: UUID): InventoryItemDto {
+        return inventoryApiService.getInventoryItem(roomId, characterId, itemId)
     }
 
     @Operation(summary = "Экипировать/снять предмет с персонажа")
@@ -86,11 +105,11 @@ class InventoryApiController(
         return inventoryApiService.changeItemCountByCharacterIdAndItemId(roomId, characterId, itemId, count)
     }
 
-    @Operation(summary = "Изменить кол-во денег у персонажа")
+    @Operation(summary = "Удалить предмет из инвенторя персонажа")
     @ApiResponses(
         value = [
             ApiResponse(
-                responseCode = "200", description = "Деньги персонажа",
+                responseCode = "200", description = "Инвентарь персонажа",
                 content = [Content(schema = Schema(implementation = InventoryDto::class))]
             ),
             ApiResponse(
@@ -99,33 +118,13 @@ class InventoryApiController(
             )
         ]
     )
-    @PatchMapping("/{roomId}/inventory/{characterId}/money")
+    @DeleteMapping("/{roomId}/inventory/{characterId}/{itemId}")
     @HasRoleOrThrow("ADMIN", "USER")
-    fun changeMoneyCount(
+    fun deleteItemFromInventory(
         @PathVariable roomId: UUID,
         @PathVariable characterId: UUID,
-        @RequestBody moneyDto: MoneyDto
-    ): MoneyDto {
-        return inventoryApiService.changeMoneyCount(roomId, characterId, moneyDto)
+        @PathVariable itemId: UUID,
+    ): InventoryDto {
+        return inventoryApiService.deleteItemFromInventory(roomId, characterId, itemId)
     }
-
-    @Operation(summary = "Получить кол-во денег у персонажа")
-    @ApiResponses(
-        value = [
-            ApiResponse(
-                responseCode = "200", description = "Деньги персонажа",
-                content = [Content(schema = Schema(implementation = InventoryDto::class))]
-            ),
-            ApiResponse(
-                responseCode = "403", description = "Недостаточно прав",
-                content = [Content(schema = Schema())]
-            )
-        ]
-    )
-    @GetMapping("/{roomId}/inventory/{characterId}/money")
-    @HasRoleOrThrow("ADMIN", "USER")
-    fun findMoneyByCharacterId(@PathVariable roomId: UUID, @PathVariable characterId: UUID): MoneyDto {
-        return inventoryApiService.findMoneyByCharacterId(roomId, characterId)
-    }
-
 }

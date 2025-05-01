@@ -65,3 +65,4 @@ project-d:
       equip-url: equip
       count-url: count
       money-url: money
+      items-url: items
