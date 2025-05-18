@@ -2,6 +2,8 @@ package com.jiubredeemer.app.itemstorage.inventory.controller
 
 import com.jiubredeemer.app.itemstorage.inventory.dto.inventory.InventoryDto
 import com.jiubredeemer.app.itemstorage.inventory.dto.inventory.InventoryItemDto
+import com.jiubredeemer.app.itemstorage.inventory.dto.item.ItemDto
+import com.jiubredeemer.app.itemstorage.inventory.dto.item.SearchItemParams
 import com.jiubredeemer.app.itemstorage.inventory.service.InventoryApiService
 import com.jiubredeemer.auth.annotation.HasRoleOrThrow
 import io.swagger.v3.oas.annotations.Operation
@@ -54,8 +56,40 @@ class InventoryApiController(
     )
     @GetMapping("/{roomId}/inventory/{characterId}/items/{itemId}")
     @HasRoleOrThrow("ADMIN", "USER")
-    fun getInventoryItem(@PathVariable roomId: UUID, @PathVariable characterId: UUID, @PathVariable itemId: UUID): InventoryItemDto {
+    fun getInventoryItem(
+        @PathVariable roomId: UUID,
+        @PathVariable characterId: UUID,
+        @PathVariable itemId: UUID
+    ): InventoryItemDto {
         return inventoryApiService.getInventoryItem(roomId, characterId, itemId)
+    }
+
+    @Operation(summary = "Получить предметы из общей базы предметов и из списка комнаты")
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200", description = "Список предметов",
+                content = [Content(schema = Schema(implementation = List::class))]
+            ),
+            ApiResponse(
+                responseCode = "403", description = "Недостаточно прав",
+                content = [Content(schema = Schema())]
+            )
+        ]
+    )
+    @PostMapping("/{roomId}/items/search")
+    @HasRoleOrThrow("ADMIN", "USER")
+    fun searchByNameRoomAndCommunityItems(
+        @PathVariable roomId: UUID,
+        @RequestBody searchItemParams: SearchItemParams,
+    ): List<ItemDto> {
+        return inventoryApiService.searchByNameRoomAndCommunityItems(
+            roomId,
+            searchItemParams.searchQuery,
+            searchItemParams.limit,
+            searchItemParams.lastSeenCreatedAt,
+            searchItemParams.lastSeenId
+        )
     }
 
     @Operation(summary = "Экипировать/снять предмет с персонажа")
@@ -105,7 +139,7 @@ class InventoryApiController(
         return inventoryApiService.changeItemCountByCharacterIdAndItemId(roomId, characterId, itemId, count)
     }
 
-    @Operation(summary = "Удалить предмет из инвенторя персонажа")
+    @Operation(summary = "Удалить предмет из инвентаря персонажа")
     @ApiResponses(
         value = [
             ApiResponse(
@@ -126,5 +160,29 @@ class InventoryApiController(
         @PathVariable itemId: UUID,
     ): InventoryDto {
         return inventoryApiService.deleteItemFromInventory(roomId, characterId, itemId)
+    }
+
+    @Operation(summary = "Добавить предмет в инвентарь персонажа")
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200", description = "Инвентарь персонажа",
+                content = [Content(schema = Schema(implementation = InventoryDto::class))]
+            ),
+            ApiResponse(
+                responseCode = "403", description = "Недостаточно прав",
+                content = [Content(schema = Schema())]
+            )
+        ]
+    )
+    @PutMapping("/{roomId}/inventory/{characterId}/{itemId}/{count}")
+    @HasRoleOrThrow("ADMIN", "USER")
+    fun addItemToInventory(
+        @PathVariable roomId: UUID,
+        @PathVariable characterId: UUID,
+        @PathVariable itemId: UUID,
+        @PathVariable count: Long,
+    ): InventoryDto {
+        return inventoryApiService.addItemToInventory(roomId, characterId, itemId, count)
     }
 }

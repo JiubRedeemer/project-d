@@ -3,12 +3,15 @@ package com.jiubredeemer.app.integration.itemstorage
 import com.jiubredeemer.app.integration.configuration.ItemstorageProperty
 import com.jiubredeemer.app.itemstorage.inventory.dto.inventory.InventoryDto
 import com.jiubredeemer.app.itemstorage.inventory.dto.inventory.InventoryItemDto
+import com.jiubredeemer.app.itemstorage.inventory.dto.item.ItemDto
 import com.jiubredeemer.app.itemstorage.inventory.dto.money.MoneyDto
 import com.jiubredeemer.common.exception.IntegrationAccessException
+import org.springframework.core.ParameterizedTypeReference
 import org.springframework.http.HttpHeaders
 import org.springframework.stereotype.Service
 import org.springframework.web.client.RestClient
 import org.springframework.web.util.UriComponentsBuilder
+import java.time.LocalDateTime
 import java.util.*
 
 @Service
@@ -59,7 +62,12 @@ class ItemstorageClient(
         }
     }
 
-    fun changeItemCountByCharacterIdAndItemId(roomId: UUID, characterId: UUID, itemId: UUID, count: Long): InventoryDto? {
+    fun changeItemCountByCharacterIdAndItemId(
+        roomId: UUID,
+        characterId: UUID,
+        itemId: UUID,
+        count: Long
+    ): InventoryDto? {
         try {
             val uri = UriComponentsBuilder
                 .fromHttpUrl(itemstorageProperty.baseUrl)
@@ -100,6 +108,28 @@ class ItemstorageClient(
             return response.body
         } catch (e: Exception) {
             throw IntegrationAccessException("Itemstorage don't response on deleteItemFromInventory, cause: ${e.message}")
+        }
+    }
+
+    fun addItemToInventory(roomId: UUID, characterId: UUID, itemId: UUID, count: Long): InventoryDto? {
+        try {
+            val uri = UriComponentsBuilder
+                .fromHttpUrl(itemstorageProperty.baseUrl)
+                .pathSegment(itemstorageProperty.apiUrl)
+                .pathSegment(roomId.toString())
+                .pathSegment(itemstorageProperty.inventoryUrl)
+                .pathSegment(characterId.toString())
+                .pathSegment(itemId.toString())
+                .pathSegment(count.toString())
+                .toUriString()
+            val response = restClient.put()
+                .uri(uri)
+                .headers { it.addAll(headers) }
+                .retrieve()
+                .toEntity(InventoryDto::class.java)
+            return response.body
+        } catch (e: Exception) {
+            throw IntegrationAccessException("Itemstorage don't response on addItemToInventory, cause: ${e.message}")
         }
     }
 
@@ -165,6 +195,44 @@ class ItemstorageClient(
             return response.body
         } catch (e: Exception) {
             throw IntegrationAccessException("Itemstorage don't response on getInventoryItem, cause: ${e.message}")
+        }
+    }
+
+    fun searchByNameRoomAndCommunityItems(
+        roomId: UUID,
+        searchQuery: String,
+        limit: Int,
+        lastSeenCreatedAt: LocalDateTime? = null,
+        lastSeenId: UUID? = null
+    ): List<ItemDto> {
+        try {
+            val uriBuilder = UriComponentsBuilder
+                .fromHttpUrl(itemstorageProperty.baseUrl)
+                .pathSegment(itemstorageProperty.apiUrl)
+                .pathSegment(itemstorageProperty.itemsUrl)
+                .pathSegment(roomId.toString())
+                .pathSegment(itemstorageProperty.searchUrl)
+
+            val queryParams = mutableMapOf<String, String>()
+            queryParams["searchQuery"] = searchQuery
+            queryParams["limit"] = limit.toString()
+            lastSeenCreatedAt?.let { queryParams["lastSeenCreatedAt"] = it.toString() }
+            lastSeenId?.let { queryParams["lastSeenId"] = it.toString() }
+
+//            queryParams.forEach { (key, value) -> uriBuilder.queryParam(key, value) }
+
+            val uri = uriBuilder.toUriString()
+
+            val response = restClient.post()
+                .uri(uri)
+                .body(queryParams)
+                .headers { it.addAll(headers) }
+                .retrieve()
+                .toEntity(object : ParameterizedTypeReference<List<ItemDto>>() {})
+
+            return response.body ?: emptyList()
+        } catch (e: Exception) {
+            throw IntegrationAccessException("Itemstorage didn't respond on searchByNameRoomAndCommunityItems, cause: ${e.message}")
         }
     }
 }

@@ -66,3 +66,4 @@ project-d:
       count-url: count
       money-url: money
       items-url: items
+      search-url: search
