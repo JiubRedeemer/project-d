@@ -21,5 +21,7 @@ data class ItemDto(
     val createdAt: Timestamp?,
     val roomId: UUID?,
     val creatorId: UUID?,
-    val imgUrl: String?
+    val imgUrl: String?,
+    val visibleFromPlayers: Boolean?,
+    val creator: String?
 )

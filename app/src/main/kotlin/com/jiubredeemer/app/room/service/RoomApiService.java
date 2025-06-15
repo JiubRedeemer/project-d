@@ -66,9 +66,9 @@ public class RoomApiService {
             characterSheetClient.persistRoom(new RoomCreateRequestDto(createdRoom.getId(), createdRoom.getOwner().getId(), RuleTypeEnum.DND5E));
         } catch (IntegrationAccessException integrationAccessException) {
             //Удаляем комнату везде, если какие то проблемы при создании
+            System.err.println(integrationAccessException.getMessage());
             try {
                 ruleBookClient.deleteRoom(Objects.requireNonNull(createdRoom.getId()));
-
             } catch (Exception ignored) {
             }
             try {
