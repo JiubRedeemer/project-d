@@ -1,12 +1,14 @@
 package com.jiubredeemer.app.itemstorage.inventory.service
 
 import com.jiubredeemer.app.integration.itemstorage.ItemstorageClient
+import com.jiubredeemer.app.itemstorage.inventory.dto.inventory.EquippedItemsStatsResponse
 import com.jiubredeemer.app.itemstorage.inventory.dto.inventory.InventoryDto
 import com.jiubredeemer.app.itemstorage.inventory.dto.inventory.InventoryItemDto
 import com.jiubredeemer.app.itemstorage.inventory.dto.item.ItemDto
 import com.jiubredeemer.app.room.service.RoomAccessChecker
 import com.jiubredeemer.auth.service.AccessChecker
 import com.jiubredeemer.common.exception.NotFoundException
+import com.jiubredeemer.dal.service.UserService
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
 import java.util.*
@@ -16,6 +18,7 @@ class InventoryApiService(
     private val roomAccessChecker: RoomAccessChecker,
     private val accessChecker: AccessChecker,
     private val itemstorageClient: ItemstorageClient,
+    private val userService: UserService,
 ) {
     fun getInventoryByCharacterId(roomId: UUID, characterId: UUID): InventoryDto {
         roomAccessChecker.hasAccessOrThrow(roomId, accessChecker.getCurrentUser().id!!)
@@ -84,12 +87,39 @@ class InventoryApiService(
         roomAccessChecker.hasAccessOrThrow(roomId, accessChecker.getCurrentUser().id!!)
         val items: List<ItemDto> = itemstorageClient.searchByNameRoomAndCommunityItems(
             roomId,
+            accessChecker.getCurrentUser().id!!,
             searchQuery,
             limit,
             lastSeenCreatedAt,
             lastSeenId
         )
         return items
+    }
+
+    fun addItem(
+        roomId: UUID,
+        itemDto: ItemDto
+    ): ItemDto {
+        roomAccessChecker.hasAccessOrThrow(roomId, accessChecker.getCurrentUser().id!!)
+        itemDto.creator = accessChecker.getCurrentUser().username
+        val createdItem: ItemDto = itemstorageClient.addItem(
+            roomId,
+            accessChecker.getCurrentUser().id!!,
+            itemDto
+        )
+        return createdItem
+    }
+
+    fun getEquippedItemStats(
+        roomId: UUID,
+        characterId: UUID
+    ): EquippedItemsStatsResponse {
+        roomAccessChecker.hasAccessOrThrow(roomId, accessChecker.getCurrentUser().id!!)
+        val response: EquippedItemsStatsResponse = itemstorageClient.getEquippedItemStats(
+            roomId,
+            characterId
+        )
+        return response
     }
 
 

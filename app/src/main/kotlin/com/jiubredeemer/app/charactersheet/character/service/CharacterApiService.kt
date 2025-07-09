@@ -18,6 +18,7 @@ class CharacterApiService(
     private val roomAccessChecker: RoomAccessChecker,
     private val accessChecker: AccessChecker,
     private val characterSheetClient: CharacterSheetClient,
+    private val inventoryApiService: InventoryApiService,
 ) {
     fun createCharacter(roomId: UUID, createCharacterRequest: CreateCharacterRequest): CharacterDto? {
         roomAccessChecker.hasAccessOrThrow(roomId, accessChecker.getCurrentUser().id!!)
@@ -36,6 +37,7 @@ class CharacterApiService(
     fun findByCharacterId(roomId: UUID, characterId: UUID): CharacterDto? {
         roomAccessChecker.hasAccessOrThrow(roomId, accessChecker.getCurrentUser().id!!)
         val character: CharacterDto? = characterSheetClient.findByCharacterId(characterId)
+        character?.itemStats = inventoryApiService.getEquippedItemStats(roomId, characterId)
         return character
     }
 

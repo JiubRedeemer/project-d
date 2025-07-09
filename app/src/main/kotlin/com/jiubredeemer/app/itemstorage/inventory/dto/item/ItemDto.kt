@@ -8,20 +8,20 @@ import java.sql.Timestamp
 import java.util.*
 
 data class ItemDto(
-    val id: UUID?,
-    val name: MultilingualField?,
-    val type: ItemTypeEnum?,
-    val typeName: String? = type?.apiName,
-    val subtype: ItemSubTypeEnum?,
-    val subtypeName: String? = subtype?.apiName,
-    val customization: Boolean?,
-    val rarity: RarityEnum?,
-    val description: String?,
-    val stats: ItemStatsDto?,
-    val createdAt: Timestamp?,
-    val roomId: UUID?,
-    val creatorId: UUID?,
-    val imgUrl: String?,
-    val visibleFromPlayers: Boolean?,
-    val creator: String?
+    var id: UUID?,
+    var name: MultilingualField?,
+    var type: ItemTypeEnum?,
+    var typeName: String? = type?.apiName,
+    var subtype: ItemSubTypeEnum?,
+    var subtypeName: String? = subtype?.apiName,
+    var customization: Boolean?,
+    var rarity: RarityEnum?,
+    var description: String?,
+    var stats: ItemStatsDto?,
+    var createdAt: Timestamp?,
+    var roomId: UUID?,
+    var creatorId: UUID?,
+    var imgUrl: String?,
+    var visibleForPlayers: Boolean?,
+    var creator: String?
 )

@@ -67,3 +67,4 @@ project-d:
       money-url: money
       items-url: items
       search-url: search
+      bonus-url: bonus

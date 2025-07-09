@@ -1,5 +1,6 @@
 package com.jiubredeemer.app.itemstorage.inventory.controller
 
+import com.jiubredeemer.app.itemstorage.inventory.dto.inventory.EquippedItemsStatsResponse
 import com.jiubredeemer.app.itemstorage.inventory.dto.inventory.InventoryDto
 import com.jiubredeemer.app.itemstorage.inventory.dto.inventory.InventoryItemDto
 import com.jiubredeemer.app.itemstorage.inventory.dto.item.ItemDto
@@ -184,5 +185,50 @@ class InventoryApiController(
         @PathVariable count: Long,
     ): InventoryDto {
         return inventoryApiService.addItemToInventory(roomId, characterId, itemId, count)
+    }
+
+    @Operation(summary = "Добавить предмет в базу знаний")
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200", description = "Добавленный предмет",
+                content = [Content(schema = Schema(implementation = ItemDto::class))]
+            ),
+            ApiResponse(
+                responseCode = "403", description = "Недостаточно прав",
+                content = [Content(schema = Schema())]
+            )
+        ]
+    )
+    @PutMapping("/{roomId}/items")
+    @HasRoleOrThrow("ADMIN", "USER")
+    fun addItemToInventory(
+        @PathVariable roomId: UUID,
+        @RequestBody itemDto: ItemDto
+    ): ItemDto {
+        return inventoryApiService.addItem(roomId, itemDto)
+    }
+
+
+    @Operation(summary = "Получить список бонусных характеристик надетых на персонажа предметов")
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200", description = "Список бонусов надетых предметов",
+                content = [Content(schema = Schema(implementation = ItemDto::class))]
+            ),
+            ApiResponse(
+                responseCode = "403", description = "Недостаточно прав",
+                content = [Content(schema = Schema())]
+            )
+        ]
+    )
+    @GetMapping("/{roomId}/inventory/{characterId}/bonus")
+    @HasRoleOrThrow("ADMIN", "USER")
+    fun getEquippedItemStats(
+        @PathVariable roomId: UUID,
+        @PathVariable characterId: UUID
+    ): EquippedItemsStatsResponse {
+        return inventoryApiService.getEquippedItemStats(roomId, characterId)
     }
 }

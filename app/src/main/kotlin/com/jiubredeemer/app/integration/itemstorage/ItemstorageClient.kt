@@ -1,6 +1,7 @@
 package com.jiubredeemer.app.integration.itemstorage
 
 import com.jiubredeemer.app.integration.configuration.ItemstorageProperty
+import com.jiubredeemer.app.itemstorage.inventory.dto.inventory.EquippedItemsStatsResponse
 import com.jiubredeemer.app.itemstorage.inventory.dto.inventory.InventoryDto
 import com.jiubredeemer.app.itemstorage.inventory.dto.inventory.InventoryItemDto
 import com.jiubredeemer.app.itemstorage.inventory.dto.item.ItemDto
@@ -200,6 +201,7 @@ class ItemstorageClient(
 
     fun searchByNameRoomAndCommunityItems(
         roomId: UUID,
+        userId: UUID,
         searchQuery: String,
         limit: Int,
         lastSeenCreatedAt: LocalDateTime? = null,
@@ -211,6 +213,7 @@ class ItemstorageClient(
                 .pathSegment(itemstorageProperty.apiUrl)
                 .pathSegment(itemstorageProperty.itemsUrl)
                 .pathSegment(roomId.toString())
+                .pathSegment(userId.toString())
                 .pathSegment(itemstorageProperty.searchUrl)
 
             val queryParams = mutableMapOf<String, String>()
@@ -233,6 +236,47 @@ class ItemstorageClient(
             return response.body ?: emptyList()
         } catch (e: Exception) {
             throw IntegrationAccessException("Itemstorage didn't respond on searchByNameRoomAndCommunityItems, cause: ${e.message}")
+        }
+    }
+
+    fun addItem(roomId: UUID, userId: UUID, itemDto: ItemDto): ItemDto {
+        try {
+            val uri = UriComponentsBuilder
+                .fromHttpUrl(itemstorageProperty.baseUrl)
+                .pathSegment(itemstorageProperty.apiUrl)
+                .pathSegment(itemstorageProperty.itemsUrl)
+                .pathSegment(roomId.toString())
+                .pathSegment(userId.toString())
+                .toUriString()
+            val response = restClient.put()
+                .uri(uri)
+                .headers { it.addAll(headers) }
+                .body(itemDto)
+                .retrieve()
+                .toEntity(ItemDto::class.java)
+            return response.body!!
+        } catch (e: Exception) {
+            throw IntegrationAccessException("Itemstorage didn't respond on addItem, cause: ${e.message}")
+        }
+    }
+
+    fun getEquippedItemStats(roomId: UUID, characterId: UUID): EquippedItemsStatsResponse {
+        try {
+            val uri = UriComponentsBuilder
+                .fromHttpUrl(itemstorageProperty.baseUrl)
+                .pathSegment(itemstorageProperty.apiUrl)
+                .pathSegment(itemstorageProperty.bonusUrl)
+                .pathSegment(roomId.toString())
+                .pathSegment(characterId.toString())
+                .toUriString()
+            val response = restClient.get()
+                .uri(uri)
+                .headers { it.addAll(headers) }
+                .retrieve()
+                .toEntity(EquippedItemsStatsResponse::class.java)
+            return response.body!!
+        } catch (e: Exception) {
+            throw IntegrationAccessException("Itemstorage didn't respond on getEquippedItemStats, cause: ${e.message}")
         }
     }
 }

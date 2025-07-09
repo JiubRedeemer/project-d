@@ -1,5 +1,6 @@
 package com.jiubredeemer.app.charactersheet.character.dto
 
+import com.jiubredeemer.app.itemstorage.inventory.dto.inventory.EquippedItemsStatsResponse
 import java.util.*
 
 data class CharacterDto(
@@ -23,7 +24,8 @@ data class CharacterDto(
     val skills: List<SkillShort>?,
     val characterBio: CharacterBio?,
     val health: HealhDto?,
-    val level: LevelDto?
+    val level: LevelDto?,
+    var itemStats: EquippedItemsStatsResponse?
 ) {
     data class AbilityShort(
         val code: String?,
