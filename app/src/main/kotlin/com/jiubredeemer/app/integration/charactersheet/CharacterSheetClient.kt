@@ -2,6 +2,7 @@ package com.jiubredeemer.app.integration.charactersheet
 
 import com.jiubredeemer.app.charactersheet.character.dto.CharacterBioUpdateRequest
 import com.jiubredeemer.app.charactersheet.character.dto.CharacterDto
+import com.jiubredeemer.app.charactersheet.character.dto.CharacterSkillsDto
 import com.jiubredeemer.app.charactersheet.character.dto.UpdateCurrentHealthRequest
 import com.jiubredeemer.app.integration.charactersheet.dto.character.BonusValueUpdateRequest
 import com.jiubredeemer.app.integration.charactersheet.dto.character.CreateCharacterRequest
@@ -377,6 +378,117 @@ class CharacterSheetClient(
                 .retrieve()
         } catch (e: Exception) {
             throw IntegrationAccessException("CharacterSheet don't response on updateMasteryByCode, cause: ${e.message}")
+        }
+    }
+
+    fun getCharacterSkills(characterId: UUID): List<CharacterSkillsDto>? {
+        try {
+            val uri = UriComponentsBuilder
+                .fromHttpUrl(characterSheetProperty.baseUrl)
+                .pathSegment(characterSheetProperty.apiUrl)
+                .pathSegment(characterSheetProperty.charactersUrl)
+                .pathSegment(characterId.toString())
+                .pathSegment(characterSheetProperty.characterSkillsUrl)
+                .toUriString()
+            return restClient.get()
+                .uri(uri)
+                .headers { it.addAll(headers) }
+                .retrieve()
+                .toEntity(object : ParameterizedTypeReference<List<CharacterSkillsDto>>() {})
+                .body
+        } catch (e: Exception) {
+            throw IntegrationAccessException("CharacterSheet don't response on getCharacterSkills, cause: ${e.message}")
+        }
+    }
+
+    fun saveCharacterSkill(characterId: UUID, characterSkillsDto: CharacterSkillsDto): CharacterSkillsDto? {
+        try {
+            val uri = UriComponentsBuilder
+                .fromHttpUrl(characterSheetProperty.baseUrl)
+                .pathSegment(characterSheetProperty.apiUrl)
+                .pathSegment(characterSheetProperty.charactersUrl)
+                .pathSegment(characterId.toString())
+                .pathSegment(characterSheetProperty.characterSkillsUrl)
+                .toUriString()
+            return restClient.put()
+                .uri(uri)
+                .headers { it.addAll(headers) }
+                .body(characterSkillsDto)
+                .retrieve()
+                .toEntity(CharacterSkillsDto::class.java)
+                .body
+        } catch (e: Exception) {
+            throw IntegrationAccessException("CharacterSheet don't response on saveCharacterSkill, cause: ${e.message}")
+        }
+    }
+
+    fun deleteCharacterSkill(characterId: UUID, characterSkillId: UUID) {
+        try {
+            val uri = UriComponentsBuilder
+                .fromHttpUrl(characterSheetProperty.baseUrl)
+                .pathSegment(characterSheetProperty.apiUrl)
+                .pathSegment(characterSheetProperty.charactersUrl)
+                .pathSegment(characterId.toString())
+                .pathSegment(characterSheetProperty.characterSkillsUrl)
+                .pathSegment(characterSkillId.toString())
+                .toUriString()
+            restClient.delete()
+                .uri(uri)
+                .headers { it.addAll(headers) }
+                .retrieve()
+        } catch (e: Exception) {
+            throw IntegrationAccessException("CharacterSheet don't response on deleteCharacterSkill, cause: ${e.message}")
+        }
+    }
+
+    fun updateCharacterSkill(
+        characterId: UUID,
+        characterSkillId: UUID,
+        characterSkillsDto: CharacterSkillsDto
+    ): CharacterSkillsDto? {
+        try {
+            val uri = UriComponentsBuilder
+                .fromHttpUrl(characterSheetProperty.baseUrl)
+                .pathSegment(characterSheetProperty.apiUrl)
+                .pathSegment(characterSheetProperty.charactersUrl)
+                .pathSegment(characterId.toString())
+                .pathSegment(characterSheetProperty.characterSkillsUrl)
+                .pathSegment(characterSkillId.toString())
+                .toUriString()
+            return restClient.patch()
+                .uri(uri)
+                .headers { it.addAll(headers) }
+                .body(characterSkillsDto)
+                .retrieve()
+                .toEntity(CharacterSkillsDto::class.java)
+                .body
+        } catch (e: Exception) {
+            throw IntegrationAccessException("CharacterSheet don't response on updateCharacterSkill, cause: ${e.message}")
+        }
+    }
+
+    fun useCharacterSkill(
+        characterId: UUID,
+        characterSkillId: UUID
+    ): CharacterSkillsDto? {
+        try {
+            val uri = UriComponentsBuilder
+                .fromHttpUrl(characterSheetProperty.baseUrl)
+                .pathSegment(characterSheetProperty.apiUrl)
+                .pathSegment(characterSheetProperty.charactersUrl)
+                .pathSegment(characterId.toString())
+                .pathSegment(characterSheetProperty.characterSkillsUrl)
+                .pathSegment(characterSkillId.toString())
+                .pathSegment(characterSheetProperty.useUrl)
+                .toUriString()
+            return restClient.patch()
+                .uri(uri)
+                .headers { it.addAll(headers) }
+                .retrieve()
+                .toEntity(CharacterSkillsDto::class.java)
+                .body
+        } catch (e: Exception) {
+            throw IntegrationAccessException("CharacterSheet don't response on useCharacterSkill, cause: ${e.message}")
         }
     }
 

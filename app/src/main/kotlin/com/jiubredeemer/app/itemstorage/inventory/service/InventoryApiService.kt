@@ -122,5 +122,15 @@ class InventoryApiService(
         return response
     }
 
+    fun useInventoryItemSkill(
+        roomId: UUID,
+        characterId: UUID,
+        itemId: UUID,
+        skillId: UUID
+    ) {
+        roomAccessChecker.hasAccessOrThrow(roomId, accessChecker.getCurrentUser().id!!)
+        itemstorageClient.useInventoryItemSkill(roomId, characterId, itemId, skillId)
+    }
+
 
 }

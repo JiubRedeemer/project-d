@@ -2,6 +2,7 @@ package com.jiubredeemer.app.charactersheet.character.service
 
 import com.jiubredeemer.app.charactersheet.character.dto.CharacterBioUpdateRequest
 import com.jiubredeemer.app.charactersheet.character.dto.CharacterDto
+import com.jiubredeemer.app.charactersheet.character.dto.CharacterSkillsDto
 import com.jiubredeemer.app.charactersheet.character.dto.UpdateCurrentHealthRequest
 import com.jiubredeemer.app.integration.charactersheet.CharacterSheetClient
 import com.jiubredeemer.app.integration.charactersheet.dto.character.BonusValueUpdateRequest
@@ -122,5 +123,50 @@ class CharacterApiService(
     ): CharacterDto? {
         roomAccessChecker.hasAccessOrThrow(roomId, accessChecker.getCurrentUser().id!!)
         return characterSheetClient.updateBioByCharacterId(characterId, section, characterBioUpdateRequest)
+    }
+
+    fun getCharacterSkills(
+        roomId: UUID,
+        characterId: UUID,
+    ): List<CharacterSkillsDto>? {
+        roomAccessChecker.hasAccessOrThrow(roomId, accessChecker.getCurrentUser().id!!)
+        return characterSheetClient.getCharacterSkills(characterId)
+    }
+
+    fun saveCharacterSkill(
+        roomId: UUID,
+        characterId: UUID,
+        characterSkillsDto: CharacterSkillsDto,
+    ): CharacterSkillsDto? {
+        roomAccessChecker.hasAccessOrThrow(roomId, accessChecker.getCurrentUser().id!!)
+        return characterSheetClient.saveCharacterSkill(characterId, characterSkillsDto);
+    }
+
+    fun deleteCharacterSkill(
+        roomId: UUID,
+        characterId: UUID,
+        characterSkillsId: UUID,
+    ) {
+        roomAccessChecker.hasAccessOrThrow(roomId, accessChecker.getCurrentUser().id!!)
+        characterSheetClient.deleteCharacterSkill(characterId, characterSkillsId);
+    }
+
+    fun updateCharacterSkill(
+        roomId: UUID,
+        characterId: UUID,
+        characterSkillsId: UUID,
+        characterSkillsDto: CharacterSkillsDto,
+    ): CharacterSkillsDto? {
+        roomAccessChecker.hasAccessOrThrow(roomId, accessChecker.getCurrentUser().id!!)
+        return characterSheetClient.updateCharacterSkill(characterId, characterSkillsId, characterSkillsDto);
+    }
+
+    fun useCharacterSkill(
+        roomId: UUID,
+        characterId: UUID,
+        characterSkillsId: UUID
+    ): CharacterSkillsDto? {
+        roomAccessChecker.hasAccessOrThrow(roomId, accessChecker.getCurrentUser().id!!)
+        return characterSheetClient.useCharacterSkill(characterId, characterSkillsId);
     }
 }

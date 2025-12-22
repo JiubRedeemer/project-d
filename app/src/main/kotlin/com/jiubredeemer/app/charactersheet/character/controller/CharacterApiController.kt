@@ -2,6 +2,7 @@ package com.jiubredeemer.app.charactersheet.character.controller
 
 import com.jiubredeemer.app.charactersheet.character.dto.CharacterBioUpdateRequest
 import com.jiubredeemer.app.charactersheet.character.dto.CharacterDto
+import com.jiubredeemer.app.charactersheet.character.dto.CharacterSkillsDto
 import com.jiubredeemer.app.charactersheet.character.dto.UpdateCurrentHealthRequest
 import com.jiubredeemer.app.charactersheet.character.service.CharacterApiService
 import com.jiubredeemer.app.integration.charactersheet.dto.character.BonusValueUpdateRequest
@@ -163,6 +164,59 @@ class CharacterApiController(
         @RequestBody request: UpdateMasteryRequest
     ) {
         characterApiService.updateSkillMasteryByCode(roomId, characterId, code, request)
+    }
+
+    @GetMapping("/characters/{characterId}/character-skills")
+    @HasRoleOrThrow("ADMIN", "USER")
+    fun getCharacterSkills(
+        @PathVariable roomId: UUID,
+        @PathVariable characterId: UUID
+    ): List<CharacterSkillsDto>? {
+        return characterApiService.getCharacterSkills(roomId, characterId)
+    }
+
+    @PutMapping("/characters/{characterId}/character-skills")
+    @HasRoleOrThrow("ADMIN", "USER")
+    fun saveCharacterSkill(
+        @PathVariable roomId: UUID,
+        @PathVariable characterId: UUID,
+        @RequestBody characterSkillsDto: CharacterSkillsDto
+    ): CharacterSkillsDto? {
+        characterSkillsDto.characterId = characterId;
+        return characterApiService.saveCharacterSkill(roomId, characterId, characterSkillsDto);
+    }
+
+    @DeleteMapping("/characters/{characterId}/character-skills/{characterSkillId}")
+    @HasRoleOrThrow("ADMIN", "USER")
+    fun deleteCharacterSkill(
+        @PathVariable roomId: UUID,
+        @PathVariable characterId: UUID,
+        @PathVariable characterSkillId: UUID
+    ) {
+        characterApiService.deleteCharacterSkill(roomId, characterId, characterSkillId);
+    }
+
+    @PatchMapping("/characters/{characterId}/character-skills/{characterSkillId}")
+    @HasRoleOrThrow("ADMIN", "USER")
+    fun updateCharacterSkill(
+        @PathVariable roomId: UUID,
+        @PathVariable characterId: UUID,
+        @PathVariable characterSkillId: UUID,
+        @RequestBody characterSkillsDto: CharacterSkillsDto
+    ): CharacterSkillsDto? {
+        characterSkillsDto.id = characterSkillId;
+        characterSkillsDto.characterId = characterId;
+        return characterApiService.updateCharacterSkill(roomId, characterId, characterSkillId, characterSkillsDto);
+    }
+
+    @PatchMapping("/characters/{characterId}/character-skills/{characterSkillId}/use")
+    @HasRoleOrThrow("ADMIN", "USER")
+    fun useCharacterSkill(
+        @PathVariable roomId: UUID,
+        @PathVariable characterId: UUID,
+        @PathVariable characterSkillId: UUID
+    ): CharacterSkillsDto? {
+        return characterApiService.useCharacterSkill(roomId, characterId, characterSkillId);
     }
 
 

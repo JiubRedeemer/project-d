@@ -9,5 +9,7 @@ data class InventoryItemDto (
     val itemId: UUID?,
     val item: ItemDto?,
     val count: Long?,
-    val inUse: Boolean?
+    val inUse: Boolean?,
+    val skills: List<InventoryItemSkillDto>?
+
 )

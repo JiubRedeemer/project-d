@@ -18,6 +18,7 @@ data class ItemDto(
     var rarity: RarityEnum?,
     var description: String?,
     var stats: ItemStatsDto?,
+    var skills: List<ItemSkillsDto>?,
     var createdAt: Timestamp?,
     var roomId: UUID?,
     var creatorId: UUID?,

@@ -28,7 +28,7 @@ project-d:
     access-token-expiration: 2628000000
     refresh-token-expiration: 4628000000
   cors:
-    allowed-urls: [ 'http://localhost:5173', 'http://172.27.32.1:5173', 'http://192.168.0.73:5173/' ]
+    allowed-urls: [ 'http://localhost:5173','http://localhost:5174', 'http://172.27.32.1:5173', 'http://192.168.0.73:5173/' ]
     allowed-methods: [ 'POST', 'GET', 'PUT', 'DELETE', 'PATCH', 'OPTIONS' ]
   integrations:
     rule-book:
@@ -58,6 +58,8 @@ project-d:
       armory-class-url: armoryClass
       speed-url: speed
       initiative-url: initiative
+      character-skills-url: character-skills
+      use-url: use
     itemstorage:
       api-url: api
       base-url: http://localhost:8083
@@ -68,3 +70,13 @@ project-d:
       items-url: items
       search-url: search
       bonus-url: bonus
+      skills-url: skills
+      use-url: use
+    notes:
+      api-url: api
+      base-url: http://localhost:8085
+      rooms-url: rooms
+      characters-url: characters
+      notes-url: notes
+
+

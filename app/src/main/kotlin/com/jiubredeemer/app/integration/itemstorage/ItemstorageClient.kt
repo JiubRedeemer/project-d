@@ -279,4 +279,28 @@ class ItemstorageClient(
             throw IntegrationAccessException("Itemstorage didn't respond on getEquippedItemStats, cause: ${e.message}")
         }
     }
+
+    fun useInventoryItemSkill(roomId: UUID, characterId: UUID, itemId: UUID, skillId: UUID) {
+        try {
+            val uri = UriComponentsBuilder
+                .fromHttpUrl(itemstorageProperty.baseUrl)
+                .pathSegment(itemstorageProperty.apiUrl)
+                .pathSegment(roomId.toString())
+                .pathSegment(itemstorageProperty.inventoryUrl)
+                .pathSegment(characterId.toString())
+                .pathSegment(itemstorageProperty.itemsUrl)
+                .pathSegment(itemId.toString())
+                .pathSegment(itemstorageProperty.skillsUrl)
+                .pathSegment(skillId.toString())
+                .pathSegment(itemstorageProperty.useUrl)
+                .toUriString()
+            val response = restClient.post()
+                .uri(uri)
+                .headers { it.addAll(headers) }
+                .retrieve()
+                .toEntity(EquippedItemsStatsResponse::class.java)
+        } catch (e: Exception) {
+            throw IntegrationAccessException("Itemstorage didn't respond on getEquippedItemStats, cause: ${e.message}")
+        }
+    }
 }

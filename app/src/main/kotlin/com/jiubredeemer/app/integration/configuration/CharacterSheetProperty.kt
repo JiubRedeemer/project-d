@@ -21,5 +21,7 @@ data class CharacterSheetProperty(
     var speedUrl: String = "",
     var initiativeUrl: String = "",
     var skillsUrl: String = "",
-    var updateMasteryUrl: String = ""
+    var updateMasteryUrl: String = "",
+    var characterSkillsUrl: String = "",
+    var useUrl: String = ""
 )

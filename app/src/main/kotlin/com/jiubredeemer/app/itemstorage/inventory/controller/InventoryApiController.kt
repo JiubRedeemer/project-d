@@ -231,4 +231,28 @@ class InventoryApiController(
     ): EquippedItemsStatsResponse {
         return inventoryApiService.getEquippedItemStats(roomId, characterId)
     }
+
+    @Operation(summary = "Получить список бонусных характеристик надетых на персонажа предметов")
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200", description = "Список бонусов надетых предметов",
+                content = [Content(schema = Schema(implementation = ItemDto::class))]
+            ),
+            ApiResponse(
+                responseCode = "403", description = "Недостаточно прав",
+                content = [Content(schema = Schema())]
+            )
+        ]
+    )
+    @PostMapping("/{roomId}/inventory/{characterId}/items/{itemId}/skills/{skillId}/use")
+    @HasRoleOrThrow("ADMIN", "USER")
+    fun useInventoryItemSkill(
+        @PathVariable roomId: UUID,
+        @PathVariable characterId: UUID,
+        @PathVariable itemId: UUID,
+        @PathVariable skillId: UUID
+    ) {
+        inventoryApiService.useInventoryItemSkill(roomId, characterId, itemId, skillId);
+    }
 }
