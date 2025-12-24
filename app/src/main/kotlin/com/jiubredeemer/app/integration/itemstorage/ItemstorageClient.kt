@@ -1,6 +1,7 @@
 package com.jiubredeemer.app.integration.itemstorage
 
 import com.jiubredeemer.app.integration.configuration.ItemstorageProperty
+import com.jiubredeemer.app.integration.dto.RestTypeEnum
 import com.jiubredeemer.app.itemstorage.inventory.dto.inventory.EquippedItemsStatsResponse
 import com.jiubredeemer.app.itemstorage.inventory.dto.inventory.InventoryDto
 import com.jiubredeemer.app.itemstorage.inventory.dto.inventory.InventoryItemDto
@@ -303,4 +304,25 @@ class ItemstorageClient(
             throw IntegrationAccessException("Itemstorage didn't respond on getEquippedItemStats, cause: ${e.message}")
         }
     }
+
+    fun characterRest(roomId:UUID, characterId: UUID, restType: RestTypeEnum) {
+        try {
+            val uri = UriComponentsBuilder
+                .fromHttpUrl(itemstorageProperty.baseUrl)
+                .pathSegment(itemstorageProperty.apiUrl)
+                .pathSegment(roomId.toString())
+                .pathSegment(itemstorageProperty.inventoryUrl)
+                .pathSegment(characterId.toString())
+                .pathSegment(itemstorageProperty.restUrl)
+                .pathSegment(restType.name)
+                .toUriString()
+            restClient.post()
+                .uri(uri)
+                .headers { it.addAll(headers) }
+                .retrieve()
+        } catch (e: Exception) {
+            throw IntegrationAccessException("Itemstorage didn't respond on characterRest, cause: ${e.message}")
+        }
+    }
+
 }

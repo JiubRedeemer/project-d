@@ -8,6 +8,8 @@ import com.jiubredeemer.app.integration.charactersheet.CharacterSheetClient
 import com.jiubredeemer.app.integration.charactersheet.dto.character.BonusValueUpdateRequest
 import com.jiubredeemer.app.integration.charactersheet.dto.character.CreateCharacterRequest
 import com.jiubredeemer.app.integration.charactersheet.dto.character.UpdateMasteryRequest
+import com.jiubredeemer.app.integration.dto.RestTypeEnum
+import com.jiubredeemer.app.integration.itemstorage.ItemstorageClient
 import com.jiubredeemer.app.itemstorage.inventory.service.InventoryApiService
 import com.jiubredeemer.app.room.service.RoomAccessChecker
 import com.jiubredeemer.auth.service.AccessChecker
@@ -20,6 +22,7 @@ class CharacterApiService(
     private val accessChecker: AccessChecker,
     private val characterSheetClient: CharacterSheetClient,
     private val inventoryApiService: InventoryApiService,
+    private val itemstorageClient: ItemstorageClient,
 ) {
     fun createCharacter(roomId: UUID, createCharacterRequest: CreateCharacterRequest): CharacterDto? {
         roomAccessChecker.hasAccessOrThrow(roomId, accessChecker.getCurrentUser().id!!)
@@ -168,5 +171,11 @@ class CharacterApiService(
     ): CharacterSkillsDto? {
         roomAccessChecker.hasAccessOrThrow(roomId, accessChecker.getCurrentUser().id!!)
         return characterSheetClient.useCharacterSkill(characterId, characterSkillsId);
+    }
+
+    fun characterRest(roomId: UUID, characterId: UUID, restType: RestTypeEnum, hpDiceCount: Int) {
+        roomAccessChecker.hasAccessOrThrow(roomId, accessChecker.getCurrentUser().id!!)
+        characterSheetClient.characterRest(characterId, restType, hpDiceCount)
+        itemstorageClient.characterRest(roomId, characterId, restType)
     }
 }

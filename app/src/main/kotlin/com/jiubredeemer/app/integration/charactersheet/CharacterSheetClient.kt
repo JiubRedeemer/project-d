@@ -7,14 +7,17 @@ import com.jiubredeemer.app.charactersheet.character.dto.UpdateCurrentHealthRequ
 import com.jiubredeemer.app.integration.charactersheet.dto.character.BonusValueUpdateRequest
 import com.jiubredeemer.app.integration.charactersheet.dto.character.CreateCharacterRequest
 import com.jiubredeemer.app.integration.charactersheet.dto.character.FindCharacterByUserIdAndRoomIdRequest
+import com.jiubredeemer.app.integration.charactersheet.dto.character.RestRequest
 import com.jiubredeemer.app.integration.charactersheet.dto.character.UpdateMasteryRequest
 import com.jiubredeemer.app.integration.configuration.CharacterSheetProperty
+import com.jiubredeemer.app.integration.dto.RestTypeEnum
 import com.jiubredeemer.app.integration.dto.room.RoomCreateRequestDto
 import com.jiubredeemer.common.exception.IntegrationAccessException
 import org.springframework.core.ParameterizedTypeReference
 import org.springframework.http.HttpHeaders
 import org.springframework.stereotype.Service
 import org.springframework.web.client.RestClient
+import org.springframework.web.client.bodyWithType
 import org.springframework.web.util.UriComponentsBuilder
 import java.util.*
 
@@ -489,6 +492,26 @@ class CharacterSheetClient(
                 .body
         } catch (e: Exception) {
             throw IntegrationAccessException("CharacterSheet don't response on useCharacterSkill, cause: ${e.message}")
+        }
+    }
+
+    fun characterRest(characterId: UUID, restType: RestTypeEnum, hpDiceCount: Int) {
+        try {
+            val uri = UriComponentsBuilder
+                .fromHttpUrl(characterSheetProperty.baseUrl)
+                .pathSegment(characterSheetProperty.apiUrl)
+                .pathSegment(characterSheetProperty.charactersUrl)
+                .pathSegment(characterId.toString())
+                .pathSegment(characterSheetProperty.restUrl)
+                .pathSegment(restType.name)
+                .toUriString()
+            restClient.post()
+                .uri(uri)
+                .headers { it.addAll(headers) }
+                .body(RestRequest(hpDiceCount))
+                .retrieve()
+        } catch (e: Exception) {
+            throw IntegrationAccessException("CharacterSheet don't response on characterRest, cause: ${e.message}")
         }
     }
 

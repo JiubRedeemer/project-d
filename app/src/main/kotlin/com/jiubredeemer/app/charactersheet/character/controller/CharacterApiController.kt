@@ -8,20 +8,21 @@ import com.jiubredeemer.app.charactersheet.character.service.CharacterApiService
 import com.jiubredeemer.app.integration.charactersheet.dto.character.BonusValueUpdateRequest
 import com.jiubredeemer.app.integration.charactersheet.dto.character.CreateCharacterRequest
 import com.jiubredeemer.app.integration.charactersheet.dto.character.UpdateMasteryRequest
+import com.jiubredeemer.app.integration.dto.RestTypeEnum
 import com.jiubredeemer.auth.annotation.HasRoleOrThrow
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.web.bind.annotation.*
 import java.util.*
 
 @RestController
-@RequestMapping("/api/rooms/{roomId}")
+@RequestMapping("/api/rooms/{roomId}/characters")
 @Tag(name = "Персонажи", description = "API для управления персонажами")
 class CharacterApiController(
     private val characterApiService: CharacterApiService
 ) {
 
 
-    @PutMapping("/characters")
+    @PutMapping("")
     @HasRoleOrThrow("ADMIN", "USER")
     fun create(
         @PathVariable roomId: UUID,
@@ -30,7 +31,7 @@ class CharacterApiController(
         return characterApiService.createCharacter(roomId, createCharacterRequest)
     }
 
-    @GetMapping("/characters")
+    @GetMapping("")
     @HasRoleOrThrow("ADMIN", "USER")
     fun findAllByRoomIdAndUserId(
         @PathVariable roomId: UUID,
@@ -38,7 +39,7 @@ class CharacterApiController(
         return characterApiService.findAllByRoomIdAndUserId(roomId)
     }
 
-    @GetMapping("/characters/{characterId}")
+    @GetMapping("/{characterId}")
     @HasRoleOrThrow("ADMIN", "USER")
     fun findByCharacterId(
         @PathVariable roomId: UUID,
@@ -47,7 +48,7 @@ class CharacterApiController(
         return characterApiService.findByCharacterId(roomId, characterId)
     }
 
-    @GetMapping("/characters/{characterId}/header")
+    @GetMapping("/{characterId}/header")
     @HasRoleOrThrow("ADMIN", "USER")
     fun getHeaderInfoByCharacterId(
         @PathVariable roomId: UUID,
@@ -56,7 +57,7 @@ class CharacterApiController(
         return characterApiService.getHeaderInfoByCharacterId(roomId, characterId)
     }
 
-    @GetMapping("/characters/{characterId}/subheader")
+    @GetMapping("/{characterId}/subheader")
     @HasRoleOrThrow("ADMIN", "USER")
     fun getSubheaderInfoByCharacterId(
         @PathVariable roomId: UUID,
@@ -65,7 +66,7 @@ class CharacterApiController(
         return characterApiService.getSubheaderInfoByCharacterId(roomId, characterId)
     }
 
-    @GetMapping("/characters/{characterId}/abilities")
+    @GetMapping("/{characterId}/abilities")
     @HasRoleOrThrow("ADMIN", "USER")
     fun getAbilitiesAndSkillsInfoByCharacterId(
         @PathVariable roomId: UUID,
@@ -74,7 +75,7 @@ class CharacterApiController(
         return characterApiService.getAbilitiesAndSkillsInfoByCharacterId(roomId, characterId)
     }
 
-    @GetMapping("/characters/{characterId}/bio")
+    @GetMapping("/{characterId}/bio")
     @HasRoleOrThrow("ADMIN", "USER")
     fun getBioByCharacterId(
         @PathVariable roomId: UUID,
@@ -83,7 +84,7 @@ class CharacterApiController(
         return characterApiService.getBioByCharacterId(roomId, characterId)
     }
 
-    @PatchMapping("/characters/{characterId}/bio/{section}")
+    @PatchMapping("/{characterId}/bio/{section}")
     @HasRoleOrThrow("ADMIN", "USER")
     fun updateBioByCharacterId(
         @PathVariable roomId: UUID,
@@ -94,7 +95,7 @@ class CharacterApiController(
         return characterApiService.updateBioByCharacterId(roomId, characterId, section, characterBioUpdateRequest)
     }
 
-    @PatchMapping("/characters/{characterId}/abilities/{code}/bonus")
+    @PatchMapping("/{characterId}/abilities/{code}/bonus")
     @HasRoleOrThrow("ADMIN", "USER")
     fun updateAbilityBonusValue(
         @PathVariable roomId: UUID,
@@ -105,7 +106,7 @@ class CharacterApiController(
         characterApiService.updateAbilityBonusValue(roomId, characterId, code, bonusValueUpdateRequest)
     }
 
-    @PatchMapping("/characters/{characterId}/health/bonus")
+    @PatchMapping("/{characterId}/health/bonus")
     @HasRoleOrThrow("ADMIN", "USER")
     fun updateHealthBonusValue(
         @PathVariable roomId: UUID,
@@ -115,7 +116,7 @@ class CharacterApiController(
         characterApiService.updateHealthBonusValue(roomId, characterId, bonusValueUpdateRequest)
     }
 
-    @PatchMapping("/characters/{characterId}/health/updateCurrent")
+    @PatchMapping("/{characterId}/health/updateCurrent")
     @HasRoleOrThrow("ADMIN", "USER")
     fun updateCurrentHealthById(
         @PathVariable roomId: UUID,
@@ -125,7 +126,7 @@ class CharacterApiController(
         characterApiService.updateCurrentHealthById(roomId, characterId, updateCurrentHealthRequest)
     }
 
-    @PatchMapping("/characters/{characterId}/armoryClass/bonus")
+    @PatchMapping("/{characterId}/armoryClass/bonus")
     @HasRoleOrThrow("ADMIN", "USER")
     fun updateArmoryClassBonusValue(
         @PathVariable roomId: UUID,
@@ -135,7 +136,7 @@ class CharacterApiController(
         characterApiService.updateArmoryClassBonusValue(roomId, characterId, bonusValueUpdateRequest)
     }
 
-    @PatchMapping("/characters/{characterId}/speed/bonus")
+    @PatchMapping("/{characterId}/speed/bonus")
     @HasRoleOrThrow("ADMIN", "USER")
     fun updateSpeedBonusValue(
         @PathVariable roomId: UUID,
@@ -145,7 +146,7 @@ class CharacterApiController(
         characterApiService.updateSpeedBonusValue(roomId, characterId, bonusValueUpdateRequest)
     }
 
-    @PatchMapping("/characters/{characterId}/initiative/bonus")
+    @PatchMapping("/{characterId}/initiative/bonus")
     @HasRoleOrThrow("ADMIN", "USER")
     fun updateInitiativeBonusValue(
         @PathVariable roomId: UUID,
@@ -155,7 +156,7 @@ class CharacterApiController(
         characterApiService.updateInitiativeBonusValue(roomId, characterId, bonusValueUpdateRequest)
     }
 
-    @PatchMapping("/characters/{characterId}/skills/{code}/mastery")
+    @PatchMapping("/{characterId}/skills/{code}/mastery")
     @HasRoleOrThrow("ADMIN", "USER")
     fun updateSkillMasteryByCode(
         @PathVariable roomId: UUID,
@@ -166,7 +167,7 @@ class CharacterApiController(
         characterApiService.updateSkillMasteryByCode(roomId, characterId, code, request)
     }
 
-    @GetMapping("/characters/{characterId}/character-skills")
+    @GetMapping("/{characterId}/character-skills")
     @HasRoleOrThrow("ADMIN", "USER")
     fun getCharacterSkills(
         @PathVariable roomId: UUID,
@@ -175,7 +176,7 @@ class CharacterApiController(
         return characterApiService.getCharacterSkills(roomId, characterId)
     }
 
-    @PutMapping("/characters/{characterId}/character-skills")
+    @PutMapping("/{characterId}/character-skills")
     @HasRoleOrThrow("ADMIN", "USER")
     fun saveCharacterSkill(
         @PathVariable roomId: UUID,
@@ -186,7 +187,7 @@ class CharacterApiController(
         return characterApiService.saveCharacterSkill(roomId, characterId, characterSkillsDto);
     }
 
-    @DeleteMapping("/characters/{characterId}/character-skills/{characterSkillId}")
+    @DeleteMapping("/{characterId}/character-skills/{characterSkillId}")
     @HasRoleOrThrow("ADMIN", "USER")
     fun deleteCharacterSkill(
         @PathVariable roomId: UUID,
@@ -196,7 +197,7 @@ class CharacterApiController(
         characterApiService.deleteCharacterSkill(roomId, characterId, characterSkillId);
     }
 
-    @PatchMapping("/characters/{characterId}/character-skills/{characterSkillId}")
+    @PatchMapping("/{characterId}/character-skills/{characterSkillId}")
     @HasRoleOrThrow("ADMIN", "USER")
     fun updateCharacterSkill(
         @PathVariable roomId: UUID,
@@ -209,7 +210,7 @@ class CharacterApiController(
         return characterApiService.updateCharacterSkill(roomId, characterId, characterSkillId, characterSkillsDto);
     }
 
-    @PatchMapping("/characters/{characterId}/character-skills/{characterSkillId}/use")
+    @PatchMapping("/{characterId}/character-skills/{characterSkillId}/use")
     @HasRoleOrThrow("ADMIN", "USER")
     fun useCharacterSkill(
         @PathVariable roomId: UUID,
@@ -217,6 +218,17 @@ class CharacterApiController(
         @PathVariable characterSkillId: UUID
     ): CharacterSkillsDto? {
         return characterApiService.useCharacterSkill(roomId, characterId, characterSkillId);
+    }
+
+    @PostMapping("/{characterId}/rest/{restType}")
+    @HasRoleOrThrow("ADMIN", "USER")
+    fun characterRest(
+        @PathVariable roomId: UUID,
+        @PathVariable characterId: UUID,
+        @PathVariable restType: RestTypeEnum,
+        @RequestBody hpDiceCount: Int
+    ) {
+      characterApiService.characterRest(roomId, characterId, restType, hpDiceCount)
     }
 
 

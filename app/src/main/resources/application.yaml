@@ -60,6 +60,7 @@ project-d:
       initiative-url: initiative
       character-skills-url: character-skills
       use-url: use
+      rest-url: rest
     itemstorage:
       api-url: api
       base-url: http://localhost:8083
@@ -72,6 +73,7 @@ project-d:
       bonus-url: bonus
       skills-url: skills
       use-url: use
+      rest-url: rest
     notes:
       api-url: api
       base-url: http://localhost:8085
