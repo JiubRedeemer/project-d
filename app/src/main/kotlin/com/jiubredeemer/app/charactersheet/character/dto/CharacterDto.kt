@@ -25,6 +25,7 @@ data class CharacterDto(
     val characterBio: CharacterBio?,
     val health: HealhDto?,
     val level: LevelDto?,
+    val currentHpDiceCount: Int?,
     var itemStats: EquippedItemsStatsResponse?
 ) {
     data class AbilityShort(
