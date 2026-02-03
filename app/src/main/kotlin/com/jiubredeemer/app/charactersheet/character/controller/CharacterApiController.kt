@@ -225,10 +225,8 @@ class CharacterApiController(
     fun characterRest(
         @PathVariable roomId: UUID,
         @PathVariable characterId: UUID,
-        @PathVariable restType: RestTypeEnum,
-        @RequestBody hpDiceCount: Int
-    ) {
-      characterApiService.characterRest(roomId, characterId, restType, hpDiceCount)
+        @PathVariable restType: RestTypeEnum) {
+      characterApiService.characterRest(roomId, characterId, restType, 0)
     }
 
 
