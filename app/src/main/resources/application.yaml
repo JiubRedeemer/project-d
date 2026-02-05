@@ -80,5 +80,15 @@ project-d:
       rooms-url: rooms
       characters-url: characters
       notes-url: notes
+    magic:
+      api-url: api
+      base-url: http://localhost:8086
+      spells-url: spells
+      spell-books-url: spell-books
+      spell-book-items-url: spell-book-items
+      spell-cells-url: spell-cells
+      import-url: import
+      by-room-character-url: by-room-character
+      in-use-url: in-use
 
 

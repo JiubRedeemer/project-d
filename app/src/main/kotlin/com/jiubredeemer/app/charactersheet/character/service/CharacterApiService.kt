@@ -10,6 +10,7 @@ import com.jiubredeemer.app.integration.charactersheet.dto.character.CreateChara
 import com.jiubredeemer.app.integration.charactersheet.dto.character.UpdateMasteryRequest
 import com.jiubredeemer.app.integration.dto.RestTypeEnum
 import com.jiubredeemer.app.integration.itemstorage.ItemstorageClient
+import com.jiubredeemer.app.integration.magic.MagicClient
 import com.jiubredeemer.app.itemstorage.inventory.service.InventoryApiService
 import com.jiubredeemer.app.room.service.RoomAccessChecker
 import com.jiubredeemer.auth.service.AccessChecker
@@ -23,6 +24,7 @@ class CharacterApiService(
     private val characterSheetClient: CharacterSheetClient,
     private val inventoryApiService: InventoryApiService,
     private val itemstorageClient: ItemstorageClient,
+    private val magicClient: MagicClient,
 ) {
     fun createCharacter(roomId: UUID, createCharacterRequest: CreateCharacterRequest): CharacterDto? {
         roomAccessChecker.hasAccessOrThrow(roomId, accessChecker.getCurrentUser().id!!)
@@ -177,5 +179,6 @@ class CharacterApiService(
         roomAccessChecker.hasAccessOrThrow(roomId, accessChecker.getCurrentUser().id!!)
         characterSheetClient.characterRest(characterId, restType, hpDiceCount)
         itemstorageClient.characterRest(roomId, characterId, restType)
+        magicClient.refillRestByCharacter(roomId, characterId, restType.name)
     }
 }
