@@ -36,6 +36,8 @@ data class CharacterDto(
 
     data class SkillShort(
         val code: String?,
+        val bonusValue: Int?,
+        val masteryValue: Long?,
     )
 
     data class CharacterBio(
