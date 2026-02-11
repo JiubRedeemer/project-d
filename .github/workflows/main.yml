@@ -22,7 +22,7 @@ permissions:
   contents: read
 
 env:
-  DEPLOY_PATH: "~/app"
+  DEPLOY_PATH: "/root/project-d-auto"
 
 jobs:
   deploy:
@@ -132,5 +132,5 @@ jobs:
 
       - name: Build and deploy with Docker Compose
         run: |
-          # Use $HOME so the path is expanded on the server (~ often isn't in non-interactive SSH)
-          ssh "$DEPLOY_USER@$DEPLOY_HOST" 'cd $HOME/app/deploy && docker compose build && docker compose up -d'
+          # Path is expanded on the runner so the server gets an absolute path (no ~ expansion issues)
+          ssh "$DEPLOY_USER@$DEPLOY_HOST" "cd $DEPLOY_PATH/deploy && docker compose build && docker compose up -d"
