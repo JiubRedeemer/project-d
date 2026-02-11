@@ -1,0 +1,233 @@
+name: Deploy Project-D (Selective Services)
+
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+    inputs:
+      services:
+        description: 'Select services to build and deploy (comma-separated)'
+        required: true
+        default: 'postgres,minio,rulebook,charactersheet,itemstorage,magic,notes,project-d,filestorage,project-d-ui,caddy'
+        type: string
+      deploy_infrastructure:
+        description: 'Deploy infrastructure services (postgres, minio)?'
+        required: false
+        type: boolean
+        default: true
+      deploy_internal:
+        description: 'Deploy internal services (rulebook, charactersheet, itemstorage, magic, notes)?'
+        required: false
+        type: boolean
+        default: true
+      deploy_external:
+        description: 'Deploy external services (project-d, filestorage, project-d-ui, caddy)?'
+        required: false
+        type: boolean
+        default: true
+
+env:
+  DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+  DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
+  DEPLOY_KEY: ${{ secrets.DEPLOY_KEY }}
+  DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
+
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    outputs:
+      services: ${{ steps.determine-services.outputs.services }}
+    
+    steps:
+      - name: Determine services to deploy
+        id: determine-services
+        run: |
+          # If manually triggered with specific services input
+          if [ -n "${{ github.event.inputs.services }}" ]; then
+            SERVICES="${{ github.event.inputs.services }}"
+          else
+            # Otherwise, use toggle inputs
+            SERVICES=""
+            
+            if [ "${{ github.event.inputs.deploy_infrastructure }}" = "true" ] || [ -z "${{ github.event.inputs.deploy_infrastructure }}" ]; then
+              SERVICES="postgres,minio"
+            fi
+            
+            if [ "${{ github.event.inputs.deploy_internal }}" = "true" ] || [ -z "${{ github.event.inputs.deploy_internal }}" ]; then
+              if [ -n "$SERVICES" ]; then
+                SERVICES="${SERVICES},rulebook,charactersheet,itemstorage,magic,notes"
+              else
+                SERVICES="rulebook,charactersheet,itemstorage,magic,notes"
+              fi
+            fi
+            
+            if [ "${{ github.event.inputs.deploy_external }}" = "true" ] || [ -z "${{ github.event.inputs.deploy_external }}" ]; then
+              if [ -n "$SERVICES" ]; then
+                SERVICES="${SERVICES},project-d,filestorage,project-d-ui,caddy"
+              else
+                SERVICES="project-d,filestorage,project-d-ui,caddy"
+              fi
+            fi
+          fi
+          
+          echo "services=${SERVICES}" >> $GITHUB_OUTPUT
+          echo "Selected services: ${SERVICES}"
+
+  deploy:
+    needs: prepare
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ env.DEPLOY_KEY }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -H ${{ env.DEPLOY_HOST }} >> ~/.ssh/known_hosts 2>/dev/null || true
+
+      - name: Create deployment directory
+        run: |
+          ssh -i ~/.ssh/deploy_key ${{ env.DEPLOY_USER }}@${{ env.DEPLOY_HOST }} \
+            "mkdir -p ${{ env.DEPLOY_PATH }}"
+
+      - name: Send files to server
+        run: |
+          rsync -avz \
+            -e "ssh -i ~/.ssh/deploy_key" \
+            --exclude='.git' \
+            --exclude='node_modules' \
+            --exclude='.env' \
+            --exclude='.DS_Store' \
+            --exclude='.github' \
+            ./ ${{ env.DEPLOY_USER }}@${{ env.DEPLOY_HOST }}:${{ env.DEPLOY_PATH }}/
+
+      - name: Build and deploy selected services
+        run: |
+          ssh -i ~/.ssh/deploy_key ${{ env.DEPLOY_USER }}@${{ env.DEPLOY_HOST }} << 'EOF'
+          cd ${{ env.DEPLOY_PATH }}
+          
+          # Load environment variables if they exist
+          if [ -f .env ]; then
+            export $(cat .env | grep -v '#' | xargs)
+          fi
+          
+          SERVICES="${{ needs.prepare.outputs.services }}"
+          
+          echo "=========================================="
+          echo "Selected Services: ${SERVICES}"
+          echo "=========================================="
+          
+          # Convert comma-separated to space-separated for docker-compose
+          SERVICES_ARRAY=$(echo $SERVICES | tr ',' ' ')
+          
+          # Build selected services
+          echo "Building selected services..."
+          docker-compose build $SERVICES_ARRAY
+          
+          # Stop and remove old containers if they exist
+          echo "Stopping and removing old containers..."
+          docker-compose down
+          
+          # Start services in detached mode
+          echo "Starting services..."
+          docker-compose up -d $SERVICES_ARRAY
+          
+          # Display service status
+          echo ""
+          echo "Service Status:"
+          docker-compose ps
+          EOF
+
+      - name: Verify infrastructure services health
+        if: contains(needs.prepare.outputs.services, 'postgres') || contains(needs.prepare.outputs.services, 'minio')
+        run: |
+          ssh -i ~/.ssh/deploy_key ${{ env.DEPLOY_USER }}@${{ env.DEPLOY_HOST }} << 'EOF'
+          cd ${{ env.DEPLOY_PATH }}
+          
+          if docker-compose ps | grep -q "postgres"; then
+            echo "Checking PostgreSQL health..."
+            for i in {1..30}; do
+              if docker-compose exec -T postgres pg_isready -U ${DB_USERNAME:-pd} &>/dev/null; then
+                echo "✅ PostgreSQL is healthy"
+                break
+              fi
+              echo "Waiting for PostgreSQL... (attempt $i/30)"
+              sleep 2
+            done
+          fi
+          
+          if docker-compose ps | grep -q "minio"; then
+            echo "Checking MinIO health..."
+            for i in {1..30}; do
+              if docker-compose exec -T minio mc ready local &>/dev/null; then
+                echo "✅ MinIO is healthy"
+                break
+              fi
+              echo "Waiting for MinIO... (attempt $i/30)"
+              sleep 2
+            done
+          fi
+          EOF
+
+      - name: Verify internal services health
+        if: contains(needs.prepare.outputs.services, 'rulebook') || contains(needs.prepare.outputs.services, 'charactersheet') || contains(needs.prepare.outputs.services, 'itemstorage') || contains(needs.prepare.outputs.services, 'magic') || contains(needs.prepare.outputs.services, 'notes')
+        run: |
+          ssh -i ~/.ssh/deploy_key ${{ env.DEPLOY_USER }}@${{ env.DEPLOY_HOST }} << 'EOF'
+          cd ${{ env.DEPLOY_PATH }}
+          
+          echo "Internal services deployment status:"
+          docker-compose ps | grep -E 'rulebook|charactersheet|itemstorage|magic|notes' || echo "No internal services running"
+          EOF
+
+      - name: Verify external services health
+        if: contains(needs.prepare.outputs.services, 'project-d') || contains(needs.prepare.outputs.services, 'filestorage') || contains(needs.prepare.outputs.services, 'project-d-ui') || contains(needs.prepare.outputs.services, 'caddy')
+        run: |
+          ssh -i ~/.ssh/deploy_key ${{ env.DEPLOY_USER }}@${{ env.DEPLOY_HOST }} << 'EOF'
+          cd ${{ env.DEPLOY_PATH }}
+          
+          echo "External services deployment status:"
+          docker-compose ps | grep -E 'project-d|filestorage|project-d-ui|caddy' || echo "No external services running"
+          
+          # Check port accessibility
+          echo ""
+          echo "Checking port accessibility..."
+          for port in 8080 8079 80 443; do
+            if timeout 2 bash -c "cat < /dev/null > /dev/tcp/localhost/$port" 2>/dev/null; then
+              echo "✅ Port $port is accessible"
+            else
+              echo "⚠️  Port $port is not responding"
+            fi
+          done
+          EOF
+
+      - name: Generate deployment summary
+        if: always()
+        run: |
+          ssh -i ~/.ssh/deploy_key ${{ env.DEPLOY_USER }}@${{ env.DEPLOY_HOST }} << 'EOF'
+          cd ${{ env.DEPLOY_PATH }}
+          
+          echo ""
+          echo "=========================================="
+          echo "DEPLOYMENT SUMMARY"
+          echo "=========================================="
+          echo "Services deployed: ${{ needs.prepare.outputs.services }}"
+          echo ""
+          echo "Running containers:"
+          docker-compose ps
+          echo ""
+          echo "Docker images:"
+          docker images | grep pd-
+          echo ""
+          echo "Deployment timestamp: $(date)"
+          echo "=========================================="
+          EOF
+
+      - name: Cleanup SSH key
+        if: always()
+        run: rm -f ~/.ssh/deploy_key
