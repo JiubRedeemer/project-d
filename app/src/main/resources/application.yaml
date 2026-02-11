@@ -28,7 +28,8 @@ project-d:
     access-token-expiration: 2628000000
     refresh-token-expiration: 4628000000
   cors:
-    allowed-urls: [ 'http://localhost:5173', 'https://projectd.jiubredeemer.ru:5173' ]
+    # Dev (Vite :5173) and production (HTTPS, no port)
+    allowed-urls: [ 'http://localhost:5173', 'https://projectd.jiubredeemer.ru:5173', 'https://projectd.jiubredeemer.ru', 'http://projectd.jiubredeemer.ru' ]
     allowed-methods: [ 'POST', 'GET', 'PUT', 'DELETE', 'PATCH', 'OPTIONS' ]
   integrations:
     rule-book:
