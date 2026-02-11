@@ -28,7 +28,7 @@ project-d:
     access-token-expiration: 2628000000
     refresh-token-expiration: 4628000000
   cors:
-    allowed-urls: [ 'http://localhost:5173', 'http://192.168.31.211:5173/', 'http://192.168.31.211:5173', 'http://192.168.1.111:5173/', 'http://localhost:5174', 'http://172.27.32.1:5173', 'http://192.168.0.73:5173/' ]
+    allowed-urls: [ 'http://localhost:5173', 'https://projectd.jiubredeemer.ru:5173' ]
     allowed-methods: [ 'POST', 'GET', 'PUT', 'DELETE', 'PATCH', 'OPTIONS' ]
   integrations:
     rule-book:
