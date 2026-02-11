@@ -45,6 +45,19 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Validate deploy secrets
+        run: |
+          missing=
+          [ -z "$DEPLOY_HOST" ]  && missing="$missing DEPLOY_HOST"
+          [ -z "$DEPLOY_USER" ]  && missing="$missing DEPLOY_USER"
+          [ -z "$DEPLOY_SSH_KEY" ] && missing="$missing DEPLOY_SSH_KEY"
+          if [ -n "$missing" ]; then
+            echo "::error::Missing required GitHub secrets (Settings → Secrets and variables → Actions):$missing"
+            echo "Add these repository secrets and re-run the workflow."
+            exit 1
+          fi
+          echo "Required secrets are set."
+
       - name: Create .env for deploy
         run: |
           {
