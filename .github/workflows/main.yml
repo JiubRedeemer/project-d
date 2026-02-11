@@ -1,0 +1,106 @@
+# =============================================================================
+# CI/CD — Build and deploy on remote server (Docker only, no Ansible)
+# =============================================================================
+# Builds and runs all services from deploy/docker-compose.yml on the deploy host.
+# Requires: DEPLOY_HOST, DEPLOY_USER, DEPLOY_SSH_KEY; optional env vars in secrets.
+# =============================================================================
+
+name: Deploy Project-D
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-project-d
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+env:
+  DEPLOY_PATH: "~/app"
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+      DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
+      DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+      UI_DOMAIN: ${{ secrets.UI_DOMAIN }}
+      LETSENCRYPT_EMAIL: ${{ secrets.LETSENCRYPT_EMAIL }}
+      DB_USERNAME: ${{ secrets.DB_USERNAME }}
+      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+      MINIO_ACCESS_KEY: ${{ secrets.MINIO_ACCESS_KEY }}
+      MINIO_SECRET_KEY: ${{ secrets.MINIO_SECRET_KEY }}
+      JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
+      CORS_ALLOWED_URLS: ${{ secrets.CORS_ALLOWED_URLS }}
+      SERVER_HOST: ${{ secrets.SERVER_HOST }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Create .env for deploy
+        run: |
+          {
+            echo "SERVER_HOST=${SERVER_HOST:-localhost}"
+            echo "UI_DOMAIN=${UI_DOMAIN}"
+            echo "LETSENCRYPT_EMAIL=${LETSENCRYPT_EMAIL}"
+            echo "UI_PORT=${UI_PORT:-80}"
+            echo "GATEWAY_PORT=${GATEWAY_PORT:-8080}"
+            echo "FILESTORAGE_PORT=${FILESTORAGE_PORT:-8079}"
+            echo "MINIO_CONSOLE_PORT=${MINIO_CONSOLE_PORT:-9001}"
+            echo "DB_USERNAME=${DB_USERNAME:-pd}"
+            echo "DB_PASSWORD=${DB_PASSWORD:-pd}"
+            echo "MINIO_ACCESS_KEY=${MINIO_ACCESS_KEY:-minioadmin}"
+            echo "MINIO_SECRET_KEY=${MINIO_SECRET_KEY:-minioadmin}"
+            echo "JWT_SECRET_KEY=${JWT_SECRET_KEY}"
+            echo "CORS_ALLOWED_URLS=${CORS_ALLOWED_URLS:-http://localhost,http://localhost:80}"
+          } > deploy/.env
+        env:
+          SERVER_HOST: ${{ secrets.SERVER_HOST }}
+          UI_DOMAIN: ${{ secrets.UI_DOMAIN }}
+          LETSENCRYPT_EMAIL: ${{ secrets.LETSENCRYPT_EMAIL }}
+          UI_PORT: ${{ secrets.UI_PORT }}
+          GATEWAY_PORT: ${{ secrets.GATEWAY_PORT }}
+          FILESTORAGE_PORT: ${{ secrets.FILESTORAGE_PORT }}
+          MINIO_CONSOLE_PORT: ${{ secrets.MINIO_CONSOLE_PORT }}
+          DB_USERNAME: ${{ secrets.DB_USERNAME }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          MINIO_ACCESS_KEY: ${{ secrets.MINIO_ACCESS_KEY }}
+          MINIO_SECRET_KEY: ${{ secrets.MINIO_SECRET_KEY }}
+          JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
+          CORS_ALLOWED_URLS: ${{ secrets.CORS_ALLOWED_URLS }}
+
+      - name: Set up SSH
+        run: |
+          mkdir -p ~/.ssh
+          printf '%s\n' "$DEPLOY_SSH_KEY" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H "$DEPLOY_HOST" >> ~/.ssh/known_hosts 2>/dev/null || true
+
+      - name: Install rsync
+        run: sudo apt-get update && sudo apt-get install -y rsync openssh-client
+
+      - name: Sync repository to remote server
+        run: |
+          rsync -avz --delete \
+            --exclude='.git' \
+            --exclude='.github' \
+            --exclude='**/node_modules' \
+            --exclude='**/target' \
+            --exclude='minioFiles' \
+            --exclude='.idea' \
+            --exclude='*.iml' \
+            --exclude='.DS_Store' \
+            -e "ssh -o StrictHostKeyChecking=accept-new" \
+            . "$DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATH/"
+
+      - name: Build and deploy with Docker Compose
+        run: |
+          ssh "$DEPLOY_USER@$DEPLOY_HOST" "cd $DEPLOY_PATH/deploy && docker compose build && docker compose up -d"
