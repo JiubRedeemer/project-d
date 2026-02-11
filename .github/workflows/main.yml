@@ -146,4 +146,4 @@ jobs:
       - name: Build and deploy with Docker Compose
         run: |
           # Run from deploy dir so compose file and build contexts (../rulebook etc.) resolve correctly
-          ssh "$DEPLOY_USER@$DEPLOY_HOST" "cd $DEPLOY_PATH/$DEPLOY_SUBDIR/deploy && docker compose build && docker compose up -d"
+          ssh "$DEPLOY_USER@$DEPLOY_HOST" "cd $DEPLOY_PATH/$DEPLOY_SUBDIR/deploy && docker compose build project-d && docker compose up -d project-d"
