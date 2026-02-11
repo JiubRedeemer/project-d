@@ -43,7 +43,12 @@ class CharacterApiService(
     fun findByCharacterId(roomId: UUID, characterId: UUID): CharacterDto? {
         roomAccessChecker.hasAccessOrThrow(roomId, accessChecker.getCurrentUser().id!!)
         val character: CharacterDto? = characterSheetClient.findByCharacterId(characterId)
-        character?.itemStats = inventoryApiService.getEquippedItemStats(roomId, characterId)
+        try {
+            character?.itemStats = inventoryApiService.getEquippedItemStats(roomId, characterId)
+        } catch (exception: Exception) {
+            inventoryApiService.getInventoryByCharacterId(roomId, characterId);
+            character?.itemStats = inventoryApiService.getEquippedItemStats(roomId, characterId)
+        }
         return character
     }
 
