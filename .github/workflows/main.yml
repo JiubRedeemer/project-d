@@ -93,9 +93,25 @@ jobs:
       - name: Set up SSH
         run: |
           mkdir -p ~/.ssh
-          printf '%s\n' "$DEPLOY_SSH_KEY" > ~/.ssh/id_rsa
+          chmod 700 ~/.ssh
+          # Restore newlines if the secret was pasted with literal \n (e.g. from JSON/script)
+          echo "$DEPLOY_SSH_KEY" | sed 's/\\n/\n/g' > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
+          # Verify key is valid and show fingerprint (so you can confirm it matches server)
+          ssh-keygen -y -f ~/.ssh/id_rsa > /dev/null || { echo "::error::DEPLOY_SSH_KEY is not a valid private key. Paste the full key including -----BEGIN ... KEY----- and -----END ... KEY----- lines."; exit 1; }
+          echo "SSH key fingerprint: $(ssh-keygen -l -f ~/.ssh/id_rsa | awk '{print $2}')"
           ssh-keyscan -H "$DEPLOY_HOST" >> ~/.ssh/known_hosts 2>/dev/null || true
+
+      - name: Test SSH connection
+        run: |
+          if ! ssh -o BatchMode=yes -o ConnectTimeout=15 "$DEPLOY_USER@$DEPLOY_HOST" "echo OK"; then
+            echo "::error::SSH authentication failed. Check:"
+            echo "  1. DEPLOY_SSH_KEY is the *private* key (starts with -----BEGIN ... PRIVATE KEY-----)."
+            echo "  2. The matching *public* key is in the server's ~/.ssh/authorized_keys for user $DEPLOY_USER."
+            echo "  3. If you pasted the key in one line, use a secret with real newlines or literal \\n between lines."
+            echo "  Key fingerprint used by this job: $(ssh-keygen -l -f ~/.ssh/id_rsa | awk '{print $2}')"
+            exit 1
+          fi
 
       - name: Install rsync
         run: sudo apt-get update && sudo apt-get install -y rsync openssh-client
