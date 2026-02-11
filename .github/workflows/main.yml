@@ -130,7 +130,11 @@ jobs:
             -e "ssh -o StrictHostKeyChecking=accept-new" \
             . "$DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATH/"
 
+      - name: Verify deploy files on server
+        run: |
+          ssh "$DEPLOY_USER@$DEPLOY_HOST" "ls -la $DEPLOY_PATH/deploy/ || true"
+
       - name: Build and deploy with Docker Compose
         run: |
-          # Path is expanded on the runner so the server gets an absolute path (no ~ expansion issues)
-          ssh "$DEPLOY_USER@$DEPLOY_HOST" "cd $DEPLOY_PATH/deploy && docker compose build && docker compose up -d"
+          COMPOSE_FILE="$DEPLOY_PATH/deploy/docker-compose.yml"
+          ssh "$DEPLOY_USER@$DEPLOY_HOST" "docker compose -f $COMPOSE_FILE build && docker compose -f $COMPOSE_FILE up -d"
