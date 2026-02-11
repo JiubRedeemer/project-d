@@ -1,0 +1,265 @@
+# =============================================================================
+# Project-D — Full Stack Deployment
+# =============================================================================
+# External:  project-d (gateway :8080), filestorage (:8079), project-d-ui (:80)
+# Internal:  charactersheet, itemstorage, magic, notes, rulebook
+# Infra:     postgres, minio
+# =============================================================================
+
+services:
+
+  # ---------------------------------------------------------------------------
+  # Infrastructure
+  # ---------------------------------------------------------------------------
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: pd-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${DB_USERNAME:-pd}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-pd}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./postgres/init-databases.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME:-pd}"]
+      interval: 5s
+      timeout: 5s
+      retries: 15
+    networks:
+      - backend
+
+  minio:
+    image: minio/minio
+    container_name: pd-minio
+    restart: unless-stopped
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ACCESS_KEY:-minioadmin}
+      MINIO_ROOT_PASSWORD: ${MINIO_SECRET_KEY:-minioadmin}
+    volumes:
+      - minio_data:/data
+    healthcheck:
+      test: ["CMD", "mc", "ready", "local"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks:
+      - backend
+
+  # ---------------------------------------------------------------------------
+  # Internal Backend Services
+  # ---------------------------------------------------------------------------
+
+  rulebook:
+    build:
+      context: ../rulebook
+    container_name: pd-rulebook
+    restart: unless-stopped
+    environment:
+      SERVER_ADDRESS: "0.0.0.0"
+      SPRING_DATASOURCE_URL: "jdbc:postgresql://postgres:5432/rule_book"
+      SPRING_DATASOURCE_USERNAME: "${DB_USERNAME:-pd}"
+      SPRING_DATASOURCE_PASSWORD: "${DB_PASSWORD:-pd}"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - backend
+
+  charactersheet:
+    build:
+      context: ../charactersheet
+    container_name: pd-charactersheet
+    restart: unless-stopped
+    environment:
+      SERVER_ADDRESS: "0.0.0.0"
+      SPRING_DATASOURCE_URL: "jdbc:postgresql://postgres:5432/charactersheet"
+      SPRING_DATASOURCE_USERNAME: "${DB_USERNAME:-pd}"
+      SPRING_DATASOURCE_PASSWORD: "${DB_PASSWORD:-pd}"
+      SPRING_APPLICATION_JSON: >-
+        {
+          "project-d.integrations.rule-book.base-url": "http://rulebook:8081",
+          "project-d.integrations.itemstorage.base-url": "http://itemstorage:8083"
+        }
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rulebook:
+        condition: service_started
+      itemstorage:
+        condition: service_started
+    networks:
+      - backend
+
+  itemstorage:
+    build:
+      context: ../itemstorage
+    container_name: pd-itemstorage
+    restart: unless-stopped
+    environment:
+      SERVER_ADDRESS: "0.0.0.0"
+      SPRING_DATASOURCE_URL: "jdbc:postgresql://postgres:5432/itemstorage"
+      SPRING_DATASOURCE_USERNAME: "${DB_USERNAME:-pd}"
+      SPRING_DATASOURCE_PASSWORD: "${DB_PASSWORD:-pd}"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - backend
+
+  magic:
+    build:
+      context: ../magic
+    container_name: pd-magic
+    restart: unless-stopped
+    environment:
+      SERVER_ADDRESS: "0.0.0.0"
+      SPRING_DATASOURCE_URL: "jdbc:postgresql://postgres:5432/magic"
+      SPRING_DATASOURCE_USERNAME: "${DB_USERNAME:-pd}"
+      SPRING_DATASOURCE_PASSWORD: "${DB_PASSWORD:-pd}"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - backend
+
+  notes:
+    build:
+      context: ../notes
+    container_name: pd-notes
+    restart: unless-stopped
+    environment:
+      SERVER_ADDRESS: "0.0.0.0"
+      SPRING_DATASOURCE_URL: "jdbc:postgresql://postgres:5432/notes"
+      SPRING_DATASOURCE_USERNAME: "${DB_USERNAME:-pd}"
+      SPRING_DATASOURCE_PASSWORD: "${DB_PASSWORD:-pd}"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - backend
+
+  # ---------------------------------------------------------------------------
+  # External Backend Services
+  # ---------------------------------------------------------------------------
+
+  project-d:
+    build:
+      context: ../project-d
+    container_name: pd-gateway
+    restart: unless-stopped
+    expose:
+      - "8080"
+    environment:
+      SERVER_ADDRESS: "0.0.0.0"
+      SPRING_DATASOURCE_URL: "jdbc:postgresql://postgres:5432/core"
+      SPRING_DATASOURCE_USERNAME: "${DB_USERNAME:-pd}"
+      SPRING_DATASOURCE_PASSWORD: "${DB_PASSWORD:-pd}"
+      SPRING_APPLICATION_JSON: >-
+        {
+          "project-d.jwt.key": "${JWT_SECRET_KEY:-9a4f2c8d3b7a1e6f45c8a0b3f267d8b1d4e6f3c8a9d2b5f8e3a9c8b5f6v8a3d9}",
+          "project-d.cors.allowed-urls": "${CORS_ALLOWED_URLS:-http://localhost,http://localhost:80}",
+          "project-d.integrations.rule-book.base-url": "http://rulebook:8081",
+          "project-d.integrations.character-sheet.base-url": "http://charactersheet:8082",
+          "project-d.integrations.itemstorage.base-url": "http://itemstorage:8083",
+          "project-d.integrations.notes.base-url": "http://notes:8085",
+          "project-d.integrations.magic.base-url": "http://magic:8086"
+        }
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rulebook:
+        condition: service_started
+      charactersheet:
+        condition: service_started
+      itemstorage:
+        condition: service_started
+      notes:
+        condition: service_started
+      magic:
+        condition: service_started
+    networks:
+      - frontend
+      - backend
+
+  filestorage:
+    build:
+      context: ../filestorage
+    container_name: pd-filestorage
+    restart: unless-stopped
+    expose:
+      - "8079"
+    environment:
+      SERVER_ADDRESS: "0.0.0.0"
+      SPRING_APPLICATION_JSON: >-
+        {
+          "project-d.filestorage.minio.url": "http://minio:9000",
+          "project-d.filestorage.minio.access-key": "${MINIO_ACCESS_KEY:-minioadmin}",
+          "project-d.filestorage.minio.secret-key": "${MINIO_SECRET_KEY:-minioadmin}",
+          "project-d.filestorage.cors.allowed-urls": "${CORS_ALLOWED_URLS:-http://localhost,http://localhost:80}"
+        }
+    depends_on:
+      minio:
+        condition: service_healthy
+    networks:
+      - frontend
+      - backend
+
+  # ---------------------------------------------------------------------------
+  # Frontend
+  # ---------------------------------------------------------------------------
+
+  project-d-ui:
+    build:
+      context: ../project-d-ui
+    container_name: pd-ui
+    restart: unless-stopped
+    expose:
+      - "80"
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+    networks:
+      - frontend
+
+  # ---------------------------------------------------------------------------
+  # HTTPS (Let's Encrypt via Caddy)
+  # ---------------------------------------------------------------------------
+
+  caddy:
+    image: caddy:2-alpine
+    container_name: pd-caddy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8080:8080"
+      - "8079:8079"
+    environment:
+      UI_DOMAIN: "${UI_DOMAIN}"
+      LETSENCRYPT_EMAIL: "${LETSENCRYPT_EMAIL}"
+    volumes:
+      - ./caddy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    networks:
+      - frontend
+
+# =============================================================================
+# Networks
+# =============================================================================
+networks:
+  frontend:
+    driver: bridge
+  backend:
+    driver: bridge
+
+# =============================================================================
+# Volumes
+# =============================================================================
+volumes:
+  postgres_data:
+  minio_data:
+  caddy_data:
+  caddy_config:
