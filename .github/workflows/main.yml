@@ -23,6 +23,7 @@ permissions:
 
 env:
   DEPLOY_PATH: "/root/project-d-auto"
+  DEPLOY_SUBDIR: "project-d-gateway"
 
 jobs:
   deploy:
@@ -128,13 +129,13 @@ jobs:
             --exclude='*.iml' \
             --exclude='.DS_Store' \
             -e "ssh -o StrictHostKeyChecking=accept-new" \
-            . "$DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATH/"
+            . "$DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATH/$DEPLOY_SUBDIR/"
 
       - name: Verify deploy files on server
         run: |
-          ssh "$DEPLOY_USER@$DEPLOY_HOST" "ls -la $DEPLOY_PATH/deploy/ || true"
+          ssh "$DEPLOY_USER@$DEPLOY_HOST" "ls -la $DEPLOY_PATH/$DEPLOY_SUBDIR/deploy/ || true"
 
       - name: Build and deploy with Docker Compose
         run: |
-          COMPOSE_FILE="$DEPLOY_PATH/deploy/docker-compose.yml"
+          COMPOSE_FILE="$DEPLOY_PATH/$DEPLOY_SUBDIR/deploy/docker-compose.yml"
           ssh "$DEPLOY_USER@$DEPLOY_HOST" "docker compose -f $COMPOSE_FILE build && docker compose -f $COMPOSE_FILE up -d"
