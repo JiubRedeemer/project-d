@@ -132,4 +132,5 @@ jobs:
 
       - name: Build and deploy with Docker Compose
         run: |
-          ssh "$DEPLOY_USER@$DEPLOY_HOST" "cd $DEPLOY_PATH/deploy && docker compose build && docker compose up -d"
+          # Use $HOME so the path is expanded on the server (~ often isn't in non-interactive SSH)
+          ssh "$DEPLOY_USER@$DEPLOY_HOST" 'cd $HOME/app/deploy && docker compose build && docker compose up -d'
