@@ -53,7 +53,12 @@ project-d:
       bio-url: bio
       bonus-url: bonus
       health-url: health
+      health-max-url: max
       update-current-health-url: updateCurrent
+      level-url: level
+      update-current-xp-url: updateCurrent
+      level-up-url: up
+      level-down-url: down
       skills-url: skills
       update-mastery-url: updateMastery
       armory-class-url: armoryClass

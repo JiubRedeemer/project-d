@@ -1,9 +1,6 @@
 package com.jiubredeemer.app.charactersheet.character.controller
 
-import com.jiubredeemer.app.charactersheet.character.dto.CharacterBioUpdateRequest
-import com.jiubredeemer.app.charactersheet.character.dto.CharacterDto
-import com.jiubredeemer.app.charactersheet.character.dto.CharacterSkillsDto
-import com.jiubredeemer.app.charactersheet.character.dto.UpdateCurrentHealthRequest
+import com.jiubredeemer.app.charactersheet.character.dto.*
 import com.jiubredeemer.app.charactersheet.character.service.CharacterApiService
 import com.jiubredeemer.app.integration.charactersheet.dto.character.BonusValueUpdateRequest
 import com.jiubredeemer.app.integration.charactersheet.dto.character.CreateCharacterRequest
@@ -116,6 +113,16 @@ class CharacterApiController(
         characterApiService.updateHealthBonusValue(roomId, characterId, bonusValueUpdateRequest)
     }
 
+    @PatchMapping("/{characterId}/health/max")
+    @HasRoleOrThrow("ADMIN", "USER")
+    fun updateHealthMaxValue(
+        @PathVariable roomId: UUID,
+        @PathVariable characterId: UUID,
+        @RequestBody bonusValueUpdateRequest: BonusValueUpdateRequest
+    ) {
+        characterApiService.updateHealthMaxValue(roomId, characterId, bonusValueUpdateRequest)
+    }
+
     @PatchMapping("/{characterId}/health/updateCurrent")
     @HasRoleOrThrow("ADMIN", "USER")
     fun updateCurrentHealthById(
@@ -124,6 +131,36 @@ class CharacterApiController(
         @RequestBody updateCurrentHealthRequest: UpdateCurrentHealthRequest
     ) {
         characterApiService.updateCurrentHealthById(roomId, characterId, updateCurrentHealthRequest)
+    }
+
+    @PatchMapping("/{characterId}/level/updateCurrent")
+    @HasRoleOrThrow("ADMIN", "USER")
+    fun updateCurrentXpById(
+        @PathVariable roomId: UUID,
+        @PathVariable characterId: UUID,
+        @RequestBody updateCurrentXpRequest: UpdateCurrentXpRequest
+    ) {
+        characterApiService.updateCurrentXpById(roomId, characterId, updateCurrentXpRequest)
+    }
+
+    @PostMapping("/{characterId}/level/up")
+    @HasRoleOrThrow("ADMIN", "USER")
+    fun levelUp(
+        @PathVariable roomId: UUID,
+        @PathVariable characterId: UUID,
+        @RequestParam(defaultValue = "false") force: Boolean
+    ) {
+        characterApiService.levelUp(roomId, characterId, force)
+    }
+
+    @PostMapping("/{characterId}/level/down")
+    @HasRoleOrThrow("ADMIN", "USER")
+    fun levelDown(
+        @PathVariable roomId: UUID,
+        @PathVariable characterId: UUID,
+        @RequestParam(defaultValue = "false") force: Boolean
+    ) {
+        characterApiService.levelDown(roomId, characterId, force)
     }
 
     @PatchMapping("/{characterId}/armoryClass/bonus")
@@ -183,8 +220,8 @@ class CharacterApiController(
         @PathVariable characterId: UUID,
         @RequestBody characterSkillsDto: CharacterSkillsDto
     ): CharacterSkillsDto? {
-        characterSkillsDto.characterId = characterId;
-        return characterApiService.saveCharacterSkill(roomId, characterId, characterSkillsDto);
+        characterSkillsDto.characterId = characterId
+        return characterApiService.saveCharacterSkill(roomId, characterId, characterSkillsDto)
     }
 
     @DeleteMapping("/{characterId}/character-skills/{characterSkillId}")
@@ -194,7 +231,7 @@ class CharacterApiController(
         @PathVariable characterId: UUID,
         @PathVariable characterSkillId: UUID
     ) {
-        characterApiService.deleteCharacterSkill(roomId, characterId, characterSkillId);
+        characterApiService.deleteCharacterSkill(roomId, characterId, characterSkillId)
     }
 
     @PatchMapping("/{characterId}/character-skills/{characterSkillId}")
@@ -205,9 +242,9 @@ class CharacterApiController(
         @PathVariable characterSkillId: UUID,
         @RequestBody characterSkillsDto: CharacterSkillsDto
     ): CharacterSkillsDto? {
-        characterSkillsDto.id = characterSkillId;
-        characterSkillsDto.characterId = characterId;
-        return characterApiService.updateCharacterSkill(roomId, characterId, characterSkillId, characterSkillsDto);
+        characterSkillsDto.id = characterSkillId
+        characterSkillsDto.characterId = characterId
+        return characterApiService.updateCharacterSkill(roomId, characterId, characterSkillId, characterSkillsDto)
     }
 
     @PatchMapping("/{characterId}/character-skills/{characterSkillId}/use")
@@ -217,7 +254,7 @@ class CharacterApiController(
         @PathVariable characterId: UUID,
         @PathVariable characterSkillId: UUID
     ): CharacterSkillsDto? {
-        return characterApiService.useCharacterSkill(roomId, characterId, characterSkillId);
+        return characterApiService.useCharacterSkill(roomId, characterId, characterSkillId)
     }
 
     @PostMapping("/{characterId}/rest/{restType}")
@@ -225,8 +262,9 @@ class CharacterApiController(
     fun characterRest(
         @PathVariable roomId: UUID,
         @PathVariable characterId: UUID,
-        @PathVariable restType: RestTypeEnum) {
-      characterApiService.characterRest(roomId, characterId, restType, 0)
+        @PathVariable restType: RestTypeEnum
+    ) {
+        characterApiService.characterRest(roomId, characterId, restType, 0)
     }
 
 
