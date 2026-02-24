@@ -1,5 +1,6 @@
 package com.jiubredeemer.app.itemstorage.inventory.controller
 
+import com.jiubredeemer.app.integration.charactersheet.dto.character.BonusValueUpdateRequest
 import com.jiubredeemer.app.itemstorage.inventory.dto.inventory.EquippedItemsStatsResponse
 import com.jiubredeemer.app.itemstorage.inventory.dto.inventory.InventoryDto
 import com.jiubredeemer.app.itemstorage.inventory.dto.inventory.InventoryItemDto
@@ -114,6 +115,54 @@ class InventoryApiController(
         @PathVariable itemId: UUID
     ): InventoryDto {
         return inventoryApiService.equipItemByCharacterIdAndItemId(roomId, characterId, itemId)
+    }
+
+    @Operation(summary = "Изменить бонусное значение атаки у предмета")
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200", description = "Инвентарь персонажа",
+                content = [Content(schema = Schema(implementation = InventoryDto::class))]
+            ),
+            ApiResponse(
+                responseCode = "403", description = "Недостаточно прав",
+                content = [Content(schema = Schema())]
+            )
+        ]
+    )
+    @PatchMapping("/{roomId}/inventory/{characterId}/items/{itemId}/attack/bonus")
+    @HasRoleOrThrow("ADMIN", "USER")
+    fun addBonusAttackToItemById(
+        @PathVariable roomId: UUID,
+        @PathVariable characterId: UUID,
+        @PathVariable itemId: UUID,
+        @RequestBody bonusValueUpdateRequest: BonusValueUpdateRequest
+    ): InventoryDto {
+        return inventoryApiService.addBonusAttackToItemById(roomId, characterId, itemId, bonusValueUpdateRequest)
+    }
+
+    @Operation(summary = "Изменить бонусное значение урона у предмета")
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200", description = "Инвентарь персонажа",
+                content = [Content(schema = Schema(implementation = InventoryDto::class))]
+            ),
+            ApiResponse(
+                responseCode = "403", description = "Недостаточно прав",
+                content = [Content(schema = Schema())]
+            )
+        ]
+    )
+    @PatchMapping("/{roomId}/inventory/{characterId}/items/{itemId}/damage/bonus")
+    @HasRoleOrThrow("ADMIN", "USER")
+    fun addBonusDamageToItemById(
+        @PathVariable roomId: UUID,
+        @PathVariable characterId: UUID,
+        @PathVariable itemId: UUID,
+        @RequestBody bonusValueUpdateRequest: BonusValueUpdateRequest
+    ): InventoryDto {
+        return inventoryApiService.addBonusDamageToItemById(roomId, characterId, itemId, bonusValueUpdateRequest)
     }
 
     @Operation(summary = "Экипировать/снять предмет с персонажа")
@@ -253,6 +302,6 @@ class InventoryApiController(
         @PathVariable itemId: UUID,
         @PathVariable skillId: UUID
     ) {
-        inventoryApiService.useInventoryItemSkill(roomId, characterId, itemId, skillId);
+        inventoryApiService.useInventoryItemSkill(roomId, characterId, itemId, skillId)
     }
 }

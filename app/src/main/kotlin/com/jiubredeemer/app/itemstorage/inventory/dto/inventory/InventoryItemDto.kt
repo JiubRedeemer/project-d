@@ -10,6 +10,8 @@ data class InventoryItemDto (
     val item: ItemDto?,
     val count: Long?,
     val inUse: Boolean?,
+    val attackBonusValue: Long?,
+    val damageBonusValue: Long?,
     val skills: List<InventoryItemSkillDto>?
 
 )

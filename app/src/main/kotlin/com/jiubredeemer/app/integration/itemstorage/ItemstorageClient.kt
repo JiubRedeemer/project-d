@@ -1,5 +1,6 @@
 package com.jiubredeemer.app.integration.itemstorage
 
+import com.jiubredeemer.app.integration.charactersheet.dto.character.BonusValueUpdateRequest
 import com.jiubredeemer.app.integration.configuration.ItemstorageProperty
 import com.jiubredeemer.app.integration.dto.RestTypeEnum
 import com.jiubredeemer.app.itemstorage.inventory.dto.inventory.EquippedItemsStatsResponse
@@ -61,6 +62,56 @@ class ItemstorageClient(
             return response.body
         } catch (e: Exception) {
             throw IntegrationAccessException("Itemstorage don't response on equipItemByCharacterIdAndItemId, cause: ${e.message}")
+        }
+    }
+
+    fun addBonusAttackToItemById(roomId: UUID, characterId: UUID, itemId: UUID, bonusValueUpdateRequest: BonusValueUpdateRequest): InventoryDto? {
+        try {
+            val uri = UriComponentsBuilder
+                .fromHttpUrl(itemstorageProperty.baseUrl)
+                .pathSegment(itemstorageProperty.apiUrl)
+                .pathSegment(roomId.toString())
+                .pathSegment(itemstorageProperty.inventoryUrl)
+                .pathSegment(characterId.toString())
+                .pathSegment(itemstorageProperty.itemsUrl)
+                .pathSegment(itemId.toString())
+                .pathSegment(itemstorageProperty.attackUrl)
+                .pathSegment(itemstorageProperty.bonusUrl)
+                .pathSegment(bonusValueUpdateRequest.bonusValue.toString())
+                .toUriString()
+            val response = restClient.patch()
+                .uri(uri)
+                .headers { it.addAll(headers) }
+                .retrieve()
+                .toEntity(InventoryDto::class.java)
+            return response.body
+        } catch (e: Exception) {
+            throw IntegrationAccessException("Itemstorage don't response on addBonusAttackToItemById, cause: ${e.message}")
+        }
+    }
+
+    fun addBonusDamageToItemById(roomId: UUID, characterId: UUID, itemId: UUID, bonusValueUpdateRequest: BonusValueUpdateRequest): InventoryDto? {
+        try {
+            val uri = UriComponentsBuilder
+                .fromHttpUrl(itemstorageProperty.baseUrl)
+                .pathSegment(itemstorageProperty.apiUrl)
+                .pathSegment(roomId.toString())
+                .pathSegment(itemstorageProperty.inventoryUrl)
+                .pathSegment(characterId.toString())
+                .pathSegment(itemstorageProperty.itemsUrl)
+                .pathSegment(itemId.toString())
+                .pathSegment(itemstorageProperty.damageUrl)
+                .pathSegment(itemstorageProperty.bonusUrl)
+                .pathSegment(bonusValueUpdateRequest.bonusValue.toString())
+                .toUriString()
+            val response = restClient.patch()
+                .uri(uri)
+                .headers { it.addAll(headers) }
+                .retrieve()
+                .toEntity(InventoryDto::class.java)
+            return response.body
+        } catch (e: Exception) {
+            throw IntegrationAccessException("Itemstorage don't response on addBonusAttackToItemById, cause: ${e.message}")
         }
     }
 
@@ -295,7 +346,7 @@ class ItemstorageClient(
                 .pathSegment(skillId.toString())
                 .pathSegment(itemstorageProperty.useUrl)
                 .toUriString()
-            val response = restClient.post()
+            restClient.post()
                 .uri(uri)
                 .headers { it.addAll(headers) }
                 .retrieve()
