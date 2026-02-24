@@ -1,5 +1,6 @@
 package com.jiubredeemer.app.itemstorage.inventory.service
 
+import com.jiubredeemer.app.integration.charactersheet.dto.character.BonusValueUpdateRequest
 import com.jiubredeemer.app.integration.itemstorage.ItemstorageClient
 import com.jiubredeemer.app.itemstorage.inventory.dto.inventory.EquippedItemsStatsResponse
 import com.jiubredeemer.app.itemstorage.inventory.dto.inventory.InventoryDto
@@ -8,7 +9,6 @@ import com.jiubredeemer.app.itemstorage.inventory.dto.item.ItemDto
 import com.jiubredeemer.app.room.service.RoomAccessChecker
 import com.jiubredeemer.auth.service.AccessChecker
 import com.jiubredeemer.common.exception.NotFoundException
-import com.jiubredeemer.dal.service.UserService
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
 import java.util.*
@@ -18,7 +18,6 @@ class InventoryApiService(
     private val roomAccessChecker: RoomAccessChecker,
     private val accessChecker: AccessChecker,
     private val itemstorageClient: ItemstorageClient,
-    private val userService: UserService,
 ) {
     fun getInventoryByCharacterId(roomId: UUID, characterId: UUID): InventoryDto {
         roomAccessChecker.hasAccessOrThrow(roomId, accessChecker.getCurrentUser().id!!)
@@ -31,6 +30,32 @@ class InventoryApiService(
         roomAccessChecker.hasAccessOrThrow(roomId, accessChecker.getCurrentUser().id!!)
         val inventoryDto: InventoryDto = itemstorageClient.equipItemByCharacterIdAndItemId(roomId, characterId, itemId)
             ?: throw NotFoundException("Inventory not found by character id: $characterId")
+        return inventoryDto
+    }
+
+    fun addBonusAttackToItemById(
+        roomId: UUID,
+        characterId: UUID,
+        itemId: UUID,
+        bonusValueUpdateRequest: BonusValueUpdateRequest
+    ): InventoryDto {
+        roomAccessChecker.hasAccessOrThrow(roomId, accessChecker.getCurrentUser().id!!)
+        val inventoryDto: InventoryDto =
+            itemstorageClient.addBonusAttackToItemById(roomId, characterId, itemId, bonusValueUpdateRequest)
+                ?: throw NotFoundException("Inventory not found by character id: $characterId")
+        return inventoryDto
+    }
+
+    fun addBonusDamageToItemById(
+        roomId: UUID,
+        characterId: UUID,
+        itemId: UUID,
+        bonusValueUpdateRequest: BonusValueUpdateRequest
+    ): InventoryDto {
+        roomAccessChecker.hasAccessOrThrow(roomId, accessChecker.getCurrentUser().id!!)
+        val inventoryDto: InventoryDto =
+            itemstorageClient.addBonusDamageToItemById(roomId, characterId, itemId, bonusValueUpdateRequest)
+                ?: throw NotFoundException("Inventory not found by character id: $characterId")
         return inventoryDto
     }
 

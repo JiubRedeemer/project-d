@@ -77,6 +77,8 @@ project-d:
       items-url: items
       search-url: search
       bonus-url: bonus
+      attack-url: attack
+      damage-url: damage
       skills-url: skills
       use-url: use
       rest-url: rest
