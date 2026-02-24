@@ -1,0 +1,130 @@
+openapi: 3.0.3
+info:
+  title: Character API
+  description: API for characters in room scope
+  version: 0.0.1-SNAPSHOT
+
+servers:
+  - url: /api
+    description: API base path (prepend your server URL)
+
+paths:
+  /rooms/{roomId}/characters/{characterId}/level/updateCurrent:
+    patch:
+      tags:
+        - Characters
+        - Level
+      summary: Update current character XP value
+      operationId: updateCurrentXpById
+      parameters:
+        - name: roomId
+          in: path
+          required: true
+          description: Room ID
+          schema:
+            type: string
+            format: uuid
+        - name: characterId
+          in: path
+          required: true
+          description: Character ID
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateCurrentXpRequest'
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Invalid request (for example, XP value is too large)
+        '404':
+          description: Character level not found
+
+  /rooms/{roomId}/characters/{characterId}/level/up:
+    post:
+      tags:
+        - Characters
+        - Level
+      summary: Increase character level
+      operationId: levelUp
+      parameters:
+        - name: roomId
+          in: path
+          required: true
+          description: Room ID
+          schema:
+            type: string
+            format: uuid
+        - name: characterId
+          in: path
+          required: true
+          description: Character ID
+          schema:
+            type: string
+            format: uuid
+        - name: force
+          in: query
+          required: false
+          description: Force level up (ignore XP threshold)
+          schema:
+            type: boolean
+            default: false
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Not enough XP for level up
+        '404':
+          description: Character level not found
+
+  /rooms/{roomId}/characters/{characterId}/level/down:
+    post:
+      tags:
+        - Characters
+        - Level
+      summary: Decrease character level
+      operationId: levelDown
+      parameters:
+        - name: roomId
+          in: path
+          required: true
+          description: Room ID
+          schema:
+            type: string
+            format: uuid
+        - name: characterId
+          in: path
+          required: true
+          description: Character ID
+          schema:
+            type: string
+            format: uuid
+        - name: force
+          in: query
+          required: false
+          description: Force level down flag (currently not used by service)
+          schema:
+            type: boolean
+            default: false
+      responses:
+        '200':
+          description: OK
+        '404':
+          description: Character level not found
+
+components:
+  schemas:
+    UpdateCurrentXpRequest:
+      type: object
+      required:
+        - value
+      properties:
+        value:
+          type: integer
+          format: int64
+          description: XP delta (can be positive or negative)
