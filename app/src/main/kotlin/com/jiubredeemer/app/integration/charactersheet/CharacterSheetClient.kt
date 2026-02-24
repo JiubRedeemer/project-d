@@ -1,14 +1,7 @@
 package com.jiubredeemer.app.integration.charactersheet
 
-import com.jiubredeemer.app.charactersheet.character.dto.CharacterBioUpdateRequest
-import com.jiubredeemer.app.charactersheet.character.dto.CharacterDto
-import com.jiubredeemer.app.charactersheet.character.dto.CharacterSkillsDto
-import com.jiubredeemer.app.charactersheet.character.dto.UpdateCurrentHealthRequest
-import com.jiubredeemer.app.integration.charactersheet.dto.character.BonusValueUpdateRequest
-import com.jiubredeemer.app.integration.charactersheet.dto.character.CreateCharacterRequest
-import com.jiubredeemer.app.integration.charactersheet.dto.character.FindCharacterByUserIdAndRoomIdRequest
-import com.jiubredeemer.app.integration.charactersheet.dto.character.RestRequest
-import com.jiubredeemer.app.integration.charactersheet.dto.character.UpdateMasteryRequest
+import com.jiubredeemer.app.charactersheet.character.dto.*
+import com.jiubredeemer.app.integration.charactersheet.dto.character.*
 import com.jiubredeemer.app.integration.configuration.CharacterSheetProperty
 import com.jiubredeemer.app.integration.dto.RestTypeEnum
 import com.jiubredeemer.app.integration.dto.room.RoomCreateRequestDto
@@ -17,7 +10,6 @@ import org.springframework.core.ParameterizedTypeReference
 import org.springframework.http.HttpHeaders
 import org.springframework.stereotype.Service
 import org.springframework.web.client.RestClient
-import org.springframework.web.client.bodyWithType
 import org.springframework.web.util.UriComponentsBuilder
 import java.util.*
 
@@ -63,7 +55,7 @@ class CharacterSheetClient(
         }
     }
 
-    fun createCharacter(roomId: UUID, createCharacterRequest: CreateCharacterRequest): CharacterDto? {
+    fun createCharacter(createCharacterRequest: CreateCharacterRequest): CharacterDto? {
         try {
             val uri = UriComponentsBuilder
                 .fromHttpUrl(characterSheetProperty.baseUrl)
@@ -273,6 +265,28 @@ class CharacterSheetClient(
             throw IntegrationAccessException("CharacterSheet don't response on updateHealthBonusValue, cause: ${e.message}")
         }
     }
+    fun updateHealthMaxValue(
+        characterId: UUID,
+        bonusValueRequest: BonusValueUpdateRequest
+    ) {
+        try {
+            val uri = UriComponentsBuilder
+                .fromHttpUrl(characterSheetProperty.baseUrl)
+                .pathSegment(characterSheetProperty.apiUrl)
+                .pathSegment(characterSheetProperty.charactersUrl)
+                .pathSegment(characterId.toString())
+                .pathSegment(characterSheetProperty.healthUrl)
+                .pathSegment(characterSheetProperty.healthMaxUrl)
+                .toUriString()
+            restClient.patch()
+                .uri(uri)
+                .headers { it.addAll(headers) }
+                .body(bonusValueRequest)
+                .retrieve()
+        } catch (e: Exception) {
+            throw IntegrationAccessException("CharacterSheet don't response on updateHealthMaxValue, cause: ${e.message}")
+        }
+    }
 
     fun updateArmoryClassBonusValue(
         characterId: UUID,
@@ -360,6 +374,66 @@ class CharacterSheetClient(
                 .retrieve()
         } catch (e: Exception) {
             throw IntegrationAccessException("CharacterSheet don't response on updateCurrentHealthById, cause: ${e.message}")
+        }
+    }
+
+    fun updateCurrentXpById(characterId: UUID, updateCurrentXpRequest: UpdateCurrentXpRequest) {
+        try {
+            val uri = UriComponentsBuilder
+                .fromHttpUrl(characterSheetProperty.baseUrl)
+                .pathSegment(characterSheetProperty.apiUrl)
+                .pathSegment(characterSheetProperty.charactersUrl)
+                .pathSegment(characterId.toString())
+                .pathSegment(characterSheetProperty.levelUrl)
+                .pathSegment(characterSheetProperty.updateCurrentXpUrl)
+                .toUriString()
+            restClient.patch()
+                .uri(uri)
+                .headers { it.addAll(headers) }
+                .body(updateCurrentXpRequest)
+                .retrieve()
+        } catch (e: Exception) {
+            throw IntegrationAccessException("CharacterSheet don't response on updateCurrentXpById, cause: ${e.message}")
+        }
+    }
+
+    fun levelUp(characterId: UUID, force: Boolean = false) {
+        try {
+            val uri = UriComponentsBuilder
+                .fromHttpUrl(characterSheetProperty.baseUrl)
+                .pathSegment(characterSheetProperty.apiUrl)
+                .pathSegment(characterSheetProperty.charactersUrl)
+                .pathSegment(characterId.toString())
+                .pathSegment(characterSheetProperty.levelUrl)
+                .pathSegment(characterSheetProperty.levelUpUrl)
+                .queryParam("force", force)
+                .toUriString()
+            restClient.post()
+                .uri(uri)
+                .headers { it.addAll(headers) }
+                .retrieve()
+        } catch (e: Exception) {
+            throw IntegrationAccessException("CharacterSheet don't response on levelUp, cause: ${e.message}")
+        }
+    }
+
+    fun levelDown(characterId: UUID, force: Boolean = false) {
+        try {
+            val uri = UriComponentsBuilder
+                .fromHttpUrl(characterSheetProperty.baseUrl)
+                .pathSegment(characterSheetProperty.apiUrl)
+                .pathSegment(characterSheetProperty.charactersUrl)
+                .pathSegment(characterId.toString())
+                .pathSegment(characterSheetProperty.levelUrl)
+                .pathSegment(characterSheetProperty.levelDownUrl)
+                .queryParam("force", force)
+                .toUriString()
+            restClient.post()
+                .uri(uri)
+                .headers { it.addAll(headers) }
+                .retrieve()
+        } catch (e: Exception) {
+            throw IntegrationAccessException("CharacterSheet don't response on levelDown, cause: ${e.message}")
         }
     }
 

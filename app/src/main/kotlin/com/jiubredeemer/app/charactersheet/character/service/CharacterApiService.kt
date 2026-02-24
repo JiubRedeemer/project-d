@@ -1,9 +1,6 @@
 package com.jiubredeemer.app.charactersheet.character.service
 
-import com.jiubredeemer.app.charactersheet.character.dto.CharacterBioUpdateRequest
-import com.jiubredeemer.app.charactersheet.character.dto.CharacterDto
-import com.jiubredeemer.app.charactersheet.character.dto.CharacterSkillsDto
-import com.jiubredeemer.app.charactersheet.character.dto.UpdateCurrentHealthRequest
+import com.jiubredeemer.app.charactersheet.character.dto.*
 import com.jiubredeemer.app.integration.charactersheet.CharacterSheetClient
 import com.jiubredeemer.app.integration.charactersheet.dto.character.BonusValueUpdateRequest
 import com.jiubredeemer.app.integration.charactersheet.dto.character.CreateCharacterRequest
@@ -29,7 +26,7 @@ class CharacterApiService(
     fun createCharacter(roomId: UUID, createCharacterRequest: CreateCharacterRequest): CharacterDto? {
         roomAccessChecker.hasAccessOrThrow(roomId, accessChecker.getCurrentUser().id!!)
         createCharacterRequest.userId = accessChecker.getCurrentUser().id!!
-        val characterUUID: CharacterDto? = characterSheetClient.createCharacter(roomId, createCharacterRequest)
+        val characterUUID: CharacterDto? = characterSheetClient.createCharacter(createCharacterRequest)
         return characterUUID
     }
 
@@ -45,8 +42,8 @@ class CharacterApiService(
         val character: CharacterDto? = characterSheetClient.findByCharacterId(characterId)
         try {
             character?.itemStats = inventoryApiService.getEquippedItemStats(roomId, characterId)
-        } catch (exception: Exception) {
-            inventoryApiService.getInventoryByCharacterId(roomId, characterId);
+        } catch (_: Exception) {
+            inventoryApiService.getInventoryByCharacterId(roomId, characterId)
             character?.itemStats = inventoryApiService.getEquippedItemStats(roomId, characterId)
         }
         return character
@@ -96,6 +93,11 @@ class CharacterApiService(
         characterSheetClient.updateHealthBonusValue(characterId, bonusValueUpdateRequest)
     }
 
+    fun updateHealthMaxValue(roomId: UUID, characterId: UUID, bonusValueUpdateRequest: BonusValueUpdateRequest) {
+        roomAccessChecker.hasAccessOrThrow(roomId, accessChecker.getCurrentUser().id!!)
+        characterSheetClient.updateHealthMaxValue(characterId, bonusValueUpdateRequest)
+    }
+
     fun updateAbilityBonusValue(
         roomId: UUID,
         characterId: UUID,
@@ -113,6 +115,25 @@ class CharacterApiService(
     ) {
         roomAccessChecker.hasAccessOrThrow(roomId, accessChecker.getCurrentUser().id!!)
         characterSheetClient.updateCurrentHealthById(characterId, updateCurrentHealthRequest)
+    }
+
+    fun updateCurrentXpById(
+        roomId: UUID,
+        characterId: UUID,
+        updateCurrentXpRequest: UpdateCurrentXpRequest
+    ) {
+        roomAccessChecker.hasAccessOrThrow(roomId, accessChecker.getCurrentUser().id!!)
+        characterSheetClient.updateCurrentXpById(characterId, updateCurrentXpRequest)
+    }
+
+    fun levelUp(roomId: UUID, characterId: UUID, force: Boolean) {
+        roomAccessChecker.hasAccessOrThrow(roomId, accessChecker.getCurrentUser().id!!)
+        characterSheetClient.levelUp(characterId, force)
+    }
+
+    fun levelDown(roomId: UUID, characterId: UUID, force: Boolean) {
+        roomAccessChecker.hasAccessOrThrow(roomId, accessChecker.getCurrentUser().id!!)
+        characterSheetClient.levelDown(characterId, force)
     }
 
     fun updateSkillMasteryByCode(
@@ -149,7 +170,7 @@ class CharacterApiService(
         characterSkillsDto: CharacterSkillsDto,
     ): CharacterSkillsDto? {
         roomAccessChecker.hasAccessOrThrow(roomId, accessChecker.getCurrentUser().id!!)
-        return characterSheetClient.saveCharacterSkill(characterId, characterSkillsDto);
+        return characterSheetClient.saveCharacterSkill(characterId, characterSkillsDto)
     }
 
     fun deleteCharacterSkill(
@@ -158,7 +179,7 @@ class CharacterApiService(
         characterSkillsId: UUID,
     ) {
         roomAccessChecker.hasAccessOrThrow(roomId, accessChecker.getCurrentUser().id!!)
-        characterSheetClient.deleteCharacterSkill(characterId, characterSkillsId);
+        characterSheetClient.deleteCharacterSkill(characterId, characterSkillsId)
     }
 
     fun updateCharacterSkill(
@@ -168,7 +189,7 @@ class CharacterApiService(
         characterSkillsDto: CharacterSkillsDto,
     ): CharacterSkillsDto? {
         roomAccessChecker.hasAccessOrThrow(roomId, accessChecker.getCurrentUser().id!!)
-        return characterSheetClient.updateCharacterSkill(characterId, characterSkillsId, characterSkillsDto);
+        return characterSheetClient.updateCharacterSkill(characterId, characterSkillsId, characterSkillsDto)
     }
 
     fun useCharacterSkill(
@@ -177,7 +198,7 @@ class CharacterApiService(
         characterSkillsId: UUID
     ): CharacterSkillsDto? {
         roomAccessChecker.hasAccessOrThrow(roomId, accessChecker.getCurrentUser().id!!)
-        return characterSheetClient.useCharacterSkill(characterId, characterSkillsId);
+        return characterSheetClient.useCharacterSkill(characterId, characterSkillsId)
     }
 
     fun characterRest(roomId: UUID, characterId: UUID, restType: RestTypeEnum, hpDiceCount: Int) {
