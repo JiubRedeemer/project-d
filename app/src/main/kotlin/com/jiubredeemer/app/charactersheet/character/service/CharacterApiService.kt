@@ -12,6 +12,7 @@ import com.jiubredeemer.app.itemstorage.inventory.service.InventoryApiService
 import com.jiubredeemer.app.room.service.RoomAccessChecker
 import com.jiubredeemer.auth.service.AccessChecker
 import com.jiubredeemer.dal.repository.RoomsUserRepository
+import com.jiubredeemer.dal.repository.UserRepository
 import org.springframework.stereotype.Service
 import java.util.*
 
@@ -23,7 +24,8 @@ class CharacterApiService(
     private val inventoryApiService: InventoryApiService,
     private val itemstorageClient: ItemstorageClient,
     private val magicClient: MagicClient,
-    private val roomsUserRepository: RoomsUserRepository
+    private val roomsUserRepository: RoomsUserRepository,
+    private val userRepository: UserRepository
 ) {
     fun createCharacter(roomId: UUID, createCharacterRequest: CreateCharacterRequest): CharacterDto? {
         roomAccessChecker.hasAccessOrThrow(roomId, accessChecker.getCurrentUser().id!!)
@@ -36,7 +38,9 @@ class CharacterApiService(
         roomAccessChecker.hasAccessOrThrow(roomId, accessChecker.getCurrentUser().id!!)
         val userId = accessChecker.getCurrentUser().id!!
         val findByRoomAndUser = roomsUserRepository.findByRoomAndUser(roomId, userId)
-        val characters: List<CharacterDto>? = characterSheetClient.findAllByRoomIdAndUserId(roomId, userId, findByRoomAndUser?.roles)
+        val characters: List<CharacterDto>? =
+            characterSheetClient.findAllByRoomIdAndUserId(roomId, userId, findByRoomAndUser?.roles)
+        characters?.forEach { it -> it.ownerUsername = userRepository.findById(it.userId!!).orElse(null)?.username }
         return characters
     }
 
