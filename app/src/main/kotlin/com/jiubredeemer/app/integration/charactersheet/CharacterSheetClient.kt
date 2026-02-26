@@ -6,6 +6,7 @@ import com.jiubredeemer.app.integration.configuration.CharacterSheetProperty
 import com.jiubredeemer.app.integration.dto.RestTypeEnum
 import com.jiubredeemer.app.integration.dto.room.RoomCreateRequestDto
 import com.jiubredeemer.common.exception.IntegrationAccessException
+import com.jiubredeemer.dal.entity.RoomUser
 import org.springframework.core.ParameterizedTypeReference
 import org.springframework.http.HttpHeaders
 import org.springframework.stereotype.Service
@@ -74,7 +75,7 @@ class CharacterSheetClient(
         }
     }
 
-    fun findAllByRoomIdAndUserId(roomId: UUID, userId: UUID): List<CharacterDto>? {
+    fun findAllByRoomIdAndUserId(roomId: UUID, userId: UUID, roles: List<RoomUser.Role>?): List<CharacterDto>? {
         try {
             val uri = UriComponentsBuilder
                 .fromHttpUrl(characterSheetProperty.baseUrl)
@@ -84,7 +85,7 @@ class CharacterSheetClient(
             val response = restClient.post()
                 .uri(uri)
                 .headers { it.addAll(headers) }
-                .body(FindCharacterByUserIdAndRoomIdRequest(roomId, userId))
+                .body(FindCharacterByUserIdAndRoomIdRequest(roomId, userId, roles))
                 .retrieve()
                 .toEntity(object : ParameterizedTypeReference<List<CharacterDto>>() {})
             return response.body
