@@ -8,5 +8,6 @@ data class RaceDto(
     val name: String,
     val code: String,
     val description: String?,
+    val imgUrl: String?,
     val stats: RaceStatsDto
 )

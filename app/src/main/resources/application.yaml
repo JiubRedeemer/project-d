@@ -37,6 +37,8 @@ project-d:
       rooms-url: rooms
       races-url: races
       classes-url: classes
+      race-species-url: race-species
+      class-groups-url: class-groups
       abilities-url: abilities
       skills-url: skills
       skills-by-code-url: byCode

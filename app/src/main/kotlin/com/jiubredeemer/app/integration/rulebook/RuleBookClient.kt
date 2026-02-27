@@ -4,7 +4,9 @@ import com.jiubredeemer.app.integration.configuration.RuleBookProperty
 import com.jiubredeemer.app.integration.dto.request.RequestByRoomId
 import com.jiubredeemer.app.integration.dto.room.RoomCreateRequestDto
 import com.jiubredeemer.app.integration.rulebook.dto.ability.AbilityDto
+import com.jiubredeemer.app.integration.rulebook.dto.clazz.ClazzGroupDto
 import com.jiubredeemer.app.integration.rulebook.dto.clazz.ClazzDto
+import com.jiubredeemer.app.integration.rulebook.dto.race.RaceGroupDto
 import com.jiubredeemer.app.integration.rulebook.dto.race.RaceDto
 import com.jiubredeemer.app.integration.rulebook.dto.skill.SkillByClassRequest
 import com.jiubredeemer.app.integration.rulebook.dto.skill.SkillByCodeRequest
@@ -75,6 +77,41 @@ class RuleBookClient(
             .retrieve()
             .toEntity(object :
                 ParameterizedTypeReference<List<ClazzDto>>() {})
+
+        return response.body
+    }
+
+    fun getGroupedRacesForRoom(roomId: UUID): List<RaceGroupDto>? {
+        val uri = UriComponentsBuilder
+            .fromHttpUrl(ruleBookProperty.baseUrl)
+            .pathSegment(ruleBookProperty.apiUrl)
+            .pathSegment(ruleBookProperty.raceSpeciesUrl)
+            .toUriString()
+
+        val response = restClient.post()
+            .uri(uri)
+            .headers { it.addAll(headers) }
+            .body(RequestByRoomId(roomId))
+            .retrieve()
+            .toEntity(object : ParameterizedTypeReference<List<RaceGroupDto>>() {})
+
+        return response.body
+    }
+
+    fun getGroupedClassesForRoom(roomId: UUID): List<ClazzGroupDto>? {
+        val uri = UriComponentsBuilder
+            .fromHttpUrl(ruleBookProperty.baseUrl)
+            .pathSegment(ruleBookProperty.apiUrl)
+            .pathSegment(ruleBookProperty.classGroupsUrl)
+            .toUriString()
+
+        val response = restClient.post()
+            .uri(uri)
+            .headers { it.addAll(headers) }
+            .body(RequestByRoomId(roomId))
+            .retrieve()
+            .toEntity(object :
+                ParameterizedTypeReference<List<ClazzGroupDto>>() {})
 
         return response.body
     }

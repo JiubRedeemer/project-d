@@ -1,6 +1,7 @@
 package com.jiubredeemer.app.rulebook.clazz.service
 
 import com.jiubredeemer.app.integration.rulebook.RuleBookClient
+import com.jiubredeemer.app.integration.rulebook.dto.clazz.ClazzGroupDto
 import com.jiubredeemer.app.integration.rulebook.dto.clazz.ClazzDto
 import com.jiubredeemer.app.room.service.RoomAccessChecker
 import com.jiubredeemer.app.rulebook.clazz.model.ClassCreateInfoDto
@@ -14,9 +15,16 @@ class ClassApiService(
     private val accessChecker: AccessChecker,
     private val ruleBookClient: RuleBookClient
 ) {
+    fun getGroupedClasses(roomId: UUID): List<ClazzGroupDto> {
+        roomAccessChecker.hasAccessOrThrow(roomId, accessChecker.getCurrentUser().id!!)
+        return ruleBookClient.getGroupedClassesForRoom(roomId) ?: listOf()
+    }
+
     fun getClasses(roomId: UUID): List<ClassCreateInfoDto> {
         roomAccessChecker.hasAccessOrThrow(roomId, accessChecker.getCurrentUser().id!!)
-        val classesForRoom: List<ClazzDto> = ruleBookClient.getClassesForRoom(roomId) ?: return listOf()
-        return classesForRoom.map { ClassCreateInfoDto(it.name, it.description ?: "", it.code, it.stats) }
+        val classesForRoom: List<ClazzDto> = ruleBookClient.getGroupedClassesForRoom(roomId)
+            ?.flatMap { clazzGroup -> listOfNotNull(clazzGroup.clazz) + clazzGroup.subClazzes }
+            ?: return listOf()
+        return classesForRoom.map { ClassCreateInfoDto(it.name, it.description ?: "", it.code, it.imgUrl, it.stats) }
     }
 }

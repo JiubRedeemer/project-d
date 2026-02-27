@@ -8,5 +8,6 @@ data class ClazzDto(
     val name: String,
     val description: String?,
     val code: String,
+    val imgUrl: String?,
     val stats: ClazzStatsDto
 )
