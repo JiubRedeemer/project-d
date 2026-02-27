@@ -1,8 +1,8 @@
-package com.jiubredeemer.app.rulebook.clazz.controller
+﻿package com.jiubredeemer.app.rulebook.clazz.controller
 
+import com.jiubredeemer.app.integration.rulebook.dto.clazz.ClazzGroupDto
 import com.jiubredeemer.app.rulebook.clazz.model.ClassCreateInfoDto
 import com.jiubredeemer.app.rulebook.clazz.service.ClassApiService
-import com.jiubredeemer.app.rulebook.race.model.RaceCreateInfoDto
 import com.jiubredeemer.auth.annotation.HasRoleOrThrow
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Content
@@ -18,20 +18,25 @@ import java.util.*
 
 @RestController
 @RequestMapping("/api/rooms")
-@Tag(name = "Классы", description = "API для управления классами")
+@Tag(name = "Classes", description = "API for classes")
 class ClassApiController(
     private val classApiService: ClassApiService
 ) {
+    @GetMapping("/{roomId}/classes/grouped")
+    @HasRoleOrThrow("ADMIN", "USER")
+    fun getGroupedClasses(@PathVariable roomId: UUID): List<ClazzGroupDto> {
+        return classApiService.getGroupedClasses(roomId)
+    }
 
-    @Operation(summary = "Получить список названий и описаний классов для комнаты")
+    @Operation(summary = "Get classes for room")
     @ApiResponses(
         value = [
             ApiResponse(
-                responseCode = "200", description = "Список классов доступных для комнаты",
-                content = [Content(schema = Schema(implementation = RaceCreateInfoDto::class))]
+                responseCode = "200", description = "List of classes for room",
+                content = [Content(schema = Schema(implementation = ClassCreateInfoDto::class))]
             ),
             ApiResponse(
-                responseCode = "403", description = "Недостаточно прав",
+                responseCode = "403", description = "Access denied",
                 content = [Content(schema = Schema())]
             )
         ]
@@ -41,5 +46,4 @@ class ClassApiController(
     fun getClasses(@PathVariable roomId: UUID): List<ClassCreateInfoDto> {
         return classApiService.getClasses(roomId)
     }
-
 }

@@ -11,6 +11,8 @@ data class RuleBookProperty(
     var roomsUrl: String = "",
     var racesUrl: String = "",
     var classesUrl: String = "",
+    var raceSpeciesUrl: String = "",
+    var classGroupsUrl: String = "",
     var abilitiesUrl: String = "",
     var skillsUrl: String = "",
     var skillsByCodeUrl: String = "",

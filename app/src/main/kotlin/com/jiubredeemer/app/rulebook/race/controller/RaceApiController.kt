@@ -1,5 +1,6 @@
-package com.jiubredeemer.app.rulebook.race.controller
+﻿package com.jiubredeemer.app.rulebook.race.controller
 
+import com.jiubredeemer.app.integration.rulebook.dto.race.RaceGroupDto
 import com.jiubredeemer.app.rulebook.race.model.RaceCreateInfoDto
 import com.jiubredeemer.app.rulebook.race.service.RaceApiService
 import com.jiubredeemer.auth.annotation.HasRoleOrThrow
@@ -17,20 +18,25 @@ import java.util.*
 
 @RestController
 @RequestMapping("/api/rooms")
-@Tag(name = "Расы", description = "API для управления расами")
+@Tag(name = "Races", description = "API for races")
 class RaceApiController(
     private val raceApiService: RaceApiService
 ) {
+    @GetMapping("/{roomId}/races/grouped")
+    @HasRoleOrThrow("ADMIN", "USER")
+    fun getGroupedRaces(@PathVariable roomId: UUID): List<RaceGroupDto> {
+        return raceApiService.getGroupedRaces(roomId)
+    }
 
-    @Operation(summary = "Получить список названий и описаний рас для комнаты")
+    @Operation(summary = "Get races for room")
     @ApiResponses(
         value = [
             ApiResponse(
-                responseCode = "200", description = "Список рас доступных для комнаты",
+                responseCode = "200", description = "List of races for room",
                 content = [Content(schema = Schema(implementation = RaceCreateInfoDto::class))]
             ),
             ApiResponse(
-                responseCode = "403", description = "Недостаточно прав",
+                responseCode = "403", description = "Access denied",
                 content = [Content(schema = Schema())]
             )
         ]
@@ -40,5 +46,4 @@ class RaceApiController(
     fun getRaces(@PathVariable roomId: UUID): List<RaceCreateInfoDto> {
         return raceApiService.getRaces(roomId)
     }
-
 }
