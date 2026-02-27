@@ -45,7 +45,7 @@ public class RoomApiService {
         final UserDto currentUser = getCurrentUser();
         final Room createdRoom = roomService.create(roomDtoConverter.createRequestToRoomDto(request),
                 Objects.requireNonNull(currentUser.getId()));
-        persistRoomInModules(createdRoom);
+        persistRoomInModules(createdRoom, request.getRules());
         return new CreateRoomResponse(createdRoom.getId());
     }
 
@@ -57,12 +57,12 @@ public class RoomApiService {
                 .toList();
     }
 
-    private void persistRoomInModules(Room createdRoom) {
+    private void persistRoomInModules(Room createdRoom, RuleTypeEnum rules) {
         try {
             ruleBookClient.persistRoom(new RoomCreateRequestDto(
                     Objects.requireNonNull(createdRoom.getId()),
                     Objects.requireNonNull(Objects.requireNonNull(createdRoom.getOwner()).getId()),
-                    RuleTypeEnum.DND5E));
+                    rules));
             characterSheetClient.persistRoom(new RoomCreateRequestDto(createdRoom.getId(), createdRoom.getOwner().getId(), RuleTypeEnum.DND5E));
         } catch (IntegrationAccessException integrationAccessException) {
             //Удаляем комнату везде, если какие то проблемы при создании
