@@ -2,10 +2,10 @@ package com.jiubredeemer.app.integration.rulebook.dto.race
 
 import java.util.*
 
-data class RaceTraitsDto(
+data class RaceTraitDto(
     val id: UUID,
     val raceStatsId: UUID,
     val name: String,
     val code: String,
-    val description: String
+    val description: String?
 )

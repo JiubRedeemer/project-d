@@ -64,6 +64,74 @@ class RuleBookClient(
         return response.body
     }
 
+    fun createRace(raceDto: RaceDto): RaceDto? {
+        val uri = UriComponentsBuilder
+            .fromHttpUrl(ruleBookProperty.baseUrl)
+            .pathSegment(ruleBookProperty.apiUrl)
+            .pathSegment(ruleBookProperty.racesUrl)
+            .toUriString()
+
+        val response = restClient.put()
+            .uri(uri)
+            .headers { it.addAll(headers) }
+            .body(raceDto)
+            .retrieve()
+            .toEntity(RaceDto::class.java)
+        return response.body
+    }
+
+    fun getRootRacesForRoom(roomId: UUID): List<RaceDto>? {
+        val uri = UriComponentsBuilder
+            .fromHttpUrl(ruleBookProperty.baseUrl)
+            .pathSegment(ruleBookProperty.apiUrl)
+            .pathSegment(ruleBookProperty.racesUrl)
+            .pathSegment("root")
+            .toUriString()
+
+        val response = restClient.post()
+            .uri(uri)
+            .headers { it.addAll(headers) }
+            .body(RequestByRoomId(roomId))
+            .retrieve()
+            .toEntity(object : ParameterizedTypeReference<List<RaceDto>>() {})
+        return response.body
+    }
+
+    fun getRaceByCode(roomId: UUID, code: String): RaceDto? {
+        val uri = UriComponentsBuilder
+            .fromHttpUrl(ruleBookProperty.baseUrl)
+            .pathSegment(ruleBookProperty.apiUrl)
+            .pathSegment(ruleBookProperty.racesUrl)
+            .pathSegment(code)
+            .toUriString()
+
+        val response = restClient.post()
+            .uri(uri)
+            .headers { it.addAll(headers) }
+            .body(RequestByRoomId(roomId))
+            .retrieve()
+            .toEntity(RaceDto::class.java)
+        return response.body
+    }
+
+    fun getRaceSubspeciesByCode(roomId: UUID, code: String): List<RaceDto>? {
+        val uri = UriComponentsBuilder
+            .fromHttpUrl(ruleBookProperty.baseUrl)
+            .pathSegment(ruleBookProperty.apiUrl)
+            .pathSegment(ruleBookProperty.racesUrl)
+            .pathSegment(code)
+            .pathSegment("subspecies")
+            .toUriString()
+
+        val response = restClient.post()
+            .uri(uri)
+            .headers { it.addAll(headers) }
+            .body(RequestByRoomId(roomId))
+            .retrieve()
+            .toEntity(object : ParameterizedTypeReference<List<RaceDto>>() {})
+        return response.body
+    }
+
     fun getClassesForRoom(roomId: UUID): List<ClazzDto>? {
         val uri = UriComponentsBuilder
             .fromHttpUrl(ruleBookProperty.baseUrl)
@@ -79,6 +147,74 @@ class RuleBookClient(
             .toEntity(object :
                 ParameterizedTypeReference<List<ClazzDto>>() {})
 
+        return response.body
+    }
+
+    fun createClass(clazzDto: ClazzDto): ClazzDto? {
+        val uri = UriComponentsBuilder
+            .fromHttpUrl(ruleBookProperty.baseUrl)
+            .pathSegment(ruleBookProperty.apiUrl)
+            .pathSegment(ruleBookProperty.classesUrl)
+            .toUriString()
+
+        val response = restClient.put()
+            .uri(uri)
+            .headers { it.addAll(headers) }
+            .body(clazzDto)
+            .retrieve()
+            .toEntity(ClazzDto::class.java)
+        return response.body
+    }
+
+    fun getRootClassesForRoom(roomId: UUID): List<ClazzDto>? {
+        val uri = UriComponentsBuilder
+            .fromHttpUrl(ruleBookProperty.baseUrl)
+            .pathSegment(ruleBookProperty.apiUrl)
+            .pathSegment(ruleBookProperty.classesUrl)
+            .pathSegment("root")
+            .toUriString()
+
+        val response = restClient.post()
+            .uri(uri)
+            .headers { it.addAll(headers) }
+            .body(RequestByRoomId(roomId))
+            .retrieve()
+            .toEntity(object : ParameterizedTypeReference<List<ClazzDto>>() {})
+        return response.body
+    }
+
+    fun getClassByCode(roomId: UUID, code: String): ClazzDto? {
+        val uri = UriComponentsBuilder
+            .fromHttpUrl(ruleBookProperty.baseUrl)
+            .pathSegment(ruleBookProperty.apiUrl)
+            .pathSegment(ruleBookProperty.classesUrl)
+            .pathSegment(code)
+            .toUriString()
+
+        val response = restClient.post()
+            .uri(uri)
+            .headers { it.addAll(headers) }
+            .body(RequestByRoomId(roomId))
+            .retrieve()
+            .toEntity(ClazzDto::class.java)
+        return response.body
+    }
+
+    fun getSubClassesForRoom(roomId: UUID, code: String): List<ClazzDto>? {
+        val uri = UriComponentsBuilder
+            .fromHttpUrl(ruleBookProperty.baseUrl)
+            .pathSegment(ruleBookProperty.apiUrl)
+            .pathSegment(ruleBookProperty.classesUrl)
+            .pathSegment(code)
+            .pathSegment("subclasses")
+            .toUriString()
+
+        val response = restClient.post()
+            .uri(uri)
+            .headers { it.addAll(headers) }
+            .body(RequestByRoomId(roomId))
+            .retrieve()
+            .toEntity(object : ParameterizedTypeReference<List<ClazzDto>>() {})
         return response.body
     }
 
@@ -204,6 +340,22 @@ class RuleBookClient(
             .retrieve()
             .toEntity(object : ParameterizedTypeReference<List<BackgroundDto>>() {})
 
+        return response.body
+    }
+
+    fun createBackground(backgroundDto: BackgroundDto): BackgroundDto? {
+        val uri = UriComponentsBuilder
+            .fromHttpUrl(ruleBookProperty.baseUrl)
+            .pathSegment(ruleBookProperty.apiUrl)
+            .pathSegment(ruleBookProperty.backgroundsUrl)
+            .toUriString()
+
+        val response = restClient.put()
+            .uri(uri)
+            .headers { it.addAll(headers) }
+            .body(backgroundDto)
+            .retrieve()
+            .toEntity(BackgroundDto::class.java)
         return response.body
     }
 

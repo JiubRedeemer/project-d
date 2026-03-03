@@ -31,6 +31,27 @@ paths:
           description: Некорректный идентификатор комнаты
         "404":
           description: Комната не найдена
+    put:
+      tags:
+        - Background
+      summary: Создание предыстории
+      operationId: createBackground
+      description: Создаёт новую предысторию (D&D 2024)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BackgroundDto'
+      responses:
+        "200":
+          description: Предыстория успешно создана
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BackgroundDto'
+        "400":
+          description: Некорректные данные запроса
 
   /api/backgrounds/{code}:
     post:

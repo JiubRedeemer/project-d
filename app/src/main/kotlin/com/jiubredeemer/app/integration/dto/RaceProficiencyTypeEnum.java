@@ -1,5 +1,5 @@
 package com.jiubredeemer.app.integration.dto;
 
-public enum RaceProficienciesTypeEnum {
+public enum RaceProficiencyTypeEnum {
     WEAPON, ARMOR, INSTRUMENT, ABILITY
 }

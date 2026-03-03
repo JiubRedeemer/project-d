@@ -1,5 +1,6 @@
 package com.jiubredeemer.app.room.controller
 
+import com.jiubredeemer.app.integration.dto.RuleTypeEnum
 import com.jiubredeemer.app.room.model.request.CreateRoomRequest
 import com.jiubredeemer.app.room.model.response.CreateRoomResponse
 import com.jiubredeemer.app.room.model.response.RoomShortResponse
@@ -36,6 +37,13 @@ class RoomApiController(
     @PutMapping
     @HasRoleOrThrow("ADMIN", "USER")
     fun createRoom(@RequestBody request: CreateRoomRequest): CreateRoomResponse {
+        if (RuleTypeEnum.HOMEBREW.name == request.rules?.name) {
+            if (request.baseRules == null) {
+                throw IllegalArgumentException("Укажи базовый тип правил, иначе нихера работать не будет")
+            }
+        } else {
+            request.baseRules = request.rules
+        }
         return roomApiService.create(request)
     }
 

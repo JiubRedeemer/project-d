@@ -11,6 +11,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.PutMapping
+import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import java.util.*
@@ -38,6 +40,23 @@ class BackgroundApiController(
     @HasRoleOrThrow("ADMIN", "USER")
     fun getBackgrounds(@PathVariable roomId: UUID): List<BackgroundDto> {
         return backgroundApiService.getBackgrounds(roomId)
+    }
+
+    @Operation(summary = "Create background")
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200", description = "Background created",
+                content = [Content(schema = Schema(implementation = BackgroundDto::class))]
+            ),
+            ApiResponse(responseCode = "403", description = "Access denied", content = [Content(schema = Schema())]),
+            ApiResponse(responseCode = "404", description = "Failed to create background", content = [Content(schema = Schema())])
+        ]
+    )
+    @PutMapping("/{roomId}/backgrounds")
+    @HasRoleOrThrow("ADMIN", "USER")
+    fun createBackground(@PathVariable roomId: UUID, @RequestBody backgroundDto: BackgroundDto): BackgroundDto {
+        return backgroundApiService.createBackground(roomId, backgroundDto)
     }
 
     @Operation(summary = "Get background by code")
