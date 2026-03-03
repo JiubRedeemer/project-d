@@ -44,6 +44,7 @@ project-d:
       skills-url: skills
       skills-by-code-url: byCode
       skills-by-class-url: byClass
+      backgrounds-url: backgrounds
     character-sheet:
       api-url: api
       base-url: http://localhost:8082

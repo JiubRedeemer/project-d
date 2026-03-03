@@ -1,0 +1,153 @@
+openapi: 3.0.3
+info:
+  title: Rulebook Background API
+  version: "1.0.0"
+  description: OpenAPI-спецификация для REST-методов предысторий (D&D 2024).
+
+paths:
+  /api/backgrounds:
+    post:
+      tags:
+        - Background
+      summary: Получение доступных предысторий для комнаты
+      operationId: getBackgroundsForRoom
+      description: Возвращает список доступных предысторий для указанной комнаты (D&D 2024)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RoomIdRequestBody'
+      responses:
+        "200":
+          description: Список предысторий успешно получен
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BackgroundDto'
+        "400":
+          description: Некорректный идентификатор комнаты
+        "404":
+          description: Комната не найдена
+
+  /api/backgrounds/{code}:
+    post:
+      tags:
+        - Background
+      summary: Получение предыстории по коду
+      operationId: getBackgroundByCode
+      description: Возвращает предысторию по коду для указанной комнаты (D&D 2024)
+      parameters:
+        - name: code
+          in: path
+          required: true
+          description: Код предыстории (например, farmer, noble)
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RoomIdRequestBody'
+      responses:
+        "200":
+          description: Предыстория успешно получена
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BackgroundDto'
+        "400":
+          description: Некорректный идентификатор комнаты
+        "404":
+          description: Комната или предыстория не найдена
+
+components:
+  schemas:
+    RoomIdRequestBody:
+      type: object
+      properties:
+        roomId:
+          type: string
+          format: uuid
+      required:
+        - roomId
+
+    BackgroundDto:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        roomId:
+          type: string
+          format: uuid
+        name:
+          type: string
+        description:
+          type: string
+        code:
+          type: string
+        imgUrl:
+          type: string
+        stats:
+          $ref: '#/components/schemas/BackgroundStatsDto'
+
+    BackgroundStatsDto:
+      type: object
+      description: Статы предыстории — модификаторы характеристик, черты и владения
+      properties:
+        id:
+          type: string
+          format: uuid
+        abilityModifiers:
+          type: array
+          description: Коды характеристик на выбор (STR, DEX, CON, INT, WIS, CHA) — +2 к одной и +1 к другой или +1 к трём
+          items:
+            type: string
+        traits:
+          type: array
+          items:
+            $ref: '#/components/schemas/BackgroundTraitDto'
+        proficiencies:
+          type: array
+          items:
+            $ref: '#/components/schemas/BackgroundProficiencyDto'
+
+    BackgroundTraitDto:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        backgroundStatsId:
+          type: string
+          format: uuid
+        name:
+          type: string
+        code:
+          type: string
+        description:
+          type: string
+
+    BackgroundProficiencyDto:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        backgroundStatsId:
+          type: string
+          format: uuid
+        type:
+          $ref: '#/components/schemas/BackgroundProficiencyTypeEnum'
+        code:
+          type: string
+
+    BackgroundProficiencyTypeEnum:
+      type: string
+      enum:
+        - SKILL
+        - TOOL
