@@ -1,0 +1,226 @@
+openapi: 3.0.3
+info:
+  title: Rulebook Class API
+  version: "1.0.0"
+  description: OpenAPI-спецификация для REST-методов классов и подклассов.
+
+paths:
+  /api/classes:
+    post:
+      tags:
+        - Class
+      summary: Получение доступных классов для комнаты
+      operationId: getClassesForRoom
+      description: Возвращает список доступных классов на основе идентификатора комнаты
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClassesByRoomRequest'
+      responses:
+        "200":
+          description: Список классов успешно получен
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ClazzDto'
+        "400":
+          description: Некорректный идентификатор комнаты
+        "404":
+          description: Комната не найдена
+    put:
+      tags:
+        - Class
+      summary: Создание класса
+      operationId: createClass
+      description: Создаёт новый класс или подкласс
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClazzDto'
+      responses:
+        "200":
+          description: Класс успешно создан
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClazzDto'
+        "400":
+          description: Некорректные данные запроса
+
+  /api/classes/root:
+    post:
+      tags:
+        - Class
+      summary: Получение доступных корневых классов для комнаты
+      operationId: getRootClassesForRoom
+      description: Возвращает список доступных корневых классов на основе идентификатора комнаты
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClassesByRoomRequest'
+      responses:
+        "200":
+          description: Список корневых классов успешно получен
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ClazzDto'
+        "400":
+          description: Некорректный идентификатор комнаты
+        "404":
+          description: Комната не найдена
+
+  /api/classes/{code}:
+    post:
+      tags:
+        - Class
+      summary: Получение класса по коду
+      operationId: getClassByCode
+      description: Возвращает класс для указанной комнаты по коду класса
+      parameters:
+        - name: code
+          in: path
+          required: true
+          description: Код класса
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClassesByRoomRequest'
+      responses:
+        "200":
+          description: Класс успешно получен
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClazzDto'
+        "400":
+          description: Некорректный идентификатор комнаты
+        "404":
+          description: Комната или класс не найден
+
+  /api/classes/{code}/subclasses:
+    post:
+      tags:
+        - Class
+      summary: Получение подклассов по коду класса
+      operationId: getSubClassesForRoom
+      description: Возвращает список подклассов для указанной комнаты по коду класса
+      parameters:
+        - name: code
+          in: path
+          required: true
+          description: Код класса
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClassesByRoomRequest'
+      responses:
+        "200":
+          description: Список подклассов успешно получен
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ClazzDto'
+        "400":
+          description: Некорректный идентификатор комнаты
+        "404":
+          description: Комната не найдена
+
+components:
+  schemas:
+    ClassesByRoomRequest:
+      type: object
+      properties:
+        roomId:
+          type: string
+          format: uuid
+      required:
+        - roomId
+
+    ClazzDto:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        roomId:
+          type: string
+          format: uuid
+        name:
+          type: string
+        description:
+          type: string
+        code:
+          type: string
+        groupCode:
+          type: string
+        imgUrl:
+          type: string
+        stats:
+          $ref: '#/components/schemas/ClazzStatsDto'
+
+    ClazzStatsDto:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        hpDice:
+          type: string
+        savingThrowsAbilities:
+          type: array
+          items:
+            $ref: '#/components/schemas/AbilityShortDto'
+        availableSkills:
+          type: array
+          items:
+            $ref: '#/components/schemas/AvailableSkillDto'
+
+    AbilityShortDto:
+      type: object
+      properties:
+        code:
+          type: string
+        name:
+          type: string
+
+    AvailableSkillDto:
+      type: object
+      properties:
+        type:
+          $ref: '#/components/schemas/SkillTypeEnum'
+        count:
+          type: integer
+          format: int32
+        of:
+          type: array
+          items:
+            type: string
+
+    SkillTypeEnum:
+      type: string
+      enum:
+        - ABILITY
+        - WEAPON
+        - ARMOR
+        - INSTRUMENT

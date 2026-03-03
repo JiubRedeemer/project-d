@@ -1,0 +1,261 @@
+openapi: 3.0.3
+info:
+  title: Rulebook Race API
+  version: "1.0.0"
+  description: OpenAPI-спецификация для REST-методов рас (виды и подвиды).
+
+paths:
+  /api/races:
+    post:
+      tags:
+        - Race
+      summary: Получение доступных рас для комнаты
+      operationId: getRacesForRoom
+      description: Возвращает список доступных рас для указанной комнаты на основе идентификатора комнаты
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RoomIdRequestBody'
+      responses:
+        "200":
+          description: Список рас успешно получен
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RaceDto'
+        "400":
+          description: Некорректный идентификатор комнаты
+        "404":
+          description: Комната не найдена
+    put:
+      tags:
+        - Race
+      summary: Создание расы
+      operationId: createRace
+      description: Создаёт новую расу (вид или подвид)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RaceDto'
+      responses:
+        "200":
+          description: Раса успешно создана
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RaceDto'
+        "400":
+          description: Некорректные данные запроса
+
+  /api/races/root:
+    post:
+      tags:
+        - Race
+      summary: Получение доступных корневых рас для комнаты
+      operationId: getRootRacesForRoom
+      description: Возвращает список доступных корневых рас (видов) для указанной комнаты
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RoomIdRequestBody'
+      responses:
+        "200":
+          description: Список корневых рас успешно получен
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RaceDto'
+        "400":
+          description: Некорректный идентификатор комнаты
+        "404":
+          description: Комната не найдена
+
+  /api/races/{code}:
+    post:
+      tags:
+        - Race
+      summary: Получение расы по коду
+      operationId: getRaceByCode
+      description: Возвращает расу для указанной комнаты по коду расы
+      parameters:
+        - name: code
+          in: path
+          required: true
+          description: Код расы
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RoomIdRequestBody'
+      responses:
+        "200":
+          description: Раса успешно получена
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RaceDto'
+        "400":
+          description: Некорректный идентификатор комнаты
+        "404":
+          description: Комната или раса не найдена
+
+  /api/races/{code}/subspecies:
+    post:
+      tags:
+        - Race
+      summary: Получение подрас по коду вида
+      operationId: getRaceSubspeciesByCode
+      description: Возвращает список подрас для указанной комнаты по коду вида
+      parameters:
+        - name: code
+          in: path
+          required: true
+          description: Код вида расы
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RoomIdRequestBody'
+      responses:
+        "200":
+          description: Список подрас успешно получен
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RaceDto'
+        "400":
+          description: Некорректный идентификатор комнаты
+        "404":
+          description: Комната не найдена
+
+components:
+  schemas:
+    RoomIdRequestBody:
+      type: object
+      properties:
+        roomId:
+          type: string
+          format: uuid
+      required:
+        - roomId
+
+    RaceDto:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        roomId:
+          type: string
+          format: uuid
+        name:
+          type: string
+        description:
+          type: string
+        code:
+          type: string
+        speciesCode:
+          type: string
+        imgUrl:
+          type: string
+        stats:
+          $ref: '#/components/schemas/RaceStatsDto'
+
+    RaceStatsDto:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        maxAge:
+          type: integer
+          format: int32
+        maxHeight:
+          type: integer
+          format: int32
+        maxWeight:
+          type: integer
+          format: int32
+        baseSpeed:
+          type: integer
+          format: int32
+        abilityModifiers:
+          type: array
+          items:
+            $ref: '#/components/schemas/AbilityModifierDto'
+        traits:
+          type: array
+          items:
+            $ref: '#/components/schemas/RaceTraitDto'
+        proficiencies:
+          type: array
+          items:
+            $ref: '#/components/schemas/RaceProficiencyDto'
+
+    AbilityModifierDto:
+      type: object
+      properties:
+        code:
+          type: string
+        value:
+          type: integer
+          format: int32
+        count:
+          type: integer
+          format: int32
+
+    RaceTraitDto:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        raceStatsId:
+          type: string
+          format: uuid
+        name:
+          type: string
+        code:
+          type: string
+        description:
+          type: string
+
+    RaceProficiencyDto:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        raceStatsId:
+          type: string
+          format: uuid
+        type:
+          $ref: '#/components/schemas/RaceProficiencyTypeEnum'
+        code:
+          type: string
+
+    RaceProficiencyTypeEnum:
+      type: string
+      enum:
+        - WEAPON
+        - ARMOR
+        - INSTRUMENT
+        - ABILITY

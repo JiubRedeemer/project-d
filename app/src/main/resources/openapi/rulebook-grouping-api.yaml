@@ -65,6 +65,122 @@ paths:
                   $ref: '#/components/schemas/RaceCreateInfoDto'
         '403':
           description: Access denied
+    put:
+      tags:
+        - Races
+      summary: Create race
+      operationId: createRace
+      parameters:
+        - name: roomId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RaceDto'
+      responses:
+        '200':
+          description: Race created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RaceDto'
+        '403':
+          description: Access denied
+        '404':
+          description: Failed to create race
+
+  /rooms/{roomId}/races/root:
+    get:
+      tags:
+        - Races
+      summary: Get root races (species) for room
+      operationId: getRootRacesForRoom
+      parameters:
+        - name: roomId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: List of root races
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RaceDto'
+        '403':
+          description: Access denied
+
+  /rooms/{roomId}/races/{code}:
+    get:
+      tags:
+        - Races
+      summary: Get race by code
+      operationId: getRaceByCodeForRoom
+      parameters:
+        - name: roomId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: code
+          in: path
+          required: true
+          description: Race code
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Race by code
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RaceDto'
+        '403':
+          description: Access denied
+        '404':
+          description: Race not found
+
+  /rooms/{roomId}/races/{code}/subspecies:
+    get:
+      tags:
+        - Races
+      summary: Get subspecies by race code
+      operationId: getRaceSubspeciesByCodeForRoom
+      parameters:
+        - name: roomId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: code
+          in: path
+          required: true
+          description: Species (race) code
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of subspecies
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RaceDto'
+        '403':
+          description: Access denied
 
   /rooms/{roomId}/classes:
     get:
@@ -88,6 +204,122 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/ClassCreateInfoDto'
+        '403':
+          description: Access denied
+    put:
+      tags:
+        - Classes
+      summary: Create class
+      operationId: createClass
+      parameters:
+        - name: roomId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClazzDto'
+      responses:
+        '200':
+          description: Class created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClazzDto'
+        '403':
+          description: Access denied
+        '404':
+          description: Failed to create class
+
+  /rooms/{roomId}/classes/root:
+    get:
+      tags:
+        - Classes
+      summary: Get root classes for room
+      operationId: getRootClassesForRoom
+      parameters:
+        - name: roomId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: List of root classes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ClazzDto'
+        '403':
+          description: Access denied
+
+  /rooms/{roomId}/classes/{code}:
+    get:
+      tags:
+        - Classes
+      summary: Get class by code
+      operationId: getClassByCodeForRoom
+      parameters:
+        - name: roomId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: code
+          in: path
+          required: true
+          description: Class code
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Class by code
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClazzDto'
+        '403':
+          description: Access denied
+        '404':
+          description: Class not found
+
+  /rooms/{roomId}/classes/{code}/subclasses:
+    get:
+      tags:
+        - Classes
+      summary: Get subclasses by class code
+      operationId: getSubClassesByCodeForRoom
+      parameters:
+        - name: roomId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: code
+          in: path
+          required: true
+          description: Class code
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of subclasses
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ClazzDto'
         '403':
           description: Access denied
 
@@ -251,6 +483,36 @@ paths:
                   $ref: '#/components/schemas/BackgroundDto'
         '403':
           description: Access denied
+    put:
+      tags:
+        - Background
+      summary: Create background
+      operationId: createBackground
+      description: Creates a new background for the room (D&D 2024)
+      parameters:
+        - name: roomId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BackgroundDto'
+      responses:
+        '200':
+          description: Background created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BackgroundDto'
+        '403':
+          description: Access denied
+        '404':
+          description: Failed to create background
 
   /rooms/{roomId}/backgrounds/{code}:
     get:
@@ -335,6 +597,9 @@ components:
           nullable: true
         code:
           type: string
+        speciesCode:
+          type: string
+          nullable: true
         imgUrl:
           type: string
           nullable: true
@@ -363,6 +628,9 @@ components:
           nullable: true
         code:
           type: string
+        groupCode:
+          type: string
+          nullable: true
         imgUrl:
           type: string
           nullable: true
@@ -383,6 +651,9 @@ components:
           type: string
         code:
           type: string
+        speciesCode:
+          type: string
+          nullable: true
         imgUrl:
           type: string
           nullable: true
@@ -403,6 +674,9 @@ components:
           type: string
         code:
           type: string
+        groupCode:
+          type: string
+          nullable: true
         imgUrl:
           type: string
           nullable: true
@@ -412,6 +686,7 @@ components:
     RaceStatsDto:
       type: object
       required:
+        - id
         - maxAge
         - maxHeight
         - maxWeight
@@ -420,6 +695,9 @@ components:
         - traits
         - proficiencies
       properties:
+        id:
+          type: string
+          format: uuid
         maxAge:
           type: integer
           format: int32
@@ -468,7 +746,6 @@ components:
         - raceStatsId
         - name
         - code
-        - description
       properties:
         id:
           type: string
@@ -482,6 +759,7 @@ components:
           type: string
         description:
           type: string
+          nullable: true
 
     RaceProficiencyDto:
       type: object
