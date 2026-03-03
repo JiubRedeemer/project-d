@@ -1,0 +1,704 @@
+openapi: 3.0.3
+info:
+  title: Rulebook API (Frontend)
+  description: Public app endpoints for rulebook data in room scope
+  version: 1.0.0
+
+servers:
+  - url: /api
+    description: API base path (prepend your server URL)
+
+tags:
+  - name: Races
+  - name: Classes
+  - name: Abilities
+  - name: Skills
+  - name: Background
+
+paths:
+  /rooms/{roomId}/races/grouped:
+    get:
+      tags:
+        - Races
+      summary: Get grouped races for room
+      operationId: getGroupedRacesForRoom
+      parameters:
+        - name: roomId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Grouped races
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RaceGroupDto'
+        '403':
+          description: Access denied
+
+  /rooms/{roomId}/races:
+    get:
+      tags:
+        - Races
+      summary: Get races for room
+      operationId: getRacesForRoom
+      parameters:
+        - name: roomId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: List of races
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RaceCreateInfoDto'
+        '403':
+          description: Access denied
+
+  /rooms/{roomId}/classes:
+    get:
+      tags:
+        - Classes
+      summary: Get classes for room
+      operationId: getClassesForRoom
+      parameters:
+        - name: roomId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: List of classes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ClassCreateInfoDto'
+        '403':
+          description: Access denied
+
+  /rooms/{roomId}/classes/grouped:
+    get:
+      tags:
+        - Classes
+      summary: Get grouped classes for room
+      operationId: getGroupedClassesForRoom
+      parameters:
+        - name: roomId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Grouped classes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ClazzGroupDto'
+        '403':
+          description: Access denied
+
+  /rooms/{roomId}/abilities:
+    get:
+      tags:
+        - Abilities
+      summary: Get abilities for room
+      operationId: getAbilitiesForRoom
+      parameters:
+        - name: roomId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: List of abilities
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AbilityDto'
+        '403':
+          description: Access denied
+
+  /rooms/{roomId}/skills:
+    get:
+      tags:
+        - Skills
+      summary: Get skills for room
+      operationId: getSkillsForRoom
+      parameters:
+        - name: roomId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: List of skills
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SkillResponse'
+        '403':
+          description: Access denied
+
+  /rooms/{roomId}/skills/byCode/{code}:
+    get:
+      tags:
+        - Skills
+      summary: Get skill by code for room
+      operationId: getSkillByCodeForRoom
+      parameters:
+        - name: roomId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: code
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Skill by code
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SkillResponse'
+        '403':
+          description: Access denied
+        '404':
+          description: Skill not found
+
+  /rooms/{roomId}/skills/byClass/{classCode}:
+    get:
+      tags:
+        - Skills
+      summary: Get skills by class code for room
+      operationId: getSkillsByClassForRoom
+      parameters:
+        - name: roomId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: classCode
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of class skills
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SkillResponse'
+        '403':
+          description: Access denied
+
+  /rooms/{roomId}/backgrounds:
+    get:
+      tags:
+        - Background
+      summary: Get backgrounds for room
+      operationId: getBackgroundsForRoom
+      description: Returns list of available backgrounds for the room (D&D 2024)
+      parameters:
+        - name: roomId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: List of backgrounds
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BackgroundDto'
+        '403':
+          description: Access denied
+
+  /rooms/{roomId}/backgrounds/{code}:
+    get:
+      tags:
+        - Background
+      summary: Get background by code for room
+      operationId: getBackgroundByCodeForRoom
+      description: Returns background by code for the room (D&D 2024)
+      parameters:
+        - name: roomId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: code
+          in: path
+          required: true
+          description: Background code (e.g. farmer, noble)
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Background by code
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BackgroundDto'
+        '403':
+          description: Access denied
+        '404':
+          description: Background not found
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    RaceGroupDto:
+      type: object
+      properties:
+        species:
+          $ref: '#/components/schemas/RaceDto'
+          nullable: true
+        subspecies:
+          type: array
+          items:
+            $ref: '#/components/schemas/RaceDto'
+
+    ClazzGroupDto:
+      type: object
+      properties:
+        clazz:
+          $ref: '#/components/schemas/ClazzDto'
+          nullable: true
+        subClazzes:
+          type: array
+          items:
+            $ref: '#/components/schemas/ClazzDto'
+
+    RaceDto:
+      type: object
+      required:
+        - id
+        - roomId
+        - name
+        - code
+        - stats
+      properties:
+        id:
+          type: string
+          format: uuid
+        roomId:
+          type: string
+          format: uuid
+        name:
+          type: string
+        description:
+          type: string
+          nullable: true
+        code:
+          type: string
+        imgUrl:
+          type: string
+          nullable: true
+        stats:
+          $ref: '#/components/schemas/RaceStatsDto'
+
+    ClazzDto:
+      type: object
+      required:
+        - id
+        - roomId
+        - name
+        - code
+        - stats
+      properties:
+        id:
+          type: string
+          format: uuid
+        roomId:
+          type: string
+          format: uuid
+        name:
+          type: string
+        description:
+          type: string
+          nullable: true
+        code:
+          type: string
+        imgUrl:
+          type: string
+          nullable: true
+        stats:
+          $ref: '#/components/schemas/ClazzStatsDto'
+
+    RaceCreateInfoDto:
+      type: object
+      required:
+        - name
+        - description
+        - code
+        - stats
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        code:
+          type: string
+        imgUrl:
+          type: string
+          nullable: true
+        stats:
+          $ref: '#/components/schemas/RaceStatsDto'
+
+    ClassCreateInfoDto:
+      type: object
+      required:
+        - name
+        - description
+        - code
+        - stats
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        code:
+          type: string
+        imgUrl:
+          type: string
+          nullable: true
+        stats:
+          $ref: '#/components/schemas/ClazzStatsDto'
+
+    RaceStatsDto:
+      type: object
+      required:
+        - maxAge
+        - maxHeight
+        - maxWeight
+        - baseSpeed
+        - abilityModifiers
+        - traits
+        - proficiencies
+      properties:
+        maxAge:
+          type: integer
+          format: int32
+        maxHeight:
+          type: integer
+          format: int32
+        maxWeight:
+          type: integer
+          format: int32
+        baseSpeed:
+          type: integer
+          format: int32
+        abilityModifiers:
+          type: array
+          items:
+            $ref: '#/components/schemas/AbilityModifierDto'
+        traits:
+          type: array
+          items:
+            $ref: '#/components/schemas/RaceTraitDto'
+        proficiencies:
+          type: array
+          items:
+            $ref: '#/components/schemas/RaceProficiencyDto'
+
+    AbilityModifierDto:
+      type: object
+      required:
+        - code
+        - value
+        - count
+      properties:
+        code:
+          type: string
+        value:
+          type: integer
+          format: int32
+        count:
+          type: integer
+          format: int32
+
+    RaceTraitDto:
+      type: object
+      required:
+        - id
+        - raceStatsId
+        - name
+        - code
+        - description
+      properties:
+        id:
+          type: string
+          format: uuid
+        raceStatsId:
+          type: string
+          format: uuid
+        name:
+          type: string
+        code:
+          type: string
+        description:
+          type: string
+
+    RaceProficiencyDto:
+      type: object
+      required:
+        - id
+        - raceStatsId
+        - type
+        - code
+      properties:
+        id:
+          type: string
+          format: uuid
+        raceStatsId:
+          type: string
+          format: uuid
+        type:
+          $ref: '#/components/schemas/RaceProficiencyTypeEnum'
+        code:
+          type: string
+
+    RaceProficiencyTypeEnum:
+      type: string
+      enum:
+        - WEAPON
+        - ARMOR
+        - INSTRUMENT
+        - ABILITY
+
+    ClazzStatsDto:
+      type: object
+      required:
+        - id
+        - hpDice
+        - savingThrowsAbilities
+        - availableSkills
+      properties:
+        id:
+          type: string
+          format: uuid
+        hpDice:
+          type: string
+        savingThrowsAbilities:
+          type: array
+          items:
+            $ref: '#/components/schemas/AbilityShortDto'
+        availableSkills:
+          type: array
+          items:
+            $ref: '#/components/schemas/AvailableSkillDto'
+
+    AbilityShortDto:
+      type: object
+      required:
+        - code
+        - name
+      properties:
+        code:
+          type: string
+        name:
+          type: string
+
+    AvailableSkillDto:
+      type: object
+      required:
+        - type
+        - count
+        - of
+      properties:
+        type:
+          $ref: '#/components/schemas/SkillTypeEnum'
+        count:
+          type: integer
+          format: int32
+        of:
+          type: array
+          items:
+            type: string
+            nullable: true
+
+    SkillTypeEnum:
+      type: string
+      enum:
+        - ABILITY
+        - WEAPON
+        - ARMOR
+        - INSTRUMENT
+
+    SkillResponse:
+      type: object
+      required:
+        - name
+        - code
+      properties:
+        name:
+          type: string
+        code:
+          type: string
+        ability:
+          $ref: '#/components/schemas/AbilityDto'
+          nullable: true
+
+    AbilityDto:
+      type: object
+      properties:
+        name:
+          type: string
+          nullable: true
+        code:
+          type: string
+          nullable: true
+        roomId:
+          type: string
+          format: uuid
+          nullable: true
+        skills:
+          type: array
+          nullable: true
+          items:
+            $ref: '#/components/schemas/AbilitySkillDto'
+
+    AbilitySkillDto:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          nullable: true
+        name:
+          type: string
+          nullable: true
+        code:
+          type: string
+          nullable: true
+
+    BackgroundDto:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        roomId:
+          type: string
+          format: uuid
+        name:
+          type: string
+        description:
+          type: string
+          nullable: true
+        code:
+          type: string
+        imgUrl:
+          type: string
+          nullable: true
+        stats:
+          $ref: '#/components/schemas/BackgroundStatsDto'
+          nullable: true
+
+    BackgroundStatsDto:
+      type: object
+      description: Background stats — ability modifiers, traits, proficiencies
+      properties:
+        id:
+          type: string
+          format: uuid
+        abilityModifiers:
+          type: array
+          description: Ability codes to choose from (STR, DEX, CON, INT, WIS, CHA)
+          items:
+            type: string
+          nullable: true
+        traits:
+          type: array
+          items:
+            $ref: '#/components/schemas/BackgroundTraitDto'
+          nullable: true
+        proficiencies:
+          type: array
+          items:
+            $ref: '#/components/schemas/BackgroundProficiencyDto'
+          nullable: true
+
+    BackgroundTraitDto:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        backgroundStatsId:
+          type: string
+          format: uuid
+        name:
+          type: string
+        code:
+          type: string
+        description:
+          type: string
+          nullable: true
+
+    BackgroundProficiencyDto:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        backgroundStatsId:
+          type: string
+          format: uuid
+        type:
+          $ref: '#/components/schemas/BackgroundProficiencyTypeEnum'
+        code:
+          type: string
+
+    BackgroundProficiencyTypeEnum:
+      type: string
+      enum:
+        - SKILL
+        - TOOL
+
+security:
+  - bearerAuth: []

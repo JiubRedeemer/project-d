@@ -8,6 +8,7 @@ data class CreateCharacterRequest(
     val name: String,
     val clazzCode: String,
     val raceCode: String,
+    val backgroundCode: String?,
     val abilities: List<AbilityShort>,
     val skills: List<SkillShort>,
     val age: Long,

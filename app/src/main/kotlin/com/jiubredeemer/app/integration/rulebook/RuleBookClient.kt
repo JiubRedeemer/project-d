@@ -4,6 +4,7 @@ import com.jiubredeemer.app.integration.configuration.RuleBookProperty
 import com.jiubredeemer.app.integration.dto.request.RequestByRoomId
 import com.jiubredeemer.app.integration.dto.room.RoomCreateRequestDto
 import com.jiubredeemer.app.integration.rulebook.dto.ability.AbilityDto
+import com.jiubredeemer.app.integration.rulebook.dto.background.BackgroundDto
 import com.jiubredeemer.app.integration.rulebook.dto.clazz.ClazzGroupDto
 import com.jiubredeemer.app.integration.rulebook.dto.clazz.ClazzDto
 import com.jiubredeemer.app.integration.rulebook.dto.race.RaceGroupDto
@@ -185,6 +186,41 @@ class RuleBookClient(
             .retrieve()
             .toEntity(object :
                 ParameterizedTypeReference<List<SkillDto>>() {})
+
+        return response.body
+    }
+
+    fun getBackgroundsForRoom(roomId: UUID): List<BackgroundDto>? {
+        val uri = UriComponentsBuilder
+            .fromHttpUrl(ruleBookProperty.baseUrl)
+            .pathSegment(ruleBookProperty.apiUrl)
+            .pathSegment(ruleBookProperty.backgroundsUrl)
+            .toUriString()
+
+        val response = restClient.post()
+            .uri(uri)
+            .headers { it.addAll(headers) }
+            .body(RequestByRoomId(roomId))
+            .retrieve()
+            .toEntity(object : ParameterizedTypeReference<List<BackgroundDto>>() {})
+
+        return response.body
+    }
+
+    fun getBackgroundByCode(roomId: UUID, code: String): BackgroundDto? {
+        val uri = UriComponentsBuilder
+            .fromHttpUrl(ruleBookProperty.baseUrl)
+            .pathSegment(ruleBookProperty.apiUrl)
+            .pathSegment(ruleBookProperty.backgroundsUrl)
+            .pathSegment(code)
+            .toUriString()
+
+        val response = restClient.post()
+            .uri(uri)
+            .headers { it.addAll(headers) }
+            .body(RequestByRoomId(roomId))
+            .retrieve()
+            .toEntity(BackgroundDto::class.java)
 
         return response.body
     }
