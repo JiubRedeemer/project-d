@@ -1,5 +1,6 @@
 package com.jiubredeemer.app.rulebook.race.controller
 
+import com.jiubredeemer.app.integration.dto.RuleTypeEnum
 import com.jiubredeemer.app.integration.rulebook.dto.race.RaceDto
 import com.jiubredeemer.app.integration.rulebook.dto.race.RaceGroupDto
 import com.jiubredeemer.app.rulebook.race.model.RaceCreateInfoDto
@@ -11,12 +12,7 @@ import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.tags.Tag
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.PutMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import java.util.*
 
 @RestController
@@ -27,8 +23,11 @@ class RaceApiController(
 ) {
     @GetMapping("/{roomId}/races/grouped")
     @HasRoleOrThrow("ADMIN", "USER")
-    fun getGroupedRaces(@PathVariable roomId: UUID): List<RaceGroupDto> {
-        return raceApiService.getGroupedRaces(roomId)
+    fun getGroupedRaces(
+        @PathVariable roomId: UUID,
+        @RequestParam("forceRuleType", required = false) forceRuleTypeEnum: RuleTypeEnum?
+    ): List<RaceGroupDto> {
+        return raceApiService.getGroupedRaces(roomId, forceRuleTypeEnum)
     }
 
     @Operation(summary = "Get races for room")
@@ -46,8 +45,11 @@ class RaceApiController(
     )
     @GetMapping("/{roomId}/races")
     @HasRoleOrThrow("ADMIN", "USER")
-    fun getRaces(@PathVariable roomId: UUID): List<RaceCreateInfoDto> {
-        return raceApiService.getRaces(roomId)
+    fun getRaces(
+        @PathVariable roomId: UUID,
+        @RequestParam("forceRuleType", required = false) forceRuleTypeEnum: RuleTypeEnum?
+    ): List<RaceCreateInfoDto> {
+        return raceApiService.getRaces(roomId, forceRuleTypeEnum)
     }
 
     @Operation(summary = "Create race")
@@ -58,7 +60,11 @@ class RaceApiController(
                 content = [Content(schema = Schema(implementation = RaceDto::class))]
             ),
             ApiResponse(responseCode = "403", description = "Access denied", content = [Content(schema = Schema())]),
-            ApiResponse(responseCode = "404", description = "Failed to create race", content = [Content(schema = Schema())])
+            ApiResponse(
+                responseCode = "404",
+                description = "Failed to create race",
+                content = [Content(schema = Schema())]
+            )
         ]
     )
     @PutMapping("/{roomId}/races")
@@ -79,8 +85,11 @@ class RaceApiController(
     )
     @GetMapping("/{roomId}/races/root")
     @HasRoleOrThrow("ADMIN", "USER")
-    fun getRootRaces(@PathVariable roomId: UUID): List<RaceDto> {
-        return raceApiService.getRootRaces(roomId)
+    fun getRootRaces(
+        @PathVariable roomId: UUID,
+        @RequestParam("forceRuleType", required = false) forceRuleTypeEnum: RuleTypeEnum?
+    ): List<RaceDto> {
+        return raceApiService.getRootRaces(roomId, forceRuleTypeEnum)
     }
 
     @Operation(summary = "Get race by code")
@@ -112,7 +121,11 @@ class RaceApiController(
     )
     @GetMapping("/{roomId}/races/{code}/subspecies")
     @HasRoleOrThrow("ADMIN", "USER")
-    fun getRaceSubspeciesByCode(@PathVariable roomId: UUID, @PathVariable code: String): List<RaceDto> {
-        return raceApiService.getRaceSubspeciesByCode(roomId, code)
+    fun getRaceSubspeciesByCode(
+        @PathVariable roomId: UUID,
+        @PathVariable code: String,
+        @RequestParam("forceRuleType", required = false) forceRuleTypeEnum: RuleTypeEnum?
+    ): List<RaceDto> {
+        return raceApiService.getRaceSubspeciesByCode(roomId, code, forceRuleTypeEnum)
     }
 }
