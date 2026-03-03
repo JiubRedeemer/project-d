@@ -1,5 +1,6 @@
 package com.jiubredeemer.app.rulebook.clazz.service
 
+import com.jiubredeemer.app.integration.dto.RuleTypeEnum
 import com.jiubredeemer.app.integration.rulebook.RuleBookClient
 import com.jiubredeemer.app.integration.rulebook.dto.clazz.ClazzGroupDto
 import com.jiubredeemer.app.integration.rulebook.dto.clazz.ClazzDto
@@ -16,14 +17,14 @@ class ClassApiService(
     private val accessChecker: AccessChecker,
     private val ruleBookClient: RuleBookClient
 ) {
-    fun getGroupedClasses(roomId: UUID): List<ClazzGroupDto> {
+    fun getGroupedClasses(roomId: UUID, forceRuleTypeEnum: RuleTypeEnum?): List<ClazzGroupDto> {
         roomAccessChecker.hasAccessOrThrow(roomId, accessChecker.getCurrentUser().id!!)
-        return ruleBookClient.getGroupedClassesForRoom(roomId) ?: listOf()
+        return ruleBookClient.getGroupedClassesForRoom(roomId, forceRuleTypeEnum) ?: listOf()
     }
 
-    fun getClasses(roomId: UUID): List<ClassCreateInfoDto> {
+    fun getClasses(roomId: UUID, forceRuleTypeEnum: RuleTypeEnum?): List<ClassCreateInfoDto> {
         roomAccessChecker.hasAccessOrThrow(roomId, accessChecker.getCurrentUser().id!!)
-        val classesForRoom: List<ClazzDto> = ruleBookClient.getClassesForRoom(roomId) ?: return listOf()
+        val classesForRoom: List<ClazzDto> = ruleBookClient.getClassesForRoom(roomId, forceRuleTypeEnum) ?: return listOf()
         return classesForRoom.map {
             ClassCreateInfoDto(it.name, it.description ?: "", it.code, it.groupCode, it.imgUrl, it.stats)
         }
@@ -34,19 +35,19 @@ class ClassApiService(
         return ruleBookClient.createClass(clazzDto) ?: throw NotFoundException("Failed to create class")
     }
 
-    fun getRootClasses(roomId: UUID): List<ClazzDto> {
+    fun getRootClasses(roomId: UUID, forceRuleTypeEnum: RuleTypeEnum?): List<ClazzDto> {
         roomAccessChecker.hasAccessOrThrow(roomId, accessChecker.getCurrentUser().id!!)
-        return ruleBookClient.getRootClassesForRoom(roomId) ?: listOf()
+        return ruleBookClient.getRootClassesForRoom(roomId, forceRuleTypeEnum) ?: listOf()
     }
 
-    fun getClassByCode(roomId: UUID, code: String): ClazzDto {
+    fun getClassByCode(roomId: UUID, code: String, forceRuleTypeEnum: RuleTypeEnum?): ClazzDto {
         roomAccessChecker.hasAccessOrThrow(roomId, accessChecker.getCurrentUser().id!!)
-        return ruleBookClient.getClassByCode(roomId, code)
+        return ruleBookClient.getClassByCode(roomId, code, forceRuleTypeEnum)
             ?: throw NotFoundException("Class not found by code: $code")
     }
 
-    fun getSubClassesForRoom(roomId: UUID, code: String): List<ClazzDto> {
+    fun getSubClassesForRoom(roomId: UUID, code: String, forceRuleTypeEnum: RuleTypeEnum?): List<ClazzDto> {
         roomAccessChecker.hasAccessOrThrow(roomId, accessChecker.getCurrentUser().id!!)
-        return ruleBookClient.getSubClassesForRoom(roomId, code) ?: listOf()
+        return ruleBookClient.getSubClassesForRoom(roomId, code, forceRuleTypeEnum) ?: listOf()
     }
 }

@@ -1,5 +1,6 @@
 package com.jiubredeemer.app.rulebook.clazz.controller
 
+import com.jiubredeemer.app.integration.dto.RuleTypeEnum
 import com.jiubredeemer.app.integration.rulebook.dto.clazz.ClazzDto
 import com.jiubredeemer.app.integration.rulebook.dto.clazz.ClazzGroupDto
 import com.jiubredeemer.app.rulebook.clazz.model.ClassCreateInfoDto
@@ -11,12 +12,7 @@ import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.tags.Tag
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.PutMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import java.util.*
 
 @RestController
@@ -27,8 +23,11 @@ class ClassApiController(
 ) {
     @GetMapping("/{roomId}/classes/grouped")
     @HasRoleOrThrow("ADMIN", "USER")
-    fun getGroupedClasses(@PathVariable roomId: UUID): List<ClazzGroupDto> {
-        return classApiService.getGroupedClasses(roomId)
+    fun getGroupedClasses(
+        @PathVariable roomId: UUID,
+        @RequestParam("forceRuleType", required = false) forceRuleTypeEnum: RuleTypeEnum?
+    ): List<ClazzGroupDto> {
+        return classApiService.getGroupedClasses(roomId, forceRuleTypeEnum)
     }
 
     @Operation(summary = "Get classes for room")
@@ -46,8 +45,11 @@ class ClassApiController(
     )
     @GetMapping("/{roomId}/classes")
     @HasRoleOrThrow("ADMIN", "USER")
-    fun getClasses(@PathVariable roomId: UUID): List<ClassCreateInfoDto> {
-        return classApiService.getClasses(roomId)
+    fun getClasses(
+        @PathVariable roomId: UUID,
+        @RequestParam("forceRuleType", required = false) forceRuleTypeEnum: RuleTypeEnum?
+    ): List<ClassCreateInfoDto> {
+        return classApiService.getClasses(roomId, forceRuleTypeEnum)
     }
 
     @Operation(summary = "Create class")
@@ -58,7 +60,11 @@ class ClassApiController(
                 content = [Content(schema = Schema(implementation = ClazzDto::class))]
             ),
             ApiResponse(responseCode = "403", description = "Access denied", content = [Content(schema = Schema())]),
-            ApiResponse(responseCode = "404", description = "Failed to create class", content = [Content(schema = Schema())])
+            ApiResponse(
+                responseCode = "404",
+                description = "Failed to create class",
+                content = [Content(schema = Schema())]
+            )
         ]
     )
     @PutMapping("/{roomId}/classes")
@@ -79,8 +85,11 @@ class ClassApiController(
     )
     @GetMapping("/{roomId}/classes/root")
     @HasRoleOrThrow("ADMIN", "USER")
-    fun getRootClasses(@PathVariable roomId: UUID): List<ClazzDto> {
-        return classApiService.getRootClasses(roomId)
+    fun getRootClasses(
+        @PathVariable roomId: UUID,
+        @RequestParam("forceRuleType", required = false) forceRuleTypeEnum: RuleTypeEnum?
+    ): List<ClazzDto> {
+        return classApiService.getRootClasses(roomId, forceRuleTypeEnum)
     }
 
     @Operation(summary = "Get class by code")
@@ -96,8 +105,11 @@ class ClassApiController(
     )
     @GetMapping("/{roomId}/classes/{code}")
     @HasRoleOrThrow("ADMIN", "USER")
-    fun getClassByCode(@PathVariable roomId: UUID, @PathVariable code: String): ClazzDto {
-        return classApiService.getClassByCode(roomId, code)
+    fun getClassByCode(
+        @PathVariable roomId: UUID, @PathVariable code: String,
+        @RequestParam("forceRuleType", required = false) forceRuleTypeEnum: RuleTypeEnum?
+    ): ClazzDto {
+        return classApiService.getClassByCode(roomId, code, forceRuleTypeEnum)
     }
 
     @Operation(summary = "Get subclasses by class code")
@@ -112,7 +124,10 @@ class ClassApiController(
     )
     @GetMapping("/{roomId}/classes/{code}/subclasses")
     @HasRoleOrThrow("ADMIN", "USER")
-    fun getSubClassesByCode(@PathVariable roomId: UUID, @PathVariable code: String): List<ClazzDto> {
-        return classApiService.getSubClassesForRoom(roomId, code)
+    fun getSubClassesByCode(
+        @PathVariable roomId: UUID, @PathVariable code: String,
+        @RequestParam("forceRuleType", required = false) forceRuleTypeEnum: RuleTypeEnum?
+    ): List<ClazzDto> {
+        return classApiService.getSubClassesForRoom(roomId, code, forceRuleTypeEnum)
     }
 }

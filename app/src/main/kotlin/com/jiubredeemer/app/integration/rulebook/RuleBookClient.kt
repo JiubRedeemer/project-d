@@ -1,14 +1,15 @@
 package com.jiubredeemer.app.integration.rulebook
 
 import com.jiubredeemer.app.integration.configuration.RuleBookProperty
+import com.jiubredeemer.app.integration.dto.RuleTypeEnum
 import com.jiubredeemer.app.integration.dto.request.RequestByRoomId
 import com.jiubredeemer.app.integration.dto.room.RoomCreateRequestDto
 import com.jiubredeemer.app.integration.rulebook.dto.ability.AbilityDto
 import com.jiubredeemer.app.integration.rulebook.dto.background.BackgroundDto
-import com.jiubredeemer.app.integration.rulebook.dto.clazz.ClazzGroupDto
 import com.jiubredeemer.app.integration.rulebook.dto.clazz.ClazzDto
-import com.jiubredeemer.app.integration.rulebook.dto.race.RaceGroupDto
+import com.jiubredeemer.app.integration.rulebook.dto.clazz.ClazzGroupDto
 import com.jiubredeemer.app.integration.rulebook.dto.race.RaceDto
+import com.jiubredeemer.app.integration.rulebook.dto.race.RaceGroupDto
 import com.jiubredeemer.app.integration.rulebook.dto.skill.SkillByClassRequest
 import com.jiubredeemer.app.integration.rulebook.dto.skill.SkillByCodeRequest
 import com.jiubredeemer.app.integration.rulebook.dto.skill.SkillDto
@@ -47,7 +48,7 @@ class RuleBookClient(
         }
     }
 
-    fun getRacesForRoom(roomId: UUID): List<RaceDto>? {
+    fun getRacesForRoom(roomId: UUID, forceRuleTypeEnum: RuleTypeEnum?): List<RaceDto>? {
         val uri = UriComponentsBuilder
             .fromHttpUrl(ruleBookProperty.baseUrl)
             .pathSegment(ruleBookProperty.apiUrl)
@@ -57,7 +58,7 @@ class RuleBookClient(
         val response = restClient.post()
             .uri(uri)
             .headers { it.addAll(headers) }
-            .body(RequestByRoomId(roomId))
+            .body(RequestByRoomId(roomId, forceRuleTypeEnum))
             .retrieve()
             .toEntity(object : ParameterizedTypeReference<List<RaceDto>>() {})
 
@@ -80,7 +81,7 @@ class RuleBookClient(
         return response.body
     }
 
-    fun getRootRacesForRoom(roomId: UUID): List<RaceDto>? {
+    fun getRootRacesForRoom(roomId: UUID, forceRuleTypeEnum: RuleTypeEnum?): List<RaceDto>? {
         val uri = UriComponentsBuilder
             .fromHttpUrl(ruleBookProperty.baseUrl)
             .pathSegment(ruleBookProperty.apiUrl)
@@ -91,13 +92,13 @@ class RuleBookClient(
         val response = restClient.post()
             .uri(uri)
             .headers { it.addAll(headers) }
-            .body(RequestByRoomId(roomId))
+            .body(RequestByRoomId(roomId, forceRuleTypeEnum))
             .retrieve()
             .toEntity(object : ParameterizedTypeReference<List<RaceDto>>() {})
         return response.body
     }
 
-    fun getRaceByCode(roomId: UUID, code: String): RaceDto? {
+    fun getRaceByCode(roomId: UUID, code: String, forceRuleTypeEnum: RuleTypeEnum?): RaceDto? {
         val uri = UriComponentsBuilder
             .fromHttpUrl(ruleBookProperty.baseUrl)
             .pathSegment(ruleBookProperty.apiUrl)
@@ -108,13 +109,13 @@ class RuleBookClient(
         val response = restClient.post()
             .uri(uri)
             .headers { it.addAll(headers) }
-            .body(RequestByRoomId(roomId))
+            .body(RequestByRoomId(roomId, forceRuleTypeEnum))
             .retrieve()
             .toEntity(RaceDto::class.java)
         return response.body
     }
 
-    fun getRaceSubspeciesByCode(roomId: UUID, code: String): List<RaceDto>? {
+    fun getRaceSubspeciesByCode(roomId: UUID, code: String, forceRuleTypeEnum: RuleTypeEnum?): List<RaceDto>? {
         val uri = UriComponentsBuilder
             .fromHttpUrl(ruleBookProperty.baseUrl)
             .pathSegment(ruleBookProperty.apiUrl)
@@ -126,13 +127,13 @@ class RuleBookClient(
         val response = restClient.post()
             .uri(uri)
             .headers { it.addAll(headers) }
-            .body(RequestByRoomId(roomId))
+            .body(RequestByRoomId(roomId, forceRuleTypeEnum))
             .retrieve()
             .toEntity(object : ParameterizedTypeReference<List<RaceDto>>() {})
         return response.body
     }
 
-    fun getClassesForRoom(roomId: UUID): List<ClazzDto>? {
+    fun getClassesForRoom(roomId: UUID, forceRuleTypeEnum: RuleTypeEnum?): List<ClazzDto>? {
         val uri = UriComponentsBuilder
             .fromHttpUrl(ruleBookProperty.baseUrl)
             .pathSegment(ruleBookProperty.apiUrl)
@@ -142,7 +143,7 @@ class RuleBookClient(
         val response = restClient.post()
             .uri(uri)
             .headers { it.addAll(headers) }
-            .body(RequestByRoomId(roomId))
+            .body(RequestByRoomId(roomId, forceRuleTypeEnum))
             .retrieve()
             .toEntity(object :
                 ParameterizedTypeReference<List<ClazzDto>>() {})
@@ -166,7 +167,7 @@ class RuleBookClient(
         return response.body
     }
 
-    fun getRootClassesForRoom(roomId: UUID): List<ClazzDto>? {
+    fun getRootClassesForRoom(roomId: UUID, forceRuleTypeEnum: RuleTypeEnum?): List<ClazzDto>? {
         val uri = UriComponentsBuilder
             .fromHttpUrl(ruleBookProperty.baseUrl)
             .pathSegment(ruleBookProperty.apiUrl)
@@ -177,13 +178,13 @@ class RuleBookClient(
         val response = restClient.post()
             .uri(uri)
             .headers { it.addAll(headers) }
-            .body(RequestByRoomId(roomId))
+            .body(RequestByRoomId(roomId, forceRuleTypeEnum))
             .retrieve()
             .toEntity(object : ParameterizedTypeReference<List<ClazzDto>>() {})
         return response.body
     }
 
-    fun getClassByCode(roomId: UUID, code: String): ClazzDto? {
+    fun getClassByCode(roomId: UUID, code: String, forceRuleTypeEnum: RuleTypeEnum?): ClazzDto? {
         val uri = UriComponentsBuilder
             .fromHttpUrl(ruleBookProperty.baseUrl)
             .pathSegment(ruleBookProperty.apiUrl)
@@ -194,13 +195,13 @@ class RuleBookClient(
         val response = restClient.post()
             .uri(uri)
             .headers { it.addAll(headers) }
-            .body(RequestByRoomId(roomId))
+            .body(RequestByRoomId(roomId, forceRuleTypeEnum))
             .retrieve()
             .toEntity(ClazzDto::class.java)
         return response.body
     }
 
-    fun getSubClassesForRoom(roomId: UUID, code: String): List<ClazzDto>? {
+    fun getSubClassesForRoom(roomId: UUID, code: String, forceRuleTypeEnum: RuleTypeEnum?): List<ClazzDto>? {
         val uri = UriComponentsBuilder
             .fromHttpUrl(ruleBookProperty.baseUrl)
             .pathSegment(ruleBookProperty.apiUrl)
@@ -212,13 +213,13 @@ class RuleBookClient(
         val response = restClient.post()
             .uri(uri)
             .headers { it.addAll(headers) }
-            .body(RequestByRoomId(roomId))
+            .body(RequestByRoomId(roomId, forceRuleTypeEnum))
             .retrieve()
             .toEntity(object : ParameterizedTypeReference<List<ClazzDto>>() {})
         return response.body
     }
 
-    fun getGroupedRacesForRoom(roomId: UUID): List<RaceGroupDto>? {
+    fun getGroupedRacesForRoom(roomId: UUID, forceRuleTypeEnum: RuleTypeEnum?): List<RaceGroupDto>? {
         val uri = UriComponentsBuilder
             .fromHttpUrl(ruleBookProperty.baseUrl)
             .pathSegment(ruleBookProperty.apiUrl)
@@ -228,14 +229,14 @@ class RuleBookClient(
         val response = restClient.post()
             .uri(uri)
             .headers { it.addAll(headers) }
-            .body(RequestByRoomId(roomId))
+            .body(RequestByRoomId(roomId, forceRuleTypeEnum))
             .retrieve()
             .toEntity(object : ParameterizedTypeReference<List<RaceGroupDto>>() {})
 
         return response.body
     }
 
-    fun getGroupedClassesForRoom(roomId: UUID): List<ClazzGroupDto>? {
+    fun getGroupedClassesForRoom(roomId: UUID, forceRuleTypeEnum: RuleTypeEnum?): List<ClazzGroupDto>? {
         val uri = UriComponentsBuilder
             .fromHttpUrl(ruleBookProperty.baseUrl)
             .pathSegment(ruleBookProperty.apiUrl)
@@ -245,7 +246,7 @@ class RuleBookClient(
         val response = restClient.post()
             .uri(uri)
             .headers { it.addAll(headers) }
-            .body(RequestByRoomId(roomId))
+            .body(RequestByRoomId(roomId, forceRuleTypeEnum))
             .retrieve()
             .toEntity(object :
                 ParameterizedTypeReference<List<ClazzGroupDto>>() {})
@@ -263,7 +264,7 @@ class RuleBookClient(
         val response = restClient.post()
             .uri(uri)
             .headers { it.addAll(headers) }
-            .body(RequestByRoomId(roomId))
+            .body(RequestByRoomId(roomId, null))
             .retrieve()
             .toEntity(object :
                 ParameterizedTypeReference<List<AbilityDto>>() {})
@@ -281,7 +282,7 @@ class RuleBookClient(
         val response = restClient.post()
             .uri(uri)
             .headers { it.addAll(headers) }
-            .body(RequestByRoomId(roomId))
+            .body(RequestByRoomId(roomId, null))
             .retrieve()
             .toEntity(object :
                 ParameterizedTypeReference<List<SkillDto>>() {})
@@ -326,7 +327,7 @@ class RuleBookClient(
         return response.body
     }
 
-    fun getBackgroundsForRoom(roomId: UUID): List<BackgroundDto>? {
+    fun getBackgroundsForRoom(roomId: UUID, forceRuleTypeEnum: RuleTypeEnum?): List<BackgroundDto>? {
         val uri = UriComponentsBuilder
             .fromHttpUrl(ruleBookProperty.baseUrl)
             .pathSegment(ruleBookProperty.apiUrl)
@@ -336,7 +337,7 @@ class RuleBookClient(
         val response = restClient.post()
             .uri(uri)
             .headers { it.addAll(headers) }
-            .body(RequestByRoomId(roomId))
+            .body(RequestByRoomId(roomId, forceRuleTypeEnum))
             .retrieve()
             .toEntity(object : ParameterizedTypeReference<List<BackgroundDto>>() {})
 
@@ -359,7 +360,7 @@ class RuleBookClient(
         return response.body
     }
 
-    fun getBackgroundByCode(roomId: UUID, code: String): BackgroundDto? {
+    fun getBackgroundByCode(roomId: UUID, code: String, forceRuleTypeEnum: RuleTypeEnum?): BackgroundDto? {
         val uri = UriComponentsBuilder
             .fromHttpUrl(ruleBookProperty.baseUrl)
             .pathSegment(ruleBookProperty.apiUrl)
@@ -370,7 +371,7 @@ class RuleBookClient(
         val response = restClient.post()
             .uri(uri)
             .headers { it.addAll(headers) }
-            .body(RequestByRoomId(roomId))
+            .body(RequestByRoomId(roomId, forceRuleTypeEnum))
             .retrieve()
             .toEntity(BackgroundDto::class.java)
 

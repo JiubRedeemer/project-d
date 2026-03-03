@@ -1,5 +1,6 @@
 package com.jiubredeemer.app.rulebook.race.service
 
+import com.jiubredeemer.app.integration.dto.RuleTypeEnum
 import com.jiubredeemer.app.integration.rulebook.RuleBookClient
 import com.jiubredeemer.app.integration.rulebook.dto.race.RaceGroupDto
 import com.jiubredeemer.app.integration.rulebook.dto.race.RaceDto
@@ -16,14 +17,14 @@ class RaceApiService(
     private val accessChecker: AccessChecker,
     private val ruleBookClient: RuleBookClient
 ) {
-    fun getGroupedRaces(roomId: UUID): List<RaceGroupDto> {
+    fun getGroupedRaces(roomId: UUID, forceRuleTypeEnum: RuleTypeEnum?): List<RaceGroupDto> {
         roomAccessChecker.hasAccessOrThrow(roomId, accessChecker.getCurrentUser().id!!)
-        return ruleBookClient.getGroupedRacesForRoom(roomId) ?: listOf()
+        return ruleBookClient.getGroupedRacesForRoom(roomId, forceRuleTypeEnum) ?: listOf()
     }
 
-    fun getRaces(roomId: UUID): List<RaceCreateInfoDto> {
+    fun getRaces(roomId: UUID, forceRuleTypeEnum: RuleTypeEnum?): List<RaceCreateInfoDto> {
         roomAccessChecker.hasAccessOrThrow(roomId, accessChecker.getCurrentUser().id!!)
-        val racesForRoom: List<RaceDto> = ruleBookClient.getRacesForRoom(roomId) ?: return listOf()
+        val racesForRoom: List<RaceDto> = ruleBookClient.getRacesForRoom(roomId, forceRuleTypeEnum) ?: return listOf()
         return racesForRoom.map {
             RaceCreateInfoDto(it.name, it.description ?: "", it.code, it.speciesCode, it.imgUrl, it.stats)
         }
@@ -34,19 +35,19 @@ class RaceApiService(
         return ruleBookClient.createRace(raceDto) ?: throw NotFoundException("Failed to create race")
     }
 
-    fun getRootRaces(roomId: UUID): List<RaceDto> {
+    fun getRootRaces(roomId: UUID, forceRuleTypeEnum: RuleTypeEnum?): List<RaceDto> {
         roomAccessChecker.hasAccessOrThrow(roomId, accessChecker.getCurrentUser().id!!)
-        return ruleBookClient.getRootRacesForRoom(roomId) ?: listOf()
+        return ruleBookClient.getRootRacesForRoom(roomId, forceRuleTypeEnum) ?: listOf()
     }
 
     fun getRaceByCode(roomId: UUID, code: String): RaceDto {
         roomAccessChecker.hasAccessOrThrow(roomId, accessChecker.getCurrentUser().id!!)
-        return ruleBookClient.getRaceByCode(roomId, code)
+        return ruleBookClient.getRaceByCode(roomId, code, null)
             ?: throw NotFoundException("Race not found by code: $code")
     }
 
-    fun getRaceSubspeciesByCode(roomId: UUID, code: String): List<RaceDto> {
+    fun getRaceSubspeciesByCode(roomId: UUID, code: String, forceRuleTypeEnum: RuleTypeEnum?): List<RaceDto> {
         roomAccessChecker.hasAccessOrThrow(roomId, accessChecker.getCurrentUser().id!!)
-        return ruleBookClient.getRaceSubspeciesByCode(roomId, code) ?: listOf()
+        return ruleBookClient.getRaceSubspeciesByCode(roomId, code, forceRuleTypeEnum) ?: listOf()
     }
 }

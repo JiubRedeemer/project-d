@@ -1,5 +1,6 @@
 package com.jiubredeemer.app.rulebook.background.service
 
+import com.jiubredeemer.app.integration.dto.RuleTypeEnum
 import com.jiubredeemer.app.integration.rulebook.RuleBookClient
 import com.jiubredeemer.app.integration.rulebook.dto.background.BackgroundDto
 import com.jiubredeemer.app.room.service.RoomAccessChecker
@@ -14,14 +15,14 @@ class BackgroundApiService(
     private val accessChecker: AccessChecker,
     private val ruleBookClient: RuleBookClient
 ) {
-    fun getBackgrounds(roomId: UUID): List<BackgroundDto> {
+    fun getBackgrounds(roomId: UUID, forceRuleTypeEnum: RuleTypeEnum?): List<BackgroundDto> {
         roomAccessChecker.hasAccessOrThrow(roomId, accessChecker.getCurrentUser().id!!)
-        return ruleBookClient.getBackgroundsForRoom(roomId) ?: listOf()
+        return ruleBookClient.getBackgroundsForRoom(roomId, forceRuleTypeEnum) ?: listOf()
     }
 
-    fun getBackgroundByCode(roomId: UUID, code: String): BackgroundDto {
+    fun getBackgroundByCode(roomId: UUID, code: String, forceRuleTypeEnum: RuleTypeEnum?): BackgroundDto {
         roomAccessChecker.hasAccessOrThrow(roomId, accessChecker.getCurrentUser().id!!)
-        return ruleBookClient.getBackgroundByCode(roomId, code)
+        return ruleBookClient.getBackgroundByCode(roomId, code, forceRuleTypeEnum)
             ?: throw NotFoundException("Background not found by code: $code")
     }
 
