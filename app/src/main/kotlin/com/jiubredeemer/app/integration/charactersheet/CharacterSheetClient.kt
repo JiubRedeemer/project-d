@@ -56,6 +56,23 @@ class CharacterSheetClient(
         }
     }
 
+    fun logicDeleteById(id: UUID) {
+        try {
+            val uri = UriComponentsBuilder
+                .fromHttpUrl(characterSheetProperty.baseUrl)
+                .pathSegment(characterSheetProperty.apiUrl)
+                .pathSegment(characterSheetProperty.roomsUrl)
+                .pathSegment(id.toString())
+                .pathSegment(characterSheetProperty.logicalUrl)
+                .toUriString()
+            restClient.delete()
+                .uri(uri)
+                .headers { it.addAll(headers) }.retrieve()
+        } catch (e: Exception) {
+            throw IntegrationAccessException("CharacterSheet don't response on logicDeleteById, cause: ${e.message}")
+        }
+    }
+
     fun createCharacter(createCharacterRequest: CreateCharacterRequest): CharacterDto? {
         try {
             val uri = UriComponentsBuilder

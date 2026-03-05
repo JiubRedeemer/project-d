@@ -10,5 +10,6 @@ data class NotesProperty (
     var baseUrl: String = "",
     var roomsUrl: String = "",
     var charactersUrl: String = "",
-    var notesUrl: String = ""
+    var notesUrl: String = "",
+    var logicalUrl: String = ""
 )

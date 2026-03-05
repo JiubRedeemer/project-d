@@ -88,6 +88,22 @@ class RoomService(
     }
 
     /**
+     * Логически удалить комнату по её идентификатору.
+     *
+     * @param roomId идентификатор комнаты
+     * @return true, если комната была удалена
+     */
+    @Transactional
+    fun deleteLogical(roomId: UUID): Boolean {
+        val findById = roomRepository.findById(roomId)
+        if (findById.isPresent) {
+            findById.get().deleteDatetime = Timestamp.valueOf(LocalDateTime.now())
+            roomRepository.save<Room>(findById.get())
+        }
+        return true
+    }
+
+    /**
      * Добавить пользователя в комнату с заданными ролями.
      *
      * @param roomId идентификатор комнаты

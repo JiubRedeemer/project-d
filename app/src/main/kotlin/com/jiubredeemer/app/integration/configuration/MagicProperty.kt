@@ -14,5 +14,7 @@ data class MagicProperty(
     var spellCellsUrl: String = "",
     var importUrl: String = "",
     var byRoomCharacterUrl: String = "",
-    var inUseUrl: String = ""
+    var inUseUrl: String = "",
+    var logicalUrl: String = ""
+
 )

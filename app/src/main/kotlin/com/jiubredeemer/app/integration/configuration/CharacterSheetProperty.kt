@@ -29,5 +29,6 @@ data class CharacterSheetProperty(
     var updateMasteryUrl: String = "",
     var characterSkillsUrl: String = "",
     var useUrl: String = "",
-    var restUrl: String = ""
+    var restUrl: String = "",
+    var logicalUrl: String = ""
 )

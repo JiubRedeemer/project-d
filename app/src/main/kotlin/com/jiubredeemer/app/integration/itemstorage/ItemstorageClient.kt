@@ -65,7 +65,12 @@ class ItemstorageClient(
         }
     }
 
-    fun addBonusAttackToItemById(roomId: UUID, characterId: UUID, itemId: UUID, bonusValueUpdateRequest: BonusValueUpdateRequest): InventoryDto? {
+    fun addBonusAttackToItemById(
+        roomId: UUID,
+        characterId: UUID,
+        itemId: UUID,
+        bonusValueUpdateRequest: BonusValueUpdateRequest
+    ): InventoryDto? {
         try {
             val uri = UriComponentsBuilder
                 .fromHttpUrl(itemstorageProperty.baseUrl)
@@ -90,7 +95,12 @@ class ItemstorageClient(
         }
     }
 
-    fun addBonusDamageToItemById(roomId: UUID, characterId: UUID, itemId: UUID, bonusValueUpdateRequest: BonusValueUpdateRequest): InventoryDto? {
+    fun addBonusDamageToItemById(
+        roomId: UUID,
+        characterId: UUID,
+        itemId: UUID,
+        bonusValueUpdateRequest: BonusValueUpdateRequest
+    ): InventoryDto? {
         try {
             val uri = UriComponentsBuilder
                 .fromHttpUrl(itemstorageProperty.baseUrl)
@@ -356,7 +366,7 @@ class ItemstorageClient(
         }
     }
 
-    fun characterRest(roomId:UUID, characterId: UUID, restType: RestTypeEnum) {
+    fun characterRest(roomId: UUID, characterId: UUID, restType: RestTypeEnum) {
         try {
             val uri = UriComponentsBuilder
                 .fromHttpUrl(itemstorageProperty.baseUrl)
@@ -373,6 +383,24 @@ class ItemstorageClient(
                 .retrieve()
         } catch (e: Exception) {
             throw IntegrationAccessException("Itemstorage didn't respond on characterRest, cause: ${e.message}")
+        }
+    }
+
+    fun logicDeleteById(roomId: UUID) {
+        try {
+            val uri = UriComponentsBuilder
+                .fromHttpUrl(itemstorageProperty.baseUrl)
+                .pathSegment(itemstorageProperty.apiUrl)
+                .pathSegment(roomId.toString())
+                .pathSegment(itemstorageProperty.inventoryUrl)
+                .pathSegment(itemstorageProperty.logicalUrl)
+                .toUriString()
+            restClient.delete()
+                .uri(uri)
+                .headers { it.addAll(headers) }
+                .retrieve()
+        } catch (e: Exception) {
+            throw IntegrationAccessException("Itemstorage didn't respond on logicDeleteById, cause: ${e.message}")
         }
     }
 

@@ -390,8 +390,28 @@ class RuleBookClient(
             restClient.delete()
                 .uri(uri)
                 .headers { it.addAll(headers) }
+                .retrieve()
         } catch (e: Exception) {
             throw IntegrationAccessException("Rulebook dont response, cause: ${e.message}")
+        }
+    }
+
+    fun logicDeleteById(id: UUID) {
+        try {
+            val uri = UriComponentsBuilder
+                .fromHttpUrl(ruleBookProperty.baseUrl)
+                .pathSegment(ruleBookProperty.apiUrl)
+                .pathSegment(ruleBookProperty.roomsUrl)
+                .pathSegment(id.toString())
+                .pathSegment(ruleBookProperty.logicalUrl)
+                .toUriString()
+
+            restClient.delete()
+                .uri(uri)
+                .headers { it.addAll(headers) }
+                .retrieve()
+        } catch (e: Exception) {
+            throw IntegrationAccessException("Rulebook dont response on logicDeleteById, cause: ${e.message}")
         }
     }
 }

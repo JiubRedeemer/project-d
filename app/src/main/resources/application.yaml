@@ -44,6 +44,7 @@ project-d:
       skills-by-code-url: byCode
       skills-by-class-url: byClass
       backgrounds-url: backgrounds
+      logical-url: logical
     character-sheet:
       api-url: api
       base-url: http://localhost:8082
@@ -69,6 +70,7 @@ project-d:
       character-skills-url: character-skills
       use-url: use
       rest-url: rest
+      logical-url: logical
     itemstorage:
       api-url: api
       base-url: http://localhost:8083
@@ -84,12 +86,14 @@ project-d:
       skills-url: skills
       use-url: use
       rest-url: rest
+      logical-url: logical
     notes:
       api-url: api
       base-url: http://localhost:8085
       rooms-url: rooms
       characters-url: characters
       notes-url: notes
+      logical-url: logical
     magic:
       api-url: api
       base-url: http://localhost:8086
@@ -100,5 +104,6 @@ project-d:
       import-url: import
       by-room-character-url: by-room-character
       in-use-url: in-use
+      logical-url: logical
 
 
