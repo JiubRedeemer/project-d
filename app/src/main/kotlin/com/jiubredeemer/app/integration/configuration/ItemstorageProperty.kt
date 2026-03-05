@@ -20,4 +20,5 @@ data class ItemstorageProperty(
     var skillsUrl: String = "",
     var useUrl: String = "",
     var restUrl: String = "",
+    var logicalUrl: String = ""
 )

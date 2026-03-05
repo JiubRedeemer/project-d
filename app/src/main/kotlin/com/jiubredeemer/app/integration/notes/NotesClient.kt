@@ -125,4 +125,21 @@ class NotesClient(
         }
     }
 
+    fun logicDeleteById(roomId: UUID) {
+        try {
+            val uri = UriComponentsBuilder
+                .fromHttpUrl(notesProperty.baseUrl)
+                .pathSegment(notesProperty.apiUrl)
+                .pathSegment(roomId.toString())
+                .pathSegment(notesProperty.notesUrl)
+                .toUriString()
+            restClient.delete()
+                .uri(uri)
+                .headers { it.addAll(headers) }
+                .retrieve()
+        } catch (e: Exception) {
+            throw IntegrationAccessException("Notes don't response on logicDeleteById, cause: ${e.message}")
+        }
+    }
+
 }

@@ -609,4 +609,22 @@ class MagicClient(
             throw IntegrationAccessException("Magic don't response on useSpellCell, cause: ${e.message}")
         }
     }
+
+    fun logicDeleteById(roomId: UUID) {
+        try {
+            val uri = UriComponentsBuilder
+                .fromHttpUrl(magicProperty.baseUrl)
+                .pathSegment(magicProperty.apiUrl)
+                .pathSegment(magicProperty.spellBooksUrl)
+                .pathSegment(roomId.toString())
+                .pathSegment(magicProperty.logicalUrl)
+                .toUriString()
+            restClient.delete()
+                .uri(uri)
+                .headers { it.addAll(headers) }
+                .retrieve()
+        } catch (e: Exception) {
+            throw IntegrationAccessException("Magic don't response on logicDeleteById, cause: ${e.message}")
+        }
+    }
 }

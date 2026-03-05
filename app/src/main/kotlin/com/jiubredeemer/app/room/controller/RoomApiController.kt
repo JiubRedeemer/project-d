@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.web.bind.annotation.*
+import java.util.UUID
 
 @RestController
 @RequestMapping("/api/rooms")
@@ -64,5 +65,24 @@ class RoomApiController(
     @HasRoleOrThrow("ADMIN", "USER")
     fun readAllRoomsForCurrentUser(): List<RoomShortResponse> {
         return roomApiService.readAllForCurrentUser()
+    }
+
+    @Operation(summary = "Получить все комнаты текущего пользователя")
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200", description = "Список комнат успешно получен",
+                content = [Content(schema = Schema(implementation = RoomShortResponse::class))]
+            ),
+            ApiResponse(
+                responseCode = "403", description = "Недостаточно прав",
+                content = [Content(schema = Schema())]
+            )
+        ]
+    )
+    @DeleteMapping("/{roomId}")
+    @HasRoleOrThrow("ADMIN", "USER")
+    fun deleteRoom(@PathVariable roomId: UUID) {
+        roomApiService.deleteRoom(roomId)
     }
 }
