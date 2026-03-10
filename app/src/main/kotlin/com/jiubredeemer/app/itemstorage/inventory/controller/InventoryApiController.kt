@@ -258,6 +258,27 @@ class InventoryApiController(
         return inventoryApiService.addItem(roomId, itemDto)
     }
 
+    @Operation(summary = "Удалить предмет из базы знаний")
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200", description = "Удален предмет",
+            ),
+            ApiResponse(
+                responseCode = "403", description = "Недостаточно прав",
+                content = [Content(schema = Schema())]
+            )
+        ]
+    )
+    @DeleteMapping("/{roomId}/items/{itemId}")
+    @HasRoleOrThrow("ADMIN", "USER")
+    fun deleteItem(
+        @PathVariable roomId: UUID,
+        @PathVariable itemId: UUID
+    ) {
+        return inventoryApiService.deleteItem(roomId, itemId)
+    }
+
 
     @Operation(summary = "Получить список бонусных характеристик надетых на персонажа предметов")
     @ApiResponses(

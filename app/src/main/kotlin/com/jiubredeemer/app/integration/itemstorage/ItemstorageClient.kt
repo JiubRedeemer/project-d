@@ -322,6 +322,26 @@ class ItemstorageClient(
         }
     }
 
+    fun deleteItem(roomId: UUID, userId: UUID, itemId: UUID) {
+        try {
+            val uri = UriComponentsBuilder
+                .fromHttpUrl(itemstorageProperty.baseUrl)
+                .pathSegment(itemstorageProperty.apiUrl)
+                .pathSegment(itemstorageProperty.itemsUrl)
+                .pathSegment(roomId.toString())
+                .pathSegment(userId.toString())
+                .pathSegment(itemId.toString())
+                .toUriString()
+            restClient.delete()
+                .uri(uri)
+                .headers { it.addAll(headers) }
+                .retrieve()
+                .toEntity(ItemDto::class.java)
+        } catch (e: Exception) {
+            throw IntegrationAccessException("Itemstorage didn't respond on deleteItem, cause: ${e.message}")
+        }
+    }
+
     fun getEquippedItemStats(roomId: UUID, characterId: UUID): EquippedItemsStatsResponse {
         try {
             val uri = UriComponentsBuilder

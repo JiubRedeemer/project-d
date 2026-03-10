@@ -135,6 +135,18 @@ class InventoryApiService(
         return createdItem
     }
 
+    fun deleteItem(
+        roomId: UUID,
+        itemId: UUID
+    ) {
+        roomAccessChecker.hasAccessOrThrow(roomId, accessChecker.getCurrentUser().id!!)
+        itemstorageClient.deleteItem(
+            roomId,
+            accessChecker.getCurrentUser().id!!,
+            itemId
+        )
+    }
+
     fun getEquippedItemStats(
         roomId: UUID,
         characterId: UUID
