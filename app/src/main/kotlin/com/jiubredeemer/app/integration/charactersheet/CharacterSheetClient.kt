@@ -283,6 +283,7 @@ class CharacterSheetClient(
             throw IntegrationAccessException("CharacterSheet don't response on updateHealthBonusValue, cause: ${e.message}")
         }
     }
+
     fun updateHealthMaxValue(
         characterId: UUID,
         bonusValueRequest: BonusValueUpdateRequest
@@ -604,6 +605,44 @@ class CharacterSheetClient(
                 .retrieve()
         } catch (e: Exception) {
             throw IntegrationAccessException("CharacterSheet don't response on characterRest, cause: ${e.message}")
+        }
+    }
+
+    fun characterAddTrait(characterId: UUID, traits: CharacterDto.CharacterTraitsDto) {
+        try {
+            val uri = UriComponentsBuilder
+                .fromHttpUrl(characterSheetProperty.baseUrl)
+                .pathSegment(characterSheetProperty.apiUrl)
+                .pathSegment(characterSheetProperty.charactersUrl)
+                .pathSegment(characterId.toString())
+                .pathSegment(characterSheetProperty.traitsUrl)
+                .toUriString()
+            restClient.put()
+                .uri(uri)
+                .headers { it.addAll(headers) }
+                .body(traits)
+                .retrieve()
+        } catch (e: Exception) {
+            throw IntegrationAccessException("CharacterSheet don't response on characterAddTrait, cause: ${e.message}")
+        }
+    }
+
+    fun characterDeleteTrait(characterId: UUID, traitId: UUID) {
+        try {
+            val uri = UriComponentsBuilder
+                .fromHttpUrl(characterSheetProperty.baseUrl)
+                .pathSegment(characterSheetProperty.apiUrl)
+                .pathSegment(characterSheetProperty.charactersUrl)
+                .pathSegment(characterId.toString())
+                .pathSegment(characterSheetProperty.traitsUrl)
+                .pathSegment(traitId.toString())
+                .toUriString()
+            restClient.delete()
+                .uri(uri)
+                .headers { it.addAll(headers) }
+                .retrieve()
+        } catch (e: Exception) {
+            throw IntegrationAccessException("CharacterSheet don't response on characterDeleteTrait, cause: ${e.message}")
         }
     }
 

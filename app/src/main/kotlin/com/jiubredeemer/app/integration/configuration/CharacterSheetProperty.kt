@@ -30,5 +30,6 @@ data class CharacterSheetProperty(
     var characterSkillsUrl: String = "",
     var useUrl: String = "",
     var restUrl: String = "",
-    var logicalUrl: String = ""
+    var logicalUrl: String = "",
+    var traitsUrl: String = ""
 )

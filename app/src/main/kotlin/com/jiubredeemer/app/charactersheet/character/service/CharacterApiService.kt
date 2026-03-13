@@ -214,4 +214,15 @@ class CharacterApiService(
         itemstorageClient.characterRest(roomId, characterId, restType)
         magicClient.refillRestByCharacter(roomId, characterId, restType.name)
     }
+
+    fun characterAddTrait(roomId: UUID, characterId: UUID, trait: CharacterDto.CharacterTraitsDto) {
+        roomAccessChecker.hasAccessOrThrow(roomId, accessChecker.getCurrentUser().id!!)
+        trait.characterId = characterId
+        characterSheetClient.characterAddTrait(characterId, trait)
+    }
+
+    fun characterDeleteTrait(roomId: UUID, characterId: UUID, traitId: UUID) {
+        roomAccessChecker.hasAccessOrThrow(roomId, accessChecker.getCurrentUser().id!!)
+        characterSheetClient.characterDeleteTrait(characterId, traitId)
+    }
 }

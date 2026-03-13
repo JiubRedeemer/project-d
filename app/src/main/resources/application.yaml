@@ -72,6 +72,7 @@ project-d:
       use-url: use
       rest-url: rest
       logical-url: logical
+      traits-url: traits
     itemstorage:
       api-url: api
       base-url: http://localhost:8083
