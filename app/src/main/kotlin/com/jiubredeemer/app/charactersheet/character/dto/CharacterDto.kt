@@ -1,5 +1,6 @@
 package com.jiubredeemer.app.charactersheet.character.dto
 
+import com.jiubredeemer.app.integration.rulebook.dto.race.RaceTraitDto
 import com.jiubredeemer.app.itemstorage.inventory.dto.inventory.EquippedItemsStatsResponse
 import java.util.*
 
@@ -25,6 +26,7 @@ data class CharacterDto(
     val characterBio: CharacterBio?,
     val health: HealhDto?,
     val level: LevelDto?,
+    val traits: List<CharacterTraitsDto>?,
     val currentHpDiceCount: Int?,
     var itemStats: EquippedItemsStatsResponse?,
     var isOwner: Boolean?,
@@ -79,5 +81,13 @@ data class CharacterDto(
     data class RaceInfoDto(
         var code: String?,
         val name: String?,
+        val traits: List<RaceTraitDto>?
+    )
+
+    data class CharacterTraitsDto(
+        var id: UUID?,
+        var characterId: UUID?,
+        val name: String?,
+        val description: String?,
     )
 }

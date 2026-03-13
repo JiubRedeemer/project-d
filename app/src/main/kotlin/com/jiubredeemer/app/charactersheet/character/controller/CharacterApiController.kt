@@ -267,5 +267,25 @@ class CharacterApiController(
         characterApiService.characterRest(roomId, characterId, restType, 0)
     }
 
+    @PutMapping("/{characterId}/traits")
+    @HasRoleOrThrow("ADMIN", "USER")
+    fun characterAddTrait(
+        @PathVariable roomId: UUID,
+        @PathVariable characterId: UUID,
+        @RequestBody trait: CharacterDto.CharacterTraitsDto
+    ) {
+        characterApiService.characterAddTrait(roomId, characterId, trait)
+    }
+
+    @DeleteMapping("/{characterId}/traits/{traitId}")
+    @HasRoleOrThrow("ADMIN", "USER")
+    fun characterDeleteTrait(
+        @PathVariable roomId: UUID,
+        @PathVariable characterId: UUID,
+        @PathVariable traitId: UUID
+    ) {
+        characterApiService.characterDeleteTrait(roomId, characterId, traitId)
+    }
+
 
 }
