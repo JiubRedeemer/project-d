@@ -3,9 +3,12 @@ package com.jiubredeemer.app.room.controller
 import com.jiubredeemer.app.integration.dto.RuleTypeEnum
 import com.jiubredeemer.app.room.model.request.CreateRoomRequest
 import com.jiubredeemer.app.room.model.response.CreateRoomResponse
+import com.jiubredeemer.app.room.model.response.RoomMasterResponse
 import com.jiubredeemer.app.room.model.response.RoomShortResponse
 import com.jiubredeemer.app.room.service.RoomApiService
 import com.jiubredeemer.auth.annotation.HasRoleOrThrow
+import com.jiubredeemer.dal.entity.RoomUser
+import com.jiubredeemer.dal.model.RoomDto
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
@@ -13,7 +16,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.web.bind.annotation.*
-import java.util.UUID
+import java.util.*
 
 @RestController
 @RequestMapping("/api/rooms")
@@ -67,12 +70,11 @@ class RoomApiController(
         return roomApiService.readAllForCurrentUser()
     }
 
-    @Operation(summary = "Получить все комнаты текущего пользователя")
+    @Operation(summary = "Удалить комнату")
     @ApiResponses(
         value = [
             ApiResponse(
-                responseCode = "200", description = "Список комнат успешно получен",
-                content = [Content(schema = Schema(implementation = RoomShortResponse::class))]
+                responseCode = "200", description = "Комната удалена",
             ),
             ApiResponse(
                 responseCode = "403", description = "Недостаточно прав",
@@ -84,5 +86,43 @@ class RoomApiController(
     @HasRoleOrThrow("ADMIN", "USER")
     fun deleteRoom(@PathVariable roomId: UUID) {
         roomApiService.deleteRoom(roomId)
+    }
+
+    @Operation(summary = "Получить список ролей пользователя в комнате")
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200", description = "Список ролей успешно получен",
+                content = [Content(schema = Schema(implementation = RoomUser.Role::class))]
+            ),
+            ApiResponse(
+                responseCode = "403", description = "Недостаточно прав",
+                content = [Content(schema = Schema())]
+            )
+        ]
+    )
+    @GetMapping("/{roomId}/roles")
+    @HasRoleOrThrow("ADMIN", "USER")
+    fun getRoleInRoom(@PathVariable("roomId") roomId: UUID): List<RoomUser.Role> {
+        return roomApiService.getRoleInRoom(roomId)
+    }
+
+    @Operation(summary = "Получить информацию о комнате")
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200", description = "Информация о комнате успешно получена",
+                content = [Content(schema = Schema(implementation = RoomMasterResponse::class))]
+            ),
+            ApiResponse(
+                responseCode = "403", description = "Недостаточно прав",
+                content = [Content(schema = Schema())]
+            )
+        ]
+    )
+    @GetMapping("/{roomId}")
+    @HasRoleOrThrow("ADMIN", "USER")
+    fun getRoomInfo(@PathVariable("roomId") roomId: UUID): RoomMasterResponse? {
+        return roomApiService.getRoomInfo(roomId);
     }
 }

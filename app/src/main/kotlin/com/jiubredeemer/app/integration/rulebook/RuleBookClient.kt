@@ -10,6 +10,7 @@ import com.jiubredeemer.app.integration.rulebook.dto.clazz.ClazzDto
 import com.jiubredeemer.app.integration.rulebook.dto.clazz.ClazzGroupDto
 import com.jiubredeemer.app.integration.rulebook.dto.race.RaceDto
 import com.jiubredeemer.app.integration.rulebook.dto.race.RaceGroupDto
+import com.jiubredeemer.app.integration.rulebook.dto.room.RoomDto
 import com.jiubredeemer.app.integration.rulebook.dto.skill.SkillByClassRequest
 import com.jiubredeemer.app.integration.rulebook.dto.skill.SkillByCodeRequest
 import com.jiubredeemer.app.integration.rulebook.dto.skill.SkillDto
@@ -412,6 +413,28 @@ class RuleBookClient(
                 .retrieve()
         } catch (e: Exception) {
             throw IntegrationAccessException("Rulebook dont response on logicDeleteById, cause: ${e.message}")
+        }
+    }
+
+    fun getRoom(roomId: UUID): RoomDto? {
+        try {
+            val uri = UriComponentsBuilder
+                .fromHttpUrl(ruleBookProperty.baseUrl)
+                .pathSegment(ruleBookProperty.apiUrl)
+                .pathSegment(ruleBookProperty.roomsUrl)
+                .pathSegment(roomId.toString())
+                .pathSegment(ruleBookProperty.rulesUrl)
+                .toUriString()
+
+            return restClient.get()
+                .uri(uri)
+                .headers { it.addAll(headers) }
+                .retrieve()
+                .toEntity(RoomDto::class.java)
+                .body
+
+        } catch (e: Exception) {
+            throw IntegrationAccessException("Rulebook dont response on getRoom, cause: ${e.message}")
         }
     }
 }

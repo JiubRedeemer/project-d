@@ -81,6 +81,7 @@ data class CharacterDto(
     data class RaceInfoDto(
         var code: String?,
         val name: String?,
+        val imgUrl: String?,
         val traits: List<RaceTraitDto>?
     )
 

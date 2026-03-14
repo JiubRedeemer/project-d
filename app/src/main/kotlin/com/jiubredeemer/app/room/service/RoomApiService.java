@@ -10,11 +10,14 @@ import com.jiubredeemer.app.integration.rulebook.RuleBookClient;
 import com.jiubredeemer.app.room.converter.RoomDtoConverter;
 import com.jiubredeemer.app.room.model.request.CreateRoomRequest;
 import com.jiubredeemer.app.room.model.response.CreateRoomResponse;
+import com.jiubredeemer.app.room.model.response.RoomMasterResponse;
 import com.jiubredeemer.app.room.model.response.RoomShortResponse;
 import com.jiubredeemer.app.room.validator.RoomValidator;
 import com.jiubredeemer.auth.service.AccessChecker;
 import com.jiubredeemer.common.exception.IntegrationAccessException;
 import com.jiubredeemer.dal.entity.Room;
+import com.jiubredeemer.dal.entity.RoomUser;
+import com.jiubredeemer.dal.model.RoomDto;
 import com.jiubredeemer.dal.model.UserDto;
 import com.jiubredeemer.dal.service.RoomService;
 import org.jetbrains.annotations.NotNull;
@@ -118,5 +121,18 @@ public class RoomApiService {
         } catch (Exception exception) {
             throw new IntegrationAccessException(exception.getMessage());
         }
+    }
+
+    public List<RoomUser.Role> getRoleInRoom(@NotNull UUID roomId) {
+        return roomAccessChecker.hasAccessOrThrow(roomId, Objects.requireNonNull(accessChecker.getCurrentUser().getId()));
+    }
+
+    public RoomMasterResponse getRoomInfo(@NotNull UUID roomId) throws IllegalAccessException {
+        if (roomAccessChecker.hasAccessOrThrow(roomId, Objects.requireNonNull(accessChecker.getCurrentUser().getId())).contains(RoomUser.Role.MASTER)) {
+            final RoomDto roomDto = roomService.readById(roomId);
+            final com.jiubredeemer.app.integration.rulebook.dto.room.RoomDto roomFromRuleBook = ruleBookClient.getRoom(roomId);
+            return new RoomMasterResponse(roomDto.getId(), roomDto.getName(), roomDto.getDescription(), roomDto.getFilePath(), roomDto.getLastActivityDatetime(), roomFromRuleBook.getRuleType(), roomFromRuleBook.getBaseRuleType());
+        }
+        throw new IllegalAccessException("You are not master");
     }
 }
