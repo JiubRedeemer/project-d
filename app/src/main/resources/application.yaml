@@ -46,6 +46,7 @@ project-d:
       skills-by-class-url: byClass
       backgrounds-url: backgrounds
       logical-url: logical
+      rules-url: rules
     character-sheet:
       api-url: api
       base-url: http://localhost:8082
