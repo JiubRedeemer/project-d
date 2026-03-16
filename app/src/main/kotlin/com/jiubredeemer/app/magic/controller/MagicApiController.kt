@@ -1,13 +1,6 @@
 package com.jiubredeemer.app.magic.controller
 
-import com.jiubredeemer.app.integration.magic.dto.ChargesRefillEnum
-import com.jiubredeemer.app.integration.magic.dto.ImportResult
-import com.jiubredeemer.app.integration.magic.dto.RefillRestRequest
-import com.jiubredeemer.app.integration.magic.dto.SpellBookDto
-import com.jiubredeemer.app.integration.magic.dto.SpellBookItemDto
-import com.jiubredeemer.app.integration.magic.dto.SpellCellDto
-import com.jiubredeemer.app.integration.magic.dto.SpellClass
-import com.jiubredeemer.app.integration.magic.dto.SpellDto
+import com.jiubredeemer.app.integration.magic.dto.*
 import com.jiubredeemer.app.magic.service.MagicApiService
 import com.jiubredeemer.auth.annotation.HasRoleOrThrow
 import io.swagger.v3.oas.annotations.Operation
@@ -31,19 +24,34 @@ class MagicApiController(
     @Operation(summary = "List all spells (optionally filter by class)")
     @ApiResponses(
         value = [
-            ApiResponse(responseCode = "200", description = "List of spells", content = [Content(schema = Schema(implementation = SpellDto::class))]),
+            ApiResponse(
+                responseCode = "200",
+                description = "List of spells",
+                content = [Content(schema = Schema(implementation = SpellDto::class))]
+            ),
             ApiResponse(responseCode = "403", description = "Forbidden", content = [Content(schema = Schema())]),
         ]
     )
     @GetMapping("/spells")
     @HasRoleOrThrow("ADMIN", "USER")
-    fun listSpells(@RequestParam(required = false) spellClass: SpellClass?): List<SpellDto> =
-        magicApiService.listSpells(spellClass?.name)
+    fun listSpells(
+        @RequestParam(required = false) spellClass: String?,
+        @RequestParam(required = false) rootSpellClass: String?
+    ): List<SpellDto> {
+        val listSpells = magicApiService.listSpells(spellClass)
+        return listSpells.ifEmpty {
+            magicApiService.listSpells(rootSpellClass)
+        }
+    }
 
     @Operation(summary = "Create a spell")
     @ApiResponses(
         value = [
-            ApiResponse(responseCode = "200", description = "Created spell", content = [Content(schema = Schema(implementation = SpellDto::class))]),
+            ApiResponse(
+                responseCode = "200",
+                description = "Created spell",
+                content = [Content(schema = Schema(implementation = SpellDto::class))]
+            ),
             ApiResponse(responseCode = "403", description = "Forbidden", content = [Content(schema = Schema())]),
         ]
     )
@@ -55,7 +63,11 @@ class MagicApiController(
     @Operation(summary = "Import spells from TTG")
     @ApiResponses(
         value = [
-            ApiResponse(responseCode = "200", description = "Import result", content = [Content(schema = Schema(implementation = ImportResult::class))]),
+            ApiResponse(
+                responseCode = "200",
+                description = "Import result",
+                content = [Content(schema = Schema(implementation = ImportResult::class))]
+            ),
             ApiResponse(responseCode = "403", description = "Forbidden", content = [Content(schema = Schema())]),
         ]
     )
@@ -67,7 +79,11 @@ class MagicApiController(
     @Operation(summary = "Get spell by ID")
     @ApiResponses(
         value = [
-            ApiResponse(responseCode = "200", description = "Spell", content = [Content(schema = Schema(implementation = SpellDto::class))]),
+            ApiResponse(
+                responseCode = "200",
+                description = "Spell",
+                content = [Content(schema = Schema(implementation = SpellDto::class))]
+            ),
             ApiResponse(responseCode = "403", description = "Forbidden", content = [Content(schema = Schema())]),
         ]
     )
@@ -79,7 +95,11 @@ class MagicApiController(
     @Operation(summary = "Update a spell")
     @ApiResponses(
         value = [
-            ApiResponse(responseCode = "200", description = "Updated spell", content = [Content(schema = Schema(implementation = SpellDto::class))]),
+            ApiResponse(
+                responseCode = "200",
+                description = "Updated spell",
+                content = [Content(schema = Schema(implementation = SpellDto::class))]
+            ),
             ApiResponse(responseCode = "403", description = "Forbidden", content = [Content(schema = Schema())]),
         ]
     )
@@ -106,7 +126,11 @@ class MagicApiController(
     @Operation(summary = "List all spell books")
     @ApiResponses(
         value = [
-            ApiResponse(responseCode = "200", description = "List of spell books", content = [Content(schema = Schema(implementation = SpellBookDto::class))]),
+            ApiResponse(
+                responseCode = "200",
+                description = "List of spell books",
+                content = [Content(schema = Schema(implementation = SpellBookDto::class))]
+            ),
             ApiResponse(responseCode = "403", description = "Forbidden", content = [Content(schema = Schema())]),
         ]
     )
@@ -118,7 +142,11 @@ class MagicApiController(
     @Operation(summary = "Create a spell book")
     @ApiResponses(
         value = [
-            ApiResponse(responseCode = "200", description = "Created spell book", content = [Content(schema = Schema(implementation = SpellBookDto::class))]),
+            ApiResponse(
+                responseCode = "200",
+                description = "Created spell book",
+                content = [Content(schema = Schema(implementation = SpellBookDto::class))]
+            ),
             ApiResponse(responseCode = "403", description = "Forbidden", content = [Content(schema = Schema())]),
         ]
     )
@@ -130,7 +158,11 @@ class MagicApiController(
     @Operation(summary = "Get spell book by room and character")
     @ApiResponses(
         value = [
-            ApiResponse(responseCode = "200", description = "Spell book", content = [Content(schema = Schema(implementation = SpellBookDto::class))]),
+            ApiResponse(
+                responseCode = "200",
+                description = "Spell book",
+                content = [Content(schema = Schema(implementation = SpellBookDto::class))]
+            ),
             ApiResponse(responseCode = "403", description = "Forbidden", content = [Content(schema = Schema())]),
         ]
     )
@@ -145,7 +177,11 @@ class MagicApiController(
     @Operation(summary = "Get spell book by ID")
     @ApiResponses(
         value = [
-            ApiResponse(responseCode = "200", description = "Spell book", content = [Content(schema = Schema(implementation = SpellBookDto::class))]),
+            ApiResponse(
+                responseCode = "200",
+                description = "Spell book",
+                content = [Content(schema = Schema(implementation = SpellBookDto::class))]
+            ),
             ApiResponse(responseCode = "403", description = "Forbidden", content = [Content(schema = Schema())]),
         ]
     )
@@ -157,7 +193,11 @@ class MagicApiController(
     @Operation(summary = "Update a spell book")
     @ApiResponses(
         value = [
-            ApiResponse(responseCode = "200", description = "Updated spell book", content = [Content(schema = Schema(implementation = SpellBookDto::class))]),
+            ApiResponse(
+                responseCode = "200",
+                description = "Updated spell book",
+                content = [Content(schema = Schema(implementation = SpellBookDto::class))]
+            ),
             ApiResponse(responseCode = "403", description = "Forbidden", content = [Content(schema = Schema())]),
         ]
     )
@@ -186,7 +226,11 @@ class MagicApiController(
     @Operation(summary = "Add spell to spell book")
     @ApiResponses(
         value = [
-            ApiResponse(responseCode = "200", description = "Updated spell book", content = [Content(schema = Schema(implementation = SpellBookDto::class))]),
+            ApiResponse(
+                responseCode = "200",
+                description = "Updated spell book",
+                content = [Content(schema = Schema(implementation = SpellBookDto::class))]
+            ),
             ApiResponse(responseCode = "403", description = "Forbidden", content = [Content(schema = Schema())]),
         ]
     )
@@ -201,7 +245,11 @@ class MagicApiController(
     @Operation(summary = "Remove spell from spell book")
     @ApiResponses(
         value = [
-            ApiResponse(responseCode = "200", description = "Updated spell book", content = [Content(schema = Schema(implementation = SpellBookDto::class))]),
+            ApiResponse(
+                responseCode = "200",
+                description = "Updated spell book",
+                content = [Content(schema = Schema(implementation = SpellBookDto::class))]
+            ),
             ApiResponse(responseCode = "403", description = "Forbidden", content = [Content(schema = Schema())]),
         ]
     )
@@ -216,7 +264,11 @@ class MagicApiController(
     @Operation(summary = "Set spell in-use flag in spell book")
     @ApiResponses(
         value = [
-            ApiResponse(responseCode = "200", description = "Updated spell book item", content = [Content(schema = Schema(implementation = SpellBookItemDto::class))]),
+            ApiResponse(
+                responseCode = "200",
+                description = "Updated spell book item",
+                content = [Content(schema = Schema(implementation = SpellBookItemDto::class))]
+            ),
             ApiResponse(responseCode = "403", description = "Forbidden", content = [Content(schema = Schema())]),
         ]
     )
@@ -232,7 +284,11 @@ class MagicApiController(
     @Operation(summary = "Create a new spell cell for the spell book")
     @ApiResponses(
         value = [
-            ApiResponse(responseCode = "200", description = "Created spell cell", content = [Content(schema = Schema(implementation = SpellCellDto::class))]),
+            ApiResponse(
+                responseCode = "200",
+                description = "Created spell cell",
+                content = [Content(schema = Schema(implementation = SpellCellDto::class))]
+            ),
             ApiResponse(responseCode = "403", description = "Forbidden", content = [Content(schema = Schema())]),
         ]
     )
@@ -247,7 +303,11 @@ class MagicApiController(
     @Operation(summary = "Refill spell cells by rest (sets currentCount = maxCount for cells matching rest type)")
     @ApiResponses(
         value = [
-            ApiResponse(responseCode = "200", description = "Updated spell book with refilled cells", content = [Content(schema = Schema(implementation = SpellBookDto::class))]),
+            ApiResponse(
+                responseCode = "200",
+                description = "Updated spell book with refilled cells",
+                content = [Content(schema = Schema(implementation = SpellBookDto::class))]
+            ),
             ApiResponse(responseCode = "403", description = "Forbidden", content = [Content(schema = Schema())]),
         ]
     )
@@ -262,7 +322,11 @@ class MagicApiController(
     @Operation(summary = "Refill spell cells of character spell book by rest (room + character)")
     @ApiResponses(
         value = [
-            ApiResponse(responseCode = "200", description = "Updated spell book with refilled cells", content = [Content(schema = Schema(implementation = SpellBookDto::class))]),
+            ApiResponse(
+                responseCode = "200",
+                description = "Updated spell book with refilled cells",
+                content = [Content(schema = Schema(implementation = SpellBookDto::class))]
+            ),
             ApiResponse(responseCode = "403", description = "Forbidden", content = [Content(schema = Schema())]),
         ]
     )
@@ -279,7 +343,11 @@ class MagicApiController(
     @Operation(summary = "List all spell book items")
     @ApiResponses(
         value = [
-            ApiResponse(responseCode = "200", description = "List of spell book items", content = [Content(schema = Schema(implementation = SpellBookItemDto::class))]),
+            ApiResponse(
+                responseCode = "200",
+                description = "List of spell book items",
+                content = [Content(schema = Schema(implementation = SpellBookItemDto::class))]
+            ),
             ApiResponse(responseCode = "403", description = "Forbidden", content = [Content(schema = Schema())]),
         ]
     )
@@ -291,7 +359,11 @@ class MagicApiController(
     @Operation(summary = "Create a spell book item")
     @ApiResponses(
         value = [
-            ApiResponse(responseCode = "200", description = "Created spell book item", content = [Content(schema = Schema(implementation = SpellBookItemDto::class))]),
+            ApiResponse(
+                responseCode = "200",
+                description = "Created spell book item",
+                content = [Content(schema = Schema(implementation = SpellBookItemDto::class))]
+            ),
             ApiResponse(responseCode = "403", description = "Forbidden", content = [Content(schema = Schema())]),
         ]
     )
@@ -303,7 +375,11 @@ class MagicApiController(
     @Operation(summary = "Get spell book item by ID")
     @ApiResponses(
         value = [
-            ApiResponse(responseCode = "200", description = "Spell book item", content = [Content(schema = Schema(implementation = SpellBookItemDto::class))]),
+            ApiResponse(
+                responseCode = "200",
+                description = "Spell book item",
+                content = [Content(schema = Schema(implementation = SpellBookItemDto::class))]
+            ),
             ApiResponse(responseCode = "403", description = "Forbidden", content = [Content(schema = Schema())]),
         ]
     )
@@ -315,7 +391,11 @@ class MagicApiController(
     @Operation(summary = "Update a spell book item")
     @ApiResponses(
         value = [
-            ApiResponse(responseCode = "200", description = "Updated spell book item", content = [Content(schema = Schema(implementation = SpellBookItemDto::class))]),
+            ApiResponse(
+                responseCode = "200",
+                description = "Updated spell book item",
+                content = [Content(schema = Schema(implementation = SpellBookItemDto::class))]
+            ),
             ApiResponse(responseCode = "403", description = "Forbidden", content = [Content(schema = Schema())]),
         ]
     )
@@ -344,7 +424,11 @@ class MagicApiController(
     @Operation(summary = "Set spell book item in-use flag")
     @ApiResponses(
         value = [
-            ApiResponse(responseCode = "200", description = "Updated spell book item", content = [Content(schema = Schema(implementation = SpellBookItemDto::class))]),
+            ApiResponse(
+                responseCode = "200",
+                description = "Updated spell book item",
+                content = [Content(schema = Schema(implementation = SpellBookItemDto::class))]
+            ),
             ApiResponse(responseCode = "403", description = "Forbidden", content = [Content(schema = Schema())]),
         ]
     )
@@ -360,7 +444,11 @@ class MagicApiController(
     @Operation(summary = "List all spell cells")
     @ApiResponses(
         value = [
-            ApiResponse(responseCode = "200", description = "List of spell cells", content = [Content(schema = Schema(implementation = SpellCellDto::class))]),
+            ApiResponse(
+                responseCode = "200",
+                description = "List of spell cells",
+                content = [Content(schema = Schema(implementation = SpellCellDto::class))]
+            ),
             ApiResponse(responseCode = "403", description = "Forbidden", content = [Content(schema = Schema())]),
         ]
     )
@@ -372,7 +460,11 @@ class MagicApiController(
     @Operation(summary = "Create a spell cell")
     @ApiResponses(
         value = [
-            ApiResponse(responseCode = "200", description = "Created spell cell", content = [Content(schema = Schema(implementation = SpellCellDto::class))]),
+            ApiResponse(
+                responseCode = "200",
+                description = "Created spell cell",
+                content = [Content(schema = Schema(implementation = SpellCellDto::class))]
+            ),
             ApiResponse(responseCode = "403", description = "Forbidden", content = [Content(schema = Schema())]),
         ]
     )
@@ -384,7 +476,11 @@ class MagicApiController(
     @Operation(summary = "Get spell cell by ID")
     @ApiResponses(
         value = [
-            ApiResponse(responseCode = "200", description = "Spell cell", content = [Content(schema = Schema(implementation = SpellCellDto::class))]),
+            ApiResponse(
+                responseCode = "200",
+                description = "Spell cell",
+                content = [Content(schema = Schema(implementation = SpellCellDto::class))]
+            ),
             ApiResponse(responseCode = "403", description = "Forbidden", content = [Content(schema = Schema())]),
         ]
     )
@@ -396,7 +492,11 @@ class MagicApiController(
     @Operation(summary = "Update a spell cell (e.g. maxCount / currentCount)")
     @ApiResponses(
         value = [
-            ApiResponse(responseCode = "200", description = "Updated spell cell", content = [Content(schema = Schema(implementation = SpellCellDto::class))]),
+            ApiResponse(
+                responseCode = "200",
+                description = "Updated spell cell",
+                content = [Content(schema = Schema(implementation = SpellCellDto::class))]
+            ),
             ApiResponse(responseCode = "403", description = "Forbidden", content = [Content(schema = Schema())]),
         ]
     )
@@ -411,7 +511,11 @@ class MagicApiController(
     @Operation(summary = "Use one charge from spell cell (currentCount - 1)")
     @ApiResponses(
         value = [
-            ApiResponse(responseCode = "200", description = "Updated spell cell", content = [Content(schema = Schema(implementation = SpellCellDto::class))]),
+            ApiResponse(
+                responseCode = "200",
+                description = "Updated spell cell",
+                content = [Content(schema = Schema(implementation = SpellCellDto::class))]
+            ),
             ApiResponse(responseCode = "400", description = "Spell cell has no charges left"),
             ApiResponse(responseCode = "403", description = "Forbidden", content = [Content(schema = Schema())]),
         ]
