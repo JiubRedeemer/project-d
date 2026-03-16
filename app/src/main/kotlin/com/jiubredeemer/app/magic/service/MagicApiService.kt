@@ -1,12 +1,8 @@
 package com.jiubredeemer.app.magic.service
 
 import com.jiubredeemer.app.integration.magic.MagicClient
-import com.jiubredeemer.app.integration.magic.dto.ImportResult
-import com.jiubredeemer.app.integration.magic.dto.RefillRestRequest
-import com.jiubredeemer.app.integration.magic.dto.SpellBookDto
-import com.jiubredeemer.app.integration.magic.dto.SpellBookItemDto
-import com.jiubredeemer.app.integration.magic.dto.SpellCellDto
-import com.jiubredeemer.app.integration.magic.dto.SpellDto
+import com.jiubredeemer.app.integration.magic.dto.*
+import com.jiubredeemer.app.integration.rulebook.RuleBookClient
 import com.jiubredeemer.app.room.service.RoomAccessChecker
 import com.jiubredeemer.auth.service.AccessChecker
 import com.jiubredeemer.common.exception.NotFoundException
@@ -18,6 +14,7 @@ class MagicApiService(
     private val roomAccessChecker: RoomAccessChecker,
     private val accessChecker: AccessChecker,
     private val magicClient: MagicClient,
+    private val ruleBookClient: RuleBookClient,
 ) {
 
     private fun ensureAccessToRoom(roomId: UUID) {
