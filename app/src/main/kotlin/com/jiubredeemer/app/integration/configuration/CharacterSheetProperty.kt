@@ -10,6 +10,8 @@ data class CharacterSheetProperty(
     var baseUrl: String = "",
     var roomsUrl: String = "",
     var charactersUrl: String = "",
+    var npcsUrl: String = "",
+    var characterNpcRelationsUrl: String = "",
     var headerUrl: String = "",
     var subheaderUrl: String = "",
     var abilitiesUrl: String = "",

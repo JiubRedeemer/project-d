@@ -52,6 +52,8 @@ project-d:
       base-url: http://localhost:8082
       rooms-url: rooms
       characters-url: characters
+      npcs-url: npcs
+      character-npc-relations-url: character-npc-relations
       header-url: header
       subheader-url: subheader
       abilities-url: abilities
