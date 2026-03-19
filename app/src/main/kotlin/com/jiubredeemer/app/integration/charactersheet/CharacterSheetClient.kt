@@ -83,7 +83,7 @@ class CharacterSheetClient(
         }
     }
 
-    fun getNpcsByRoomId(roomId: UUID): List<NpcDto>? {
+    fun getNpcsByRoomId(roomId: UUID, userId: UUID, characterId: UUID?, forceAll: Boolean): List<NpcDto>? {
         try {
             val uri = UriComponentsBuilder
                 .fromHttpUrl(characterSheetProperty.baseUrl)
@@ -91,6 +91,9 @@ class CharacterSheetClient(
                 .pathSegment(characterSheetProperty.npcsUrl)
                 .pathSegment("room")
                 .pathSegment(roomId.toString())
+                .queryParam("userId", userId.toString())
+                .queryParam("characterId", characterId.toString())
+                .queryParam("forceAll", forceAll.toString())
                 .toUriString()
             return restClient.get()
                 .uri(uri)

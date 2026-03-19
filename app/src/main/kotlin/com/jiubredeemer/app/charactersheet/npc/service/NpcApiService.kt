@@ -21,9 +21,10 @@ class NpcApiService(
         return characterSheetClient.saveNpc(request)
     }
 
-    fun getNpcsByRoomIdForRoom(roomId: UUID): List<NpcDto>? {
-        roomAccessChecker.hasAccessOrThrow(roomId, accessChecker.getCurrentUser().id!!)
-        return characterSheetClient.getNpcsByRoomId(roomId)
+    fun getNpcsByRoomIdForRoom(roomId: UUID, characterId: UUID?, forceAll: Boolean): List<NpcDto>? {
+        val userId = accessChecker.getCurrentUser().id!!
+        roomAccessChecker.hasAccessOrThrow(roomId, userId)
+        return characterSheetClient.getNpcsByRoomId(roomId, userId, characterId, forceAll)
     }
 
     fun getNpcByIdForRoom(roomId: UUID, id: UUID): NpcDto? {

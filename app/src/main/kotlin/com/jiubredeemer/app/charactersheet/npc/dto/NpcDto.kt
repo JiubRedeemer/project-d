@@ -6,9 +6,12 @@ import java.util.*
 
 data class NpcDto(
     val id: UUID? = null,
+    val relationId: UUID?,
     val roomId: UUID? = null,
     val name: String? = null,
     val description: String? = null,
+    val visible: Boolean? = null,
+    val unique: Boolean? = null,
     val type: NpcTypeEnum? = null,
     val clazzCode: String? = null,
     val clazzInfo: ClassInfoDto? = null,
