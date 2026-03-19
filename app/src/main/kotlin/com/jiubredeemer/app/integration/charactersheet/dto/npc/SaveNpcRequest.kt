@@ -8,6 +8,8 @@ data class SaveNpcRequest(
     var roomId: UUID? = null,
     var name: String? = null,
     var description: String? = null,
+    var visible: Boolean? = null,
+    var unique: Boolean? = null,
     var type: NpcTypeEnum? = null,
     var clazzCode: String? = null,
     var raceCode: String? = null,

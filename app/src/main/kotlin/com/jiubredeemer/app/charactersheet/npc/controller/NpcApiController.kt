@@ -29,8 +29,10 @@ class NpcApiController(
     @HasRoleOrThrow("ADMIN", "USER")
     fun getNpcsByRoomIdForRoom(
         @PathVariable roomId: UUID,
+        @RequestParam(required = false) characterId: UUID?,
+        @RequestParam(required = false) forceAll: Boolean = false,
     ): List<NpcDto>? {
-        return npcApiService.getNpcsByRoomIdForRoom(roomId)
+        return npcApiService.getNpcsByRoomIdForRoom(roomId, characterId, forceAll)
     }
 
     @GetMapping("/{id}")
