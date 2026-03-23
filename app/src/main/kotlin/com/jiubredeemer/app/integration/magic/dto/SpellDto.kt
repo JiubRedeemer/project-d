@@ -18,6 +18,7 @@ data class SpellDto(
     val distance: String? = null,
     val duration: String? = null,
     val components: String? = null,
+    val materialComponents: String? = null,
     val description: String? = null,
     val createdAt: Instant? = null,
     /** When creating a spell, set to the character ID; stored as createdBy */
