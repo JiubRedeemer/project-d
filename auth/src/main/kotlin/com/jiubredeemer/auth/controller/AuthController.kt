@@ -64,7 +64,7 @@ class AuthController(
     @ApiResponses(
         value = [
             ApiResponse(
-                responseCode = "200", description = "Пользователь успешно зарегистрирован",
+                responseCode = "200", description = "Пользователь успешно авторизирован",
                 content = [Content(schema = Schema(implementation = AuthenticationResponse::class))]
             ),
             ApiResponse(
