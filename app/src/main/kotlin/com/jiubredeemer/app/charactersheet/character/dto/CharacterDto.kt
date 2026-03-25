@@ -1,5 +1,6 @@
 package com.jiubredeemer.app.charactersheet.character.dto
 
+import com.jiubredeemer.app.integration.rulebook.dto.background.BackgroundDto
 import com.jiubredeemer.app.integration.rulebook.dto.race.RaceTraitDto
 import com.jiubredeemer.app.itemstorage.inventory.dto.inventory.EquippedItemsStatsResponse
 import java.util.*
@@ -13,6 +14,8 @@ data class CharacterDto(
     val clazzInfo: ClassInfoDto?,
     val raceCode: String?,
     val raceInfo: RaceInfoDto?,
+    val backgroundCode: String?,
+    val backgroundInfo: BackgroundDto?,
     val proficiencyBonus: Int?,
     val armoryClass: Int?,
     val bonusArmoryClass: Int?,
