@@ -14,6 +14,7 @@ data class ItemstorageProperty(
     var moneyUrl: String = "",
     var itemsUrl: String = "",
     var searchUrl: String = "",
+    var ownedUrl: String = "",
     var bonusUrl: String = "",
     var attackUrl: String = "",
     var damageUrl: String = "",
