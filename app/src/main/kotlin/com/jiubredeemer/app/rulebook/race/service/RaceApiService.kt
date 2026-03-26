@@ -26,12 +26,12 @@ class RaceApiService(
         roomAccessChecker.hasAccessOrThrow(roomId, accessChecker.getCurrentUser().id!!)
         val racesForRoom: List<RaceDto> = ruleBookClient.getRacesForRoom(roomId, forceRuleTypeEnum) ?: return listOf()
         return racesForRoom.map {
-            RaceCreateInfoDto(it.name, it.description ?: "", it.code, it.speciesCode, it.imgUrl, it.stats)
+            RaceCreateInfoDto(it.name, it.description, it.code, it.speciesCode, it.imgUrl, it.stats)
         }
     }
 
-    fun createRace(roomId: UUID, raceDto: RaceDto): RaceDto {
-        roomAccessChecker.hasAccessOrThrow(roomId, accessChecker.getCurrentUser().id!!)
+    fun createRace(raceDto: RaceDto): RaceDto {
+        roomAccessChecker.hasAccessOrThrow(raceDto.roomId, accessChecker.getCurrentUser().id!!)
         return ruleBookClient.createRace(raceDto) ?: throw NotFoundException("Failed to create race")
     }
 

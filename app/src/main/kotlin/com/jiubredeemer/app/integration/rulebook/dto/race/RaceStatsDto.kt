@@ -7,7 +7,7 @@ data class RaceStatsDto(
     val maxAge: Int?,
     val maxHeight: Int?,
     val maxWeight: Int?,
-    val baseSpeed: Int,
+    val baseSpeed: Int?,
     val abilityModifiers: List<AbilityModifierDto>,
     val traits: List<RaceTraitDto>?,
     val proficiencies: List<RaceProficiencyDto>?

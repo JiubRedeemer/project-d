@@ -98,10 +98,16 @@ components:
 
     BackgroundDto:
       type: object
+      required:
+        - roomId
+        - name
+        - description
+        - stats
       properties:
         id:
           type: string
           format: uuid
+          readOnly: true
         roomId:
           type: string
           format: uuid
@@ -111,18 +117,23 @@ components:
           type: string
         code:
           type: string
+          readOnly: true
         imgUrl:
           type: string
+          nullable: true
         stats:
           $ref: '#/components/schemas/BackgroundStatsDto'
 
     BackgroundStatsDto:
       type: object
       description: Статы предыстории — модификаторы характеристик, черты и владения
+      required:
+        - abilityModifiers
       properties:
         id:
           type: string
           format: uuid
+          readOnly: true
         abilityModifiers:
           type: array
           description: Коды характеристик на выбор (STR, DEX, CON, INT, WIS, CHA) — +2 к одной и +1 к другой или +1 к трём
@@ -139,13 +150,19 @@ components:
 
     BackgroundTraitDto:
       type: object
+      required:
+        - name
+        - code
+        - description
       properties:
         id:
           type: string
           format: uuid
+          readOnly: true
         backgroundStatsId:
           type: string
           format: uuid
+          readOnly: true
         name:
           type: string
         code:
@@ -155,13 +172,18 @@ components:
 
     BackgroundProficiencyDto:
       type: object
+      required:
+        - type
+        - code
       properties:
         id:
           type: string
           format: uuid
+          readOnly: true
         backgroundStatsId:
           type: string
           format: uuid
+          readOnly: true
         type:
           $ref: '#/components/schemas/BackgroundProficiencyTypeEnum'
         code:

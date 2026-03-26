@@ -59,7 +59,7 @@ class BackgroundApiController(
     @PutMapping("/{roomId}/backgrounds")
     @HasRoleOrThrow("ADMIN", "USER")
     fun createBackground(@PathVariable roomId: UUID, @RequestBody backgroundDto: BackgroundDto): BackgroundDto {
-        return backgroundApiService.createBackground(roomId, backgroundDto)
+        return backgroundApiService.createBackground(backgroundDto.copy(roomId = roomId))
     }
 
     @Operation(summary = "Get background by code")

@@ -26,8 +26,8 @@ class BackgroundApiService(
             ?: throw NotFoundException("Background not found by code: $code")
     }
 
-    fun createBackground(roomId: UUID, backgroundDto: BackgroundDto): BackgroundDto {
-        roomAccessChecker.hasAccessOrThrow(roomId, accessChecker.getCurrentUser().id!!)
+    fun createBackground(backgroundDto: BackgroundDto): BackgroundDto {
+        roomAccessChecker.hasAccessOrThrow(backgroundDto.roomId, accessChecker.getCurrentUser().id!!)
         return ruleBookClient.createBackground(backgroundDto)
             ?: throw NotFoundException("Failed to create background")
     }

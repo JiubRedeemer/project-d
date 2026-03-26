@@ -70,7 +70,7 @@ class RaceApiController(
     @PutMapping("/{roomId}/races")
     @HasRoleOrThrow("ADMIN", "USER")
     fun createRace(@PathVariable roomId: UUID, @RequestBody raceDto: RaceDto): RaceDto {
-        return raceApiService.createRace(roomId, raceDto)
+        return raceApiService.createRace(raceDto.copy(roomId = roomId))
     }
 
     @Operation(summary = "Get root races (species) for room")

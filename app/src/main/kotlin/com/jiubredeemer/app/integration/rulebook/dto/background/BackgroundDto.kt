@@ -6,8 +6,8 @@ data class BackgroundDto(
     val id: UUID?,
     val roomId: UUID,
     val name: String,
-    val description: String?,
+    val description: String,
     val code: String?,
     val imgUrl: String?,
-    val stats: BackgroundStatsDto?
+    val stats: BackgroundStatsDto
 )
