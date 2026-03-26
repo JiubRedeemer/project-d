@@ -6,7 +6,7 @@ data class RaceDto(
     val id: UUID?,
     val roomId: UUID,
     val name: String,
-    val description: String?,
+    val description: String,
     val code: String?,
     val speciesCode: String?,
     val imgUrl: String?,

@@ -159,10 +159,16 @@ components:
 
     RaceDto:
       type: object
+      required:
+        - roomId
+        - name
+        - description
+        - stats
       properties:
         id:
           type: string
           format: uuid
+          readOnly: true
         roomId:
           type: string
           format: uuid
@@ -172,31 +178,41 @@ components:
           type: string
         code:
           type: string
+          readOnly: true
         speciesCode:
           type: string
+          nullable: true
         imgUrl:
           type: string
+          nullable: true
         stats:
           $ref: '#/components/schemas/RaceStatsDto'
 
     RaceStatsDto:
       type: object
+      required:
+        - abilityModifiers
       properties:
         id:
           type: string
           format: uuid
+          readOnly: true
         maxAge:
           type: integer
           format: int32
+          nullable: true
         maxHeight:
           type: integer
           format: int32
+          nullable: true
         maxWeight:
           type: integer
           format: int32
+          nullable: true
         baseSpeed:
           type: integer
           format: int32
+          nullable: true
         abilityModifiers:
           type: array
           items:
@@ -212,6 +228,9 @@ components:
 
     AbilityModifierDto:
       type: object
+      required:
+        - code
+        - value
       properties:
         code:
           type: string
@@ -221,16 +240,23 @@ components:
         count:
           type: integer
           format: int32
+          nullable: true
 
     RaceTraitDto:
       type: object
+      required:
+        - name
+        - code
+        - description
       properties:
         id:
           type: string
           format: uuid
+          readOnly: true
         raceStatsId:
           type: string
           format: uuid
+          readOnly: true
         name:
           type: string
         code:
@@ -240,13 +266,18 @@ components:
 
     RaceProficiencyDto:
       type: object
+      required:
+        - type
+        - code
       properties:
         id:
           type: string
           format: uuid
+          readOnly: true
         raceStatsId:
           type: string
           format: uuid
+          readOnly: true
         type:
           $ref: '#/components/schemas/RaceProficiencyTypeEnum'
         code:
