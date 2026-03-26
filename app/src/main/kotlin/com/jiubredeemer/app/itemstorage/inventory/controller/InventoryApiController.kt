@@ -94,6 +94,34 @@ class InventoryApiController(
         )
     }
 
+    @Operation(summary = "Получить предметы из общей базы предметов и из списка комнаты принадлежащих юзеру")
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200", description = "Список предметов",
+                content = [Content(schema = Schema(implementation = List::class))]
+            ),
+            ApiResponse(
+                responseCode = "403", description = "Недостаточно прав",
+                content = [Content(schema = Schema())]
+            )
+        ]
+    )
+    @PostMapping("/{roomId}/items/search/owned")
+    @HasRoleOrThrow("ADMIN", "USER")
+    fun searchByNameRoomAndCommunityItemsOwnedUsers(
+        @PathVariable roomId: UUID,
+        @RequestBody searchItemParams: SearchItemParams,
+    ): List<ItemDto> {
+        return inventoryApiService.searchByNameRoomAndCommunityItemsOwnedUsers(
+            roomId,
+            searchItemParams.searchQuery,
+            searchItemParams.limit,
+            searchItemParams.lastSeenCreatedAt,
+            searchItemParams.lastSeenId
+        )
+    }
+
     @Operation(summary = "Экипировать/снять предмет с персонажа")
     @ApiResponses(
         value = [

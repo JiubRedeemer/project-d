@@ -110,10 +110,13 @@ class InventoryApiService(
         lastSeenId: UUID? = null
     ): List<ItemDto> {
         roomAccessChecker.hasAccessOrThrow(roomId, accessChecker.getCurrentUser().id!!)
+        validateCursorParams(lastSeenCreatedAt, lastSeenId)
+        val normalizedSearchQuery = searchQuery.trim()
+        validateLimit(limit)
         val items: List<ItemDto> = itemstorageClient.searchByNameRoomAndCommunityItems(
             roomId,
             accessChecker.getCurrentUser().id!!,
-            searchQuery,
+            normalizedSearchQuery,
             limit,
             lastSeenCreatedAt,
             lastSeenId
@@ -167,6 +170,40 @@ class InventoryApiService(
     ) {
         roomAccessChecker.hasAccessOrThrow(roomId, accessChecker.getCurrentUser().id!!)
         itemstorageClient.useInventoryItemSkill(roomId, characterId, itemId, skillId)
+    }
+
+    fun searchByNameRoomAndCommunityItemsOwnedUsers(
+        roomId: UUID,
+        searchQuery: String,
+        limit: Int,
+        lastSeenCreatedAt: LocalDateTime?,
+        lastSeenId: UUID?
+    ): List<ItemDto> {
+        roomAccessChecker.hasAccessOrThrow(roomId, accessChecker.getCurrentUser().id!!)
+        validateCursorParams(lastSeenCreatedAt, lastSeenId)
+        val normalizedSearchQuery = searchQuery.trim()
+        validateLimit(limit)
+        val items: List<ItemDto> = itemstorageClient.searchByNameRoomAndCommunityItemsOwnedUsers(
+            roomId,
+            accessChecker.getCurrentUser().id!!,
+            normalizedSearchQuery,
+            limit,
+            lastSeenCreatedAt,
+            lastSeenId
+        )
+        return items
+    }
+
+    private fun validateCursorParams(lastSeenCreatedAt: LocalDateTime?, lastSeenId: UUID?) {
+        if ((lastSeenCreatedAt == null) != (lastSeenId == null)) {
+            throw IllegalArgumentException("Pagination cursor must include both lastSeenCreatedAt and lastSeenId")
+        }
+    }
+
+    private fun validateLimit(limit: Int) {
+        if (limit <= 0) {
+            throw IllegalArgumentException("Pagination limit must be greater than 0")
+        }
     }
 
 

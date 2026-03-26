@@ -424,4 +424,45 @@ class ItemstorageClient(
         }
     }
 
+    fun searchByNameRoomAndCommunityItemsOwnedUsers(
+        roomId: UUID,
+        userId: UUID,
+        searchQuery: String,
+        limit: Int,
+        lastSeenCreatedAt: LocalDateTime?,
+        lastSeenId: UUID?
+    ): List<ItemDto> {
+        try {
+            val uriBuilder = UriComponentsBuilder
+                .fromHttpUrl(itemstorageProperty.baseUrl)
+                .pathSegment(itemstorageProperty.apiUrl)
+                .pathSegment(itemstorageProperty.itemsUrl)
+                .pathSegment(roomId.toString())
+                .pathSegment(userId.toString())
+                .pathSegment(itemstorageProperty.searchUrl)
+                .pathSegment(itemstorageProperty.ownedUrl)
+
+            val queryParams = mutableMapOf<String, String>()
+            queryParams["searchQuery"] = searchQuery
+            queryParams["limit"] = limit.toString()
+            lastSeenCreatedAt?.let { queryParams["lastSeenCreatedAt"] = it.toString() }
+            lastSeenId?.let { queryParams["lastSeenId"] = it.toString() }
+
+//            queryParams.forEach { (key, value) -> uriBuilder.queryParam(key, value) }
+
+            val uri = uriBuilder.toUriString()
+
+            val response = restClient.post()
+                .uri(uri)
+                .body(queryParams)
+                .headers { it.addAll(headers) }
+                .retrieve()
+                .toEntity(object : ParameterizedTypeReference<List<ItemDto>>() {})
+
+            return response.body ?: emptyList()
+        } catch (e: Exception) {
+            throw IntegrationAccessException("Itemstorage didn't respond on searchByNameRoomAndCommunityItems, cause: ${e.message}")
+        }
+    }
+
 }
