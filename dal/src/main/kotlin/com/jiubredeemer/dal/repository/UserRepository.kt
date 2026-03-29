@@ -13,6 +13,9 @@ interface UserRepository : JpaRepository<User, UUID> {
     @Query("select u from User u where u.email = :email")
     fun findByEmail(@Param("email") email: String): User?
 
+    @Query("select u from User u where lower(u.email) = lower(:email)")
+    fun findByEmailIgnoreCase(@Param("email") email: String): User?
+
     @Query("select u from User u where u.username = :username")
     fun findByUsername(username: String): User?
 }

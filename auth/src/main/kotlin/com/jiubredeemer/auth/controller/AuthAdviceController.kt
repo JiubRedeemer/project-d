@@ -29,4 +29,10 @@ class AuthAdviceController {
         )
         return ResponseEntity(errorMessage, HttpStatus.NOT_ACCEPTABLE)
     }
+
+    @ExceptionHandler(IllegalArgumentException::class)
+    fun handleIllegalArgument(ex: IllegalArgumentException): ResponseEntity<ErrorResponse> {
+        val errorMessage = ErrorResponse(ErrorCode.OTHER.name, ex.message ?: "Bad request")
+        return ResponseEntity(errorMessage, HttpStatus.BAD_REQUEST)
+    }
 }

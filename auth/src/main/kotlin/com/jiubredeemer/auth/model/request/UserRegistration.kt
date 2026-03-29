@@ -14,5 +14,19 @@ data class UserRegistration(
     val password: String,
 
     @Schema(description = "Повторение пароля для валидации", example = "password123")
-    val matchingPassword: String
+    val matchingPassword: String,
+
+    @Schema(
+        description = "Токен приглашения в комнату из письма (query roomInviteToken). После регистрации пользователь сразу добавляется в комнату.",
+        example = "eyJhbGciOiJIUzI1NiJ9",
+        required = false,
+    )
+    val roomInviteToken: String? = null,
+
+    @Schema(
+        description = "Код из письма. Обязателен, если roomInviteToken не указан.",
+        example = "123456",
+        required = false,
+    )
+    val verificationCode: String? = null,
 )
