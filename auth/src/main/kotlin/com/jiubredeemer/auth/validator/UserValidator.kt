@@ -17,13 +17,13 @@ class UserValidator(
     }
 
     private fun validateUniqueByEmail(registrationRequest: UserRegistration) {
-        if (userService.getByEmail(registrationRequest.email) != null) {
+        if (userService.existsByEmailIgnoreCase(registrationRequest.email.trim())) {
             throw ValidationException(ErrorCode.USER_EXISTS_BY_EMAIL, "email")
         }
     }
 
     private fun validateUniqueByUsername(registrationRequest: UserRegistration) {
-        if (userService.getByUsername(registrationRequest.email) != null) {
+        if (userService.getByUsername(registrationRequest.username.trim()) != null) {
             throw ValidationException(ErrorCode.USER_EXISTS_BY_USERNAME, "username")
         }
     }

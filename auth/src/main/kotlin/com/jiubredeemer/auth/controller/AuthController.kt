@@ -2,6 +2,7 @@ package com.jiubredeemer.auth.controller
 
 import com.jiubredeemer.auth.model.request.AuthenticationRequest
 import com.jiubredeemer.auth.model.request.RefreshTokenRequest
+import com.jiubredeemer.auth.model.request.SendVerificationCodeRequest
 import com.jiubredeemer.auth.model.request.UserRegistration
 import com.jiubredeemer.auth.model.response.AuthenticationResponse
 import com.jiubredeemer.auth.model.response.TokenResponse
@@ -12,7 +13,9 @@ import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.tags.Tag
+import com.jiubredeemer.auth.service.RegistrationVerificationCodeService
 import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.server.ResponseStatusException
 
@@ -24,6 +27,7 @@ import org.springframework.web.server.ResponseStatusException
 )
 class AuthController(
     private val authenticationService: AuthenticationService,
+    private val registrationVerificationCodeService: RegistrationVerificationCodeService,
 ) {
 
     @Operation(summary = "Аутентификация по учетным данным")
@@ -76,6 +80,21 @@ class AuthController(
     @PostMapping("/registration")
     fun registration(@RequestBody registrationRequest: UserRegistration): AuthenticationResponse =
         authenticationService.registration(registrationRequest)
+
+    @Operation(summary = "Отправить код подтверждения на email (для регистрации без приглашения в комнату)")
+    @ApiResponses(
+        value = [
+            ApiResponse(responseCode = "200", description = "Код отправлен"),
+            ApiResponse(responseCode = "406", description = "Ошибка валидации (email занят, cooldown и т.д.)"),
+        ],
+    )
+    @PostMapping("/registration/send-verification-code")
+    fun sendVerificationCode(
+        @RequestBody request: SendVerificationCodeRequest,
+    ): ResponseEntity<Unit> {
+        registrationVerificationCodeService.sendVerificationCode(request.email)
+        return ResponseEntity.ok().build()
+    }
 
     @Operation(summary = "Обновление access токена по refresh токену")
     @ApiResponses(

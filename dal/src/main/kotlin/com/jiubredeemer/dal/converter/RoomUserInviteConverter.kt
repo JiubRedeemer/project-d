@@ -18,6 +18,22 @@ class RoomUserInviteConverter {
         return entity
     }
 
+    fun toEntityExternal(
+        room: Room,
+        owner: User,
+        invitedEmailNormalized: String,
+        role: RoomUser.Role,
+        inviteToken: String,
+    ): RoomUserInvite {
+        val entity = RoomUserInvite()
+        entity.room = room
+        entity.owner = owner
+        entity.invitedEmail = invitedEmailNormalized
+        entity.inviteToken = inviteToken
+        entity.role = role
+        return entity
+    }
+
     fun toDto(entity: RoomUserInvite): RoomUserInviteDto {
         val model = RoomUserInviteDto()
         model.id = entity.id
@@ -26,7 +42,7 @@ class RoomUserInviteConverter {
         model.roomDescription = entity.room?.description
         model.ownerId = entity.owner?.id
         model.ownerUsername = entity.owner?.username
-        model.invitedUserEmail = entity.invitedUser?.email
+        model.invitedUserEmail = entity.invitedUser?.email ?: entity.invitedEmail
         model.invitedUserId = entity.invitedUser?.id
         model.createDatetime = entity.createDatetime
         model.role = entity.role

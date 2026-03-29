@@ -24,6 +24,10 @@ class UserService(
         return userRepository.findByEmail(email)?.let { userConverter.toDto(it) }
     }
 
+    fun existsByEmailIgnoreCase(email: String): Boolean {
+        return userRepository.findByEmailIgnoreCase(email) != null
+    }
+
     fun readById(id: UUID): UserDto? {
         return userRepository.getReferenceById(id).let { userConverter.toDto(it) }
     }

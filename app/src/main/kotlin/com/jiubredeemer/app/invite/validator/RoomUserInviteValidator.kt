@@ -45,8 +45,10 @@ class RoomUserInviteValidator(
     }
 
     private fun validateInvited(roomId: UUID, invitedUserEmail: String) {
-        roomUserInviteRepository.findByRoomIdAndUserEmail(roomId, invitedUserEmail)
-            .let { if (it != null) throw IllegalStateException("User already invited") }
+        val trimmed = invitedUserEmail.trim()
+        val norm = trimmed.lowercase()
+        roomUserInviteRepository.findPendingByRoomIdAndEmail(roomId, trimmed, norm)
+            ?.let { throw IllegalStateException("User already invited") }
     }
 
     private fun validateInvited(inviteChangeStatusRequest: InviteChangeStatusRequest) {

@@ -15,7 +15,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
 
 @Configuration
-@EnableConfigurationProperties(JwtConfig::class, CorsConfig::class)
+@EnableConfigurationProperties(JwtConfig::class, CorsConfig::class, RegistrationInviteMailProperties::class)
 class Configuration {
     @Bean
     fun userDetailsService(userService: UserService): UserDetailsService =

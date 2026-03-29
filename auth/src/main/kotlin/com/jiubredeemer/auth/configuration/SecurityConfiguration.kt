@@ -30,7 +30,13 @@ class SecurityConfiguration(
             .cors { it.configurationSource(corsConfigurationSource()) }
             .authorizeHttpRequests {
                 it
-                    .requestMatchers("/auth", "/auth/refresh", "auth/registration", "/error")
+                    .requestMatchers(
+                        "/auth",
+                        "/auth/refresh",
+                        "/auth/registration",
+                        "/auth/registration/send-verification-code",
+                        "/error",
+                    )
                     .permitAll()
                     .requestMatchers(
                         "/actuator/**", "swagger-ui/**", "/swagger-ui/**", "/swagger-ui.html",

@@ -5,6 +5,7 @@ import com.jiubredeemer.app.invite.model.request.InviteChangeStatusRequest
 import com.jiubredeemer.app.invite.model.request.InviteUserToRoomRequest
 import com.jiubredeemer.app.invite.model.response.RoomUserInviteCountResponse
 import com.jiubredeemer.app.invite.model.response.RoomUserInviteShortResponse
+import com.jiubredeemer.app.invite.mail.RoomInviteEmailService
 import com.jiubredeemer.app.invite.validator.RoomUserInviteValidator
 import com.jiubredeemer.auth.service.AccessChecker
 import com.jiubredeemer.dal.service.RoomUserInviteService
@@ -15,7 +16,8 @@ class InviteApiService(
     private val roomUserInviteService: RoomUserInviteService,
     private val roomInviteConverter: RoomInviteConverter,
     private val accessChecker: AccessChecker,
-    private val validator: RoomUserInviteValidator
+    private val validator: RoomUserInviteValidator,
+    private val roomInviteEmailService: RoomInviteEmailService,
 ) {
     fun getIncomingInvites(): List<RoomUserInviteShortResponse> {
         return roomUserInviteService.getIncomingInvites(accessChecker.getCurrentUser().id!!)
@@ -34,7 +36,14 @@ class InviteApiService(
 
         val inviteDto = roomInviteConverter.requestToDto(inviteUserToRoomRequest)
         inviteDto.ownerId = accessChecker.getCurrentUser().id
-        roomUserInviteService.createRoomUserInvite(inviteDto)
+        val result = roomUserInviteService.createRoomUserInvite(inviteDto)
+        if (result.emailDispatchNeeded) {
+            roomInviteEmailService.sendRoomInviteEmail(
+                result.invitedEmail,
+                result.inviteToken!!,
+                result.roomName,
+            )
+        }
         return true
     }
 

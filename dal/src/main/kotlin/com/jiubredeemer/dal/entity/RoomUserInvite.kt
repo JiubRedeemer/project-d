@@ -22,9 +22,15 @@ open class RoomUserInvite {
     @JoinColumn(name = "owner_id", nullable = false)
     open var owner: User? = null
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "invited_user_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = true)
+    @JoinColumn(name = "invited_user_id", nullable = true)
     open var invitedUser: User? = null
+
+    @Column(name = "invited_email")
+    open var invitedEmail: String? = null
+
+    @Column(name = "invite_token")
+    open var inviteToken: String? = null
 
     @NotNull
     @ColumnDefault("now()")
