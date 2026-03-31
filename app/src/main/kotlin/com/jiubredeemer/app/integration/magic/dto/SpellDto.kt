@@ -6,6 +6,7 @@ import java.util.*
 data class SpellDto(
     val id: UUID? = null,
     val name: Map<String, String>? = null,
+    val aliasName: Map<String, String>? = null,
     val level: String? = null,
     val spellClass: String? = null,
     val school: String? = null,
