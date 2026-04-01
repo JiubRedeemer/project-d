@@ -20,7 +20,6 @@ class RoomUserInviteValidator(
     fun onInvite(inviteUserToRoomRequest: InviteUserToRoomRequest) {
         validateInvited(inviteUserToRoomRequest.roomId, inviteUserToRoomRequest.email)
         validateMandatoryFields(inviteUserToRoomRequest)
-        validateOwner(inviteUserToRoomRequest.roomId)
     }
 
     fun onAccept(inviteChangeStatusRequest: InviteChangeStatusRequest) {
@@ -35,7 +34,6 @@ class RoomUserInviteValidator(
 
     fun onRevoke(inviteChangeStatusRequest: InviteChangeStatusRequest) {
         validateExists(inviteChangeStatusRequest)
-        validateOwner(inviteChangeStatusRequest.inviteId)
     }
 
     private fun validateExists(inviteChangeStatusRequest: InviteChangeStatusRequest) {
