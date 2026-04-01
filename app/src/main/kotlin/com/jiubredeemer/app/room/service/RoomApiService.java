@@ -127,12 +127,9 @@ public class RoomApiService {
         return roomAccessChecker.hasAccessOrThrow(roomId, Objects.requireNonNull(accessChecker.getCurrentUser().getId()));
     }
 
-    public RoomMasterResponse getRoomInfo(@NotNull UUID roomId) throws IllegalAccessException {
-        if (roomAccessChecker.hasAccessOrThrow(roomId, Objects.requireNonNull(accessChecker.getCurrentUser().getId())).contains(RoomUser.Role.MASTER)) {
-            final RoomDto roomDto = roomService.readById(roomId);
-            final com.jiubredeemer.app.integration.rulebook.dto.room.RoomDto roomFromRuleBook = ruleBookClient.getRoom(roomId);
-            return new RoomMasterResponse(roomDto.getId(), roomDto.getName(), roomDto.getDescription(), roomDto.getFilePath(), roomDto.getLastActivityDatetime(), roomFromRuleBook.getRuleType(), roomFromRuleBook.getBaseRuleType());
-        }
-        throw new IllegalAccessException("You are not master");
+    public RoomMasterResponse getRoomInfo(@NotNull UUID roomId) {
+        final RoomDto roomDto = roomService.readById(roomId);
+        final com.jiubredeemer.app.integration.rulebook.dto.room.RoomDto roomFromRuleBook = ruleBookClient.getRoom(roomId);
+        return new RoomMasterResponse(roomDto.getId(), roomDto.getName(), roomDto.getDescription(), roomDto.getFilePath(), roomDto.getLastActivityDatetime(), roomFromRuleBook.getRuleType(), roomFromRuleBook.getBaseRuleType());
     }
 }
