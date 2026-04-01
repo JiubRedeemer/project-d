@@ -48,7 +48,7 @@ class RaceApiController(
     fun getRaces(
         @PathVariable roomId: UUID,
         @RequestParam("forceRuleType", required = false) forceRuleTypeEnum: RuleTypeEnum?
-    ): List<RaceCreateInfoDto> {
+    ): List<RaceDto> {
         return raceApiService.getRaces(roomId, forceRuleTypeEnum)
     }
 
@@ -71,6 +71,28 @@ class RaceApiController(
     @HasRoleOrThrow("ADMIN", "USER")
     fun createRace(@PathVariable roomId: UUID, @RequestBody raceDto: RaceDto): RaceDto {
         return raceApiService.createRace(raceDto.copy(roomId = roomId))
+    }
+
+    @Operation(summary = "Update race")
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200", description = "Race updated",
+                content = [Content(schema = Schema(implementation = RaceDto::class))]
+            ),
+            ApiResponse(responseCode = "400", description = "Invalid request", content = [Content(schema = Schema())]),
+            ApiResponse(responseCode = "403", description = "Access denied", content = [Content(schema = Schema())]),
+            ApiResponse(
+                responseCode = "404",
+                description = "Failed to update race",
+                content = [Content(schema = Schema())]
+            )
+        ]
+    )
+    @PatchMapping("/{roomId}/races")
+    @HasRoleOrThrow("ADMIN", "USER")
+    fun updateRace(@PathVariable roomId: UUID, @RequestBody raceDto: RaceDto): RaceDto {
+        return raceApiService.updateRace(raceDto.copy(roomId = roomId))
     }
 
     @Operation(summary = "Get root races (species) for room")

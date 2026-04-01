@@ -10,5 +10,6 @@ data class ClazzDto(
     val code: String?,
     val groupCode: String?,
     val imgUrl: String?,
+    val hidden: Boolean?,
     val stats: ClazzStatsDto
 )

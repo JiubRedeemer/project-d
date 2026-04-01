@@ -82,6 +82,40 @@ class RuleBookClient(
         return response.body
     }
 
+    fun updateRace(raceDto: RaceDto): RaceDto? {
+        val uri = UriComponentsBuilder
+            .fromHttpUrl(ruleBookProperty.baseUrl)
+            .pathSegment(ruleBookProperty.apiUrl)
+            .pathSegment(ruleBookProperty.racesUrl)
+            .toUriString()
+
+        val response = restClient.patch()
+            .uri(uri)
+            .headers { it.addAll(headers) }
+            .body(raceDto)
+            .retrieve()
+            .toEntity(RaceDto::class.java)
+        return response.body
+    }
+
+    fun setRaceHidden(id: UUID, hidden: Boolean): RaceDto? {
+        val uri = UriComponentsBuilder
+            .fromHttpUrl(ruleBookProperty.baseUrl)
+            .pathSegment(ruleBookProperty.apiUrl)
+            .pathSegment(ruleBookProperty.racesUrl)
+            .pathSegment("hidden")
+            .pathSegment(id.toString())
+            .queryParam("hidden", hidden)
+            .toUriString()
+
+        val response = restClient.patch()
+            .uri(uri)
+            .headers { it.addAll(headers) }
+            .retrieve()
+            .toEntity(RaceDto::class.java)
+        return response.body
+    }
+
     fun getRootRacesForRoom(roomId: UUID, forceRuleTypeEnum: RuleTypeEnum?): List<RaceDto>? {
         val uri = UriComponentsBuilder
             .fromHttpUrl(ruleBookProperty.baseUrl)
@@ -163,6 +197,40 @@ class RuleBookClient(
             .uri(uri)
             .headers { it.addAll(headers) }
             .body(clazzDto)
+            .retrieve()
+            .toEntity(ClazzDto::class.java)
+        return response.body
+    }
+
+    fun updateClass(clazzDto: ClazzDto): ClazzDto? {
+        val uri = UriComponentsBuilder
+            .fromHttpUrl(ruleBookProperty.baseUrl)
+            .pathSegment(ruleBookProperty.apiUrl)
+            .pathSegment(ruleBookProperty.classesUrl)
+            .toUriString()
+
+        val response = restClient.patch()
+            .uri(uri)
+            .headers { it.addAll(headers) }
+            .body(clazzDto)
+            .retrieve()
+            .toEntity(ClazzDto::class.java)
+        return response.body
+    }
+
+    fun setClassHidden(id: UUID, hidden: Boolean): ClazzDto? {
+        val uri = UriComponentsBuilder
+            .fromHttpUrl(ruleBookProperty.baseUrl)
+            .pathSegment(ruleBookProperty.apiUrl)
+            .pathSegment(ruleBookProperty.classesUrl)
+            .pathSegment("hidden")
+            .pathSegment(id.toString())
+            .queryParam("hidden", hidden)
+            .toUriString()
+
+        val response = restClient.patch()
+            .uri(uri)
+            .headers { it.addAll(headers) }
             .retrieve()
             .toEntity(ClazzDto::class.java)
         return response.body
@@ -356,6 +424,40 @@ class RuleBookClient(
             .uri(uri)
             .headers { it.addAll(headers) }
             .body(backgroundDto)
+            .retrieve()
+            .toEntity(BackgroundDto::class.java)
+        return response.body
+    }
+
+    fun updateBackground(backgroundDto: BackgroundDto): BackgroundDto? {
+        val uri = UriComponentsBuilder
+            .fromHttpUrl(ruleBookProperty.baseUrl)
+            .pathSegment(ruleBookProperty.apiUrl)
+            .pathSegment(ruleBookProperty.backgroundsUrl)
+            .toUriString()
+
+        val response = restClient.patch()
+            .uri(uri)
+            .headers { it.addAll(headers) }
+            .body(backgroundDto)
+            .retrieve()
+            .toEntity(BackgroundDto::class.java)
+        return response.body
+    }
+
+    fun setBackgroundHidden(id: UUID, hidden: Boolean): BackgroundDto? {
+        val uri = UriComponentsBuilder
+            .fromHttpUrl(ruleBookProperty.baseUrl)
+            .pathSegment(ruleBookProperty.apiUrl)
+            .pathSegment(ruleBookProperty.backgroundsUrl)
+            .pathSegment("hidden")
+            .pathSegment(id.toString())
+            .queryParam("hidden", hidden)
+            .toUriString()
+
+        val response = restClient.patch()
+            .uri(uri)
+            .headers { it.addAll(headers) }
             .retrieve()
             .toEntity(BackgroundDto::class.java)
         return response.body

@@ -48,7 +48,7 @@ class ClassApiController(
     fun getClasses(
         @PathVariable roomId: UUID,
         @RequestParam("forceRuleType", required = false) forceRuleTypeEnum: RuleTypeEnum?
-    ): List<ClassCreateInfoDto> {
+    ): List<ClazzDto> {
         return classApiService.getClasses(roomId, forceRuleTypeEnum)
     }
 
@@ -71,6 +71,28 @@ class ClassApiController(
     @HasRoleOrThrow("ADMIN", "USER")
     fun createClass(@PathVariable roomId: UUID, @RequestBody clazzDto: ClazzDto): ClazzDto {
         return classApiService.createClass(roomId, clazzDto)
+    }
+
+    @Operation(summary = "Update class")
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200", description = "Class updated",
+                content = [Content(schema = Schema(implementation = ClazzDto::class))]
+            ),
+            ApiResponse(responseCode = "400", description = "Invalid request", content = [Content(schema = Schema())]),
+            ApiResponse(responseCode = "403", description = "Access denied", content = [Content(schema = Schema())]),
+            ApiResponse(
+                responseCode = "404",
+                description = "Failed to update class",
+                content = [Content(schema = Schema())]
+            )
+        ]
+    )
+    @PatchMapping("/{roomId}/classes")
+    @HasRoleOrThrow("ADMIN", "USER")
+    fun updateClass(@PathVariable roomId: UUID, @RequestBody clazzDto: ClazzDto): ClazzDto {
+        return classApiService.updateClass(roomId, clazzDto)
     }
 
     @Operation(summary = "Get root classes for room")

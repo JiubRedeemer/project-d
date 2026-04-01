@@ -31,4 +31,15 @@ class BackgroundApiService(
         return ruleBookClient.createBackground(backgroundDto)
             ?: throw NotFoundException("Failed to create background")
     }
+
+    fun updateBackground(backgroundDto: BackgroundDto): BackgroundDto {
+        roomAccessChecker.hasAccessOrThrow(backgroundDto.roomId, accessChecker.getCurrentUser().id!!)
+        return ruleBookClient.updateBackground(backgroundDto)
+            ?: throw NotFoundException("Failed to update background")
+    }
+
+    fun setBackgroundHidden(id: UUID, hidden: Boolean): BackgroundDto {
+        return ruleBookClient.setBackgroundHidden(id, hidden)
+            ?: throw NotFoundException("Background not found by id: $id")
+    }
 }
