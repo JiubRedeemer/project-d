@@ -9,5 +9,6 @@ data class BackgroundDto(
     val description: String,
     val code: String?,
     val imgUrl: String?,
+    val hidden: Boolean?,
     val stats: BackgroundStatsDto
 )

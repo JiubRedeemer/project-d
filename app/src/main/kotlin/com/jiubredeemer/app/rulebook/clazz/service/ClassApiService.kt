@@ -2,10 +2,9 @@ package com.jiubredeemer.app.rulebook.clazz.service
 
 import com.jiubredeemer.app.integration.dto.RuleTypeEnum
 import com.jiubredeemer.app.integration.rulebook.RuleBookClient
-import com.jiubredeemer.app.integration.rulebook.dto.clazz.ClazzGroupDto
 import com.jiubredeemer.app.integration.rulebook.dto.clazz.ClazzDto
+import com.jiubredeemer.app.integration.rulebook.dto.clazz.ClazzGroupDto
 import com.jiubredeemer.app.room.service.RoomAccessChecker
-import com.jiubredeemer.app.rulebook.clazz.model.ClassCreateInfoDto
 import com.jiubredeemer.auth.service.AccessChecker
 import com.jiubredeemer.common.exception.NotFoundException
 import org.springframework.stereotype.Service
@@ -22,17 +21,24 @@ class ClassApiService(
         return ruleBookClient.getGroupedClassesForRoom(roomId, forceRuleTypeEnum) ?: listOf()
     }
 
-    fun getClasses(roomId: UUID, forceRuleTypeEnum: RuleTypeEnum?): List<ClassCreateInfoDto> {
+    fun getClasses(roomId: UUID, forceRuleTypeEnum: RuleTypeEnum?): List<ClazzDto> {
         roomAccessChecker.hasAccessOrThrow(roomId, accessChecker.getCurrentUser().id!!)
         val classesForRoom: List<ClazzDto> = ruleBookClient.getClassesForRoom(roomId, forceRuleTypeEnum) ?: return listOf()
-        return classesForRoom.map {
-            ClassCreateInfoDto(it.name, it.description ?: "", it.code, it.groupCode, it.imgUrl, it.stats)
-        }
+        return classesForRoom
     }
 
     fun createClass(roomId: UUID, clazzDto: ClazzDto): ClazzDto {
         roomAccessChecker.hasAccessOrThrow(roomId, accessChecker.getCurrentUser().id!!)
         return ruleBookClient.createClass(clazzDto) ?: throw NotFoundException("Failed to create class")
+    }
+
+    fun updateClass(roomId: UUID, clazzDto: ClazzDto): ClazzDto {
+        roomAccessChecker.hasAccessOrThrow(roomId, accessChecker.getCurrentUser().id!!)
+        return ruleBookClient.updateClass(clazzDto) ?: throw NotFoundException("Failed to update class")
+    }
+
+    fun setClassHidden(id: UUID, hidden: Boolean): ClazzDto {
+        return ruleBookClient.setClassHidden(id, hidden) ?: throw NotFoundException("Class not found by id: $id")
     }
 
     fun getRootClasses(roomId: UUID, forceRuleTypeEnum: RuleTypeEnum?): List<ClazzDto> {

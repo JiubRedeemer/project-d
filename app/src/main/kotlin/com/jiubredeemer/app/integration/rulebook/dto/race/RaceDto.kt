@@ -10,5 +10,6 @@ data class RaceDto(
     val code: String?,
     val speciesCode: String?,
     val imgUrl: String?,
+    val hidden: Boolean?,
     val stats: RaceStatsDto
 )

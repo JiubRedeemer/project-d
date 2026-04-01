@@ -62,6 +62,28 @@ class BackgroundApiController(
         return backgroundApiService.createBackground(backgroundDto.copy(roomId = roomId))
     }
 
+    @Operation(summary = "Update background")
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200", description = "Background updated",
+                content = [Content(schema = Schema(implementation = BackgroundDto::class))]
+            ),
+            ApiResponse(responseCode = "400", description = "Invalid request", content = [Content(schema = Schema())]),
+            ApiResponse(responseCode = "403", description = "Access denied", content = [Content(schema = Schema())]),
+            ApiResponse(
+                responseCode = "404",
+                description = "Failed to update background",
+                content = [Content(schema = Schema())]
+            )
+        ]
+    )
+    @PatchMapping("/{roomId}/backgrounds")
+    @HasRoleOrThrow("ADMIN", "USER")
+    fun updateBackground(@PathVariable roomId: UUID, @RequestBody backgroundDto: BackgroundDto): BackgroundDto {
+        return backgroundApiService.updateBackground(backgroundDto.copy(roomId = roomId))
+    }
+
     @Operation(summary = "Get background by code")
     @ApiResponses(
         value = [

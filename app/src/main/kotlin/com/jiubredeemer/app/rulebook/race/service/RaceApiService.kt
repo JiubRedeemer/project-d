@@ -2,9 +2,8 @@ package com.jiubredeemer.app.rulebook.race.service
 
 import com.jiubredeemer.app.integration.dto.RuleTypeEnum
 import com.jiubredeemer.app.integration.rulebook.RuleBookClient
-import com.jiubredeemer.app.integration.rulebook.dto.race.RaceGroupDto
 import com.jiubredeemer.app.integration.rulebook.dto.race.RaceDto
-import com.jiubredeemer.app.rulebook.race.model.RaceCreateInfoDto
+import com.jiubredeemer.app.integration.rulebook.dto.race.RaceGroupDto
 import com.jiubredeemer.app.room.service.RoomAccessChecker
 import com.jiubredeemer.auth.service.AccessChecker
 import com.jiubredeemer.common.exception.NotFoundException
@@ -22,17 +21,24 @@ class RaceApiService(
         return ruleBookClient.getGroupedRacesForRoom(roomId, forceRuleTypeEnum) ?: listOf()
     }
 
-    fun getRaces(roomId: UUID, forceRuleTypeEnum: RuleTypeEnum?): List<RaceCreateInfoDto> {
+    fun getRaces(roomId: UUID, forceRuleTypeEnum: RuleTypeEnum?): List<RaceDto> {
         roomAccessChecker.hasAccessOrThrow(roomId, accessChecker.getCurrentUser().id!!)
         val racesForRoom: List<RaceDto> = ruleBookClient.getRacesForRoom(roomId, forceRuleTypeEnum) ?: return listOf()
-        return racesForRoom.map {
-            RaceCreateInfoDto(it.name, it.description, it.code, it.speciesCode, it.imgUrl, it.stats)
-        }
+        return racesForRoom
     }
 
     fun createRace(raceDto: RaceDto): RaceDto {
         roomAccessChecker.hasAccessOrThrow(raceDto.roomId, accessChecker.getCurrentUser().id!!)
         return ruleBookClient.createRace(raceDto) ?: throw NotFoundException("Failed to create race")
+    }
+
+    fun updateRace(raceDto: RaceDto): RaceDto {
+        roomAccessChecker.hasAccessOrThrow(raceDto.roomId, accessChecker.getCurrentUser().id!!)
+        return ruleBookClient.updateRace(raceDto) ?: throw NotFoundException("Failed to update race")
+    }
+
+    fun setRaceHidden(id: UUID, hidden: Boolean): RaceDto {
+        return ruleBookClient.setRaceHidden(id, hidden) ?: throw NotFoundException("Race not found by id: $id")
     }
 
     fun getRootRaces(roomId: UUID, forceRuleTypeEnum: RuleTypeEnum?): List<RaceDto> {
