@@ -45,6 +45,7 @@ data class CharacterDto(
         val code: String?,
         val bonusValue: Int?,
         val masteryValue: Long?,
+        val advantageValue: Long?,
     )
 
     data class CharacterBio(

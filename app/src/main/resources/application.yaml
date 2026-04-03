@@ -7,7 +7,7 @@ spring:
   mail:
     host: ${MAIL_HOST:smtp.spaceweb.ru}
     port: ${MAIL_PORT:587}
-    userёname: ${MAIL_USERNAME:}
+    username: ${MAIL_USERNAME:}
     password: ${MAIL_PASSWORD:}
     properties:
       mail:
