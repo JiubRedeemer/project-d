@@ -21,7 +21,7 @@ class MagicApiController(
 ) {
 
     // Spells
-    @Operation(summary = "List all spells (optionally filter by class)")
+    @Operation(summary = "List spells for legacy integrations (unified catalog)")
     @ApiResponses(
         value = [
             ApiResponse(
@@ -36,13 +36,8 @@ class MagicApiController(
     @HasRoleOrThrow("ADMIN", "USER")
     fun listSpells(
         @RequestParam(required = false) spellClass: String?,
-        @RequestParam(required = false) rootSpellClass: String?
-    ): List<SpellDto> {
-        val listSpells = magicApiService.listSpells(spellClass)
-        return listSpells.ifEmpty {
-            magicApiService.listSpells(rootSpellClass)
-        }
-    }
+    ): List<SpellDto> =
+        magicApiService.listSpells(spellClass)
 
     @Operation(summary = "Create a spell")
     @ApiResponses(
@@ -60,7 +55,7 @@ class MagicApiController(
     fun createSpell(@RequestBody spellDto: SpellDto): SpellDto =
         magicApiService.createSpell(spellDto)
 
-    @Operation(summary = "Import spells from TTG")
+    @Operation(summary = "Import DnD 5e spells from TTG (5e14)")
     @ApiResponses(
         value = [
             ApiResponse(
@@ -75,6 +70,40 @@ class MagicApiController(
     @HasRoleOrThrow("ADMIN")
     fun importSpells(): ImportResult =
         magicApiService.importSpells()
+
+    @Operation(summary = "List DnD 2024 spells (optionally filter by class)")
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                description = "List of DnD 2024 spells",
+                content = [Content(schema = Schema(implementation = SpellDto::class))]
+            ),
+            ApiResponse(responseCode = "403", description = "Forbidden", content = [Content(schema = Schema())]),
+        ]
+    )
+    @GetMapping("/spells/dnd2024")
+    @HasRoleOrThrow("ADMIN", "USER")
+    fun listSpellsDnd2024(
+        @RequestParam(required = false) spellClass: String?,
+    ): List<SpellDto> =
+        magicApiService.listSpellsDnd2024(spellClass)
+
+    @Operation(summary = "Import DnD 2024 spells from TTG Club API v2")
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                description = "Import result",
+                content = [Content(schema = Schema(implementation = ImportResult::class))]
+            ),
+            ApiResponse(responseCode = "403", description = "Forbidden", content = [Content(schema = Schema())]),
+        ]
+    )
+    @PostMapping("/spells/import-2024")
+    @HasRoleOrThrow("ADMIN")
+    fun importSpells2024(): ImportResult =
+        magicApiService.importSpells2024()
 
     @Operation(summary = "Get spell by ID")
     @ApiResponses(

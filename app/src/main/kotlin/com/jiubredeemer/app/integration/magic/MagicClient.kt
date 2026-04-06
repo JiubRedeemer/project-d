@@ -80,6 +80,45 @@ class MagicClient(
         }
     }
 
+    fun listSpellsDnd2024(spellClass: String? = null): List<SpellDto>? {
+        return try {
+            val builder = UriComponentsBuilder
+                .fromHttpUrl(magicProperty.baseUrl)
+                .pathSegment(magicProperty.apiUrl)
+                .pathSegment(magicProperty.spellsUrl)
+                .pathSegment(magicProperty.spellsDnd2024Url)
+            spellClass?.let { builder.queryParam("spellClass", it) }
+            val uri = builder.toUriString()
+            restClient.get()
+                .uri(uri)
+                .headers { it.addAll(headers) }
+                .retrieve()
+                .toEntity(object : ParameterizedTypeReference<List<SpellDto>>() {})
+                .body
+        } catch (e: Exception) {
+            throw IntegrationAccessException("Magic don't response on listSpellsDnd2024, cause: ${e.message}")
+        }
+    }
+
+    fun importSpells2024(): ImportResult? {
+        return try {
+            val uri = UriComponentsBuilder
+                .fromHttpUrl(magicProperty.baseUrl)
+                .pathSegment(magicProperty.apiUrl)
+                .pathSegment(magicProperty.spellsUrl)
+                .pathSegment(magicProperty.import2024Url)
+                .toUriString()
+            restClient.post()
+                .uri(uri)
+                .headers { it.addAll(headers) }
+                .retrieve()
+                .toEntity(ImportResult::class.java)
+                .body
+        } catch (e: Exception) {
+            throw IntegrationAccessException("Magic don't response on importSpells2024, cause: ${e.message}")
+        }
+    }
+
     fun getSpellById(id: UUID): SpellDto? {
         return try {
             val uri = UriComponentsBuilder

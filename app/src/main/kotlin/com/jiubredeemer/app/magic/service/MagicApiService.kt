@@ -41,6 +41,14 @@ class MagicApiService(
         return magicClient.importSpells() ?: throw NotFoundException("Failed to import spells")
     }
 
+    fun listSpellsDnd2024(spellClass: String?): List<SpellDto> {
+        return magicClient.listSpellsDnd2024(spellClass) ?: emptyList()
+    }
+
+    fun importSpells2024(): ImportResult {
+        return magicClient.importSpells2024() ?: throw NotFoundException("Failed to import spells 2024")
+    }
+
     fun getSpellById(id: UUID): SpellDto {
         return magicClient.getSpellById(id) ?: throw NotFoundException("Spell not found by id: $id")
     }

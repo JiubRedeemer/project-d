@@ -9,10 +9,12 @@ data class MagicProperty(
     var apiUrl: String = "",
     var baseUrl: String = "",
     var spellsUrl: String = "",
+    var spellsDnd2024Url: String = "",
     var spellBooksUrl: String = "",
     var spellBookItemsUrl: String = "",
     var spellCellsUrl: String = "",
     var importUrl: String = "",
+    var import2024Url: String = "",
     var byRoomCharacterUrl: String = "",
     var inUseUrl: String = "",
     var logicalUrl: String = ""
