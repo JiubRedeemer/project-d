@@ -107,7 +107,8 @@ class InventoryApiService(
         searchQuery: String,
         limit: Int,
         lastSeenCreatedAt: LocalDateTime? = null,
-        lastSeenId: UUID? = null
+        lastSeenId: UUID? = null,
+        ruleType: String? = null
     ): List<ItemDto> {
         roomAccessChecker.hasAccessOrThrow(roomId, accessChecker.getCurrentUser().id!!)
         validateCursorParams(lastSeenCreatedAt, lastSeenId)
@@ -119,7 +120,8 @@ class InventoryApiService(
             normalizedSearchQuery,
             limit,
             lastSeenCreatedAt,
-            lastSeenId
+            lastSeenId,
+            ruleType
         )
         return items
     }

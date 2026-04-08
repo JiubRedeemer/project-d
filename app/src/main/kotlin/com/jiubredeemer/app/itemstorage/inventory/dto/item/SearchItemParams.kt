@@ -7,5 +7,6 @@ data class SearchItemParams(
     val searchQuery: String,
     val limit: Int,
     val lastSeenCreatedAt: LocalDateTime? = null,
-    val lastSeenId: UUID? = null
+    val lastSeenId: UUID? = null,
+    val ruleType: String? = null
 )

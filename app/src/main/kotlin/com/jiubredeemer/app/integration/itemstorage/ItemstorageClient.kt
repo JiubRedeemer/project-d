@@ -267,7 +267,8 @@ class ItemstorageClient(
         searchQuery: String,
         limit: Int,
         lastSeenCreatedAt: LocalDateTime? = null,
-        lastSeenId: UUID? = null
+        lastSeenId: UUID? = null,
+        ruleType: String? = null
     ): List<ItemDto> {
         try {
             val uriBuilder = UriComponentsBuilder
@@ -281,6 +282,7 @@ class ItemstorageClient(
             val queryParams = mutableMapOf<String, String>()
             queryParams["searchQuery"] = searchQuery
             queryParams["limit"] = limit.toString()
+            queryParams["ruleType"] = ruleType ?: "2014"
             lastSeenCreatedAt?.let { queryParams["lastSeenCreatedAt"] = it.toString() }
             lastSeenId?.let { queryParams["lastSeenId"] = it.toString() }
 

@@ -90,7 +90,8 @@ class InventoryApiController(
             searchItemParams.searchQuery,
             searchItemParams.limit,
             searchItemParams.lastSeenCreatedAt,
-            searchItemParams.lastSeenId
+            searchItemParams.lastSeenId,
+            searchItemParams.ruleType
         )
     }
 
