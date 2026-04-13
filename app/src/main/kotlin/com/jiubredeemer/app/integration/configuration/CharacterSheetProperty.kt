@@ -12,6 +12,7 @@ data class CharacterSheetProperty(
     var charactersUrl: String = "",
     var npcsUrl: String = "",
     var characterNpcRelationsUrl: String = "",
+    var petsUrl: String = "",
     var headerUrl: String = "",
     var subheaderUrl: String = "",
     var abilitiesUrl: String = "",
@@ -33,5 +34,7 @@ data class CharacterSheetProperty(
     var useUrl: String = "",
     var restUrl: String = "",
     var logicalUrl: String = "",
-    var traitsUrl: String = ""
+    var traitsUrl: String = "",
+    var profileUrl: String = "",
+    var currentUrl: String = ""
 )

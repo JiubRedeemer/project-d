@@ -3,9 +3,15 @@ package com.jiubredeemer.app.integration.charactersheet
 import com.jiubredeemer.app.charactersheet.character.dto.*
 import com.jiubredeemer.app.charactersheet.npc.dto.CharacterNpcRelationDto
 import com.jiubredeemer.app.charactersheet.npc.dto.NpcDto
+import com.jiubredeemer.app.charactersheet.pet.dto.PetDto
+import com.jiubredeemer.app.charactersheet.pet.dto.PetSkillDto
 import com.jiubredeemer.app.integration.charactersheet.dto.character.*
 import com.jiubredeemer.app.integration.charactersheet.dto.npc.SaveCharacterNpcRelationRequest
 import com.jiubredeemer.app.integration.charactersheet.dto.npc.SaveNpcRequest
+import com.jiubredeemer.app.integration.charactersheet.dto.pet.CreatePetRequest
+import com.jiubredeemer.app.integration.charactersheet.dto.pet.PetHealthCurrentUpdateRequest
+import com.jiubredeemer.app.integration.charactersheet.dto.pet.PetProfileUpdateRequest
+import com.jiubredeemer.app.integration.charactersheet.dto.pet.PetSkillRequest
 import com.jiubredeemer.app.integration.configuration.CharacterSheetProperty
 import com.jiubredeemer.app.integration.dto.RestTypeEnum
 import com.jiubredeemer.app.integration.dto.room.RoomCreateRequestDto
@@ -185,6 +191,228 @@ class CharacterSheetClient(
             throw IntegrationAccessException(
                 "CharacterSheet don't response on getNpcsByCharacterIdAndRelationType, cause: ${e.message}"
             )
+        }
+    }
+
+    fun createPet(characterId: UUID, request: CreatePetRequest): PetDto? {
+        try {
+            val uri = UriComponentsBuilder
+                .fromHttpUrl(characterSheetProperty.baseUrl)
+                .pathSegment(characterSheetProperty.apiUrl)
+                .pathSegment(characterSheetProperty.charactersUrl)
+                .pathSegment(characterId.toString())
+                .pathSegment(characterSheetProperty.petsUrl)
+                .toUriString()
+            return restClient.post()
+                .uri(uri)
+                .headers { it.addAll(headers) }
+                .body(request)
+                .retrieve()
+                .toEntity(PetDto::class.java)
+                .body
+        } catch (e: Exception) {
+            throw IntegrationAccessException("CharacterSheet don't response on createPet, cause: ${e.message}")
+        }
+    }
+
+    fun getPetsByCharacterId(characterId: UUID): List<PetDto>? {
+        try {
+            val uri = UriComponentsBuilder
+                .fromHttpUrl(characterSheetProperty.baseUrl)
+                .pathSegment(characterSheetProperty.apiUrl)
+                .pathSegment(characterSheetProperty.charactersUrl)
+                .pathSegment(characterId.toString())
+                .pathSegment(characterSheetProperty.petsUrl)
+                .toUriString()
+            return restClient.get()
+                .uri(uri)
+                .headers { it.addAll(headers) }
+                .retrieve()
+                .toEntity(object : ParameterizedTypeReference<List<PetDto>>() {})
+                .body
+        } catch (e: Exception) {
+            throw IntegrationAccessException("CharacterSheet don't response on getPetsByCharacterId, cause: ${e.message}")
+        }
+    }
+
+    fun getPetById(petId: UUID): PetDto? {
+        try {
+            val uri = UriComponentsBuilder
+                .fromHttpUrl(characterSheetProperty.baseUrl)
+                .pathSegment(characterSheetProperty.apiUrl)
+                .pathSegment(characterSheetProperty.petsUrl)
+                .pathSegment(petId.toString())
+                .toUriString()
+            return restClient.get()
+                .uri(uri)
+                .headers { it.addAll(headers) }
+                .retrieve()
+                .toEntity(PetDto::class.java)
+                .body
+        } catch (_: HttpClientErrorException.NotFound) {
+            return null
+        } catch (e: Exception) {
+            throw IntegrationAccessException("CharacterSheet don't response on getPetById, cause: ${e.message}")
+        }
+    }
+
+    fun deletePetLogicalById(petId: UUID) {
+        try {
+            val uri = UriComponentsBuilder
+                .fromHttpUrl(characterSheetProperty.baseUrl)
+                .pathSegment(characterSheetProperty.apiUrl)
+                .pathSegment(characterSheetProperty.petsUrl)
+                .pathSegment(petId.toString())
+                .pathSegment(characterSheetProperty.logicalUrl)
+                .toUriString()
+            restClient.delete()
+                .uri(uri)
+                .headers { it.addAll(headers) }
+                .retrieve()
+        } catch (e: Exception) {
+            throw IntegrationAccessException("CharacterSheet don't response on deletePetLogicalById, cause: ${e.message}")
+        }
+    }
+
+    fun updatePetProfile(petId: UUID, request: PetProfileUpdateRequest) {
+        try {
+            val uri = UriComponentsBuilder
+                .fromHttpUrl(characterSheetProperty.baseUrl)
+                .pathSegment(characterSheetProperty.apiUrl)
+                .pathSegment(characterSheetProperty.petsUrl)
+                .pathSegment(petId.toString())
+                .pathSegment(characterSheetProperty.profileUrl)
+                .toUriString()
+            restClient.patch()
+                .uri(uri)
+                .headers { it.addAll(headers) }
+                .body(request)
+                .retrieve()
+        } catch (e: Exception) {
+            throw IntegrationAccessException("CharacterSheet don't response on updatePetProfile, cause: ${e.message}")
+        }
+    }
+
+    fun updatePetAbilityBonus(petId: UUID, abilityCode: String, request: BonusValueUpdateRequest) {
+        try {
+            val uri = UriComponentsBuilder
+                .fromHttpUrl(characterSheetProperty.baseUrl)
+                .pathSegment(characterSheetProperty.apiUrl)
+                .pathSegment(characterSheetProperty.petsUrl)
+                .pathSegment(petId.toString())
+                .pathSegment(characterSheetProperty.abilitiesUrl)
+                .pathSegment(abilityCode)
+                .pathSegment(characterSheetProperty.bonusUrl)
+                .toUriString()
+            restClient.patch()
+                .uri(uri)
+                .headers { it.addAll(headers) }
+                .body(request)
+                .retrieve()
+        } catch (e: Exception) {
+            throw IntegrationAccessException("CharacterSheet don't response on updatePetAbilityBonus, cause: ${e.message}")
+        }
+    }
+
+    fun updatePetCurrentHp(petId: UUID, request: PetHealthCurrentUpdateRequest) {
+        try {
+            val uri = UriComponentsBuilder
+                .fromHttpUrl(characterSheetProperty.baseUrl)
+                .pathSegment(characterSheetProperty.apiUrl)
+                .pathSegment(characterSheetProperty.petsUrl)
+                .pathSegment(petId.toString())
+                .pathSegment(characterSheetProperty.healthUrl)
+                .pathSegment(characterSheetProperty.currentUrl)
+                .toUriString()
+            restClient.patch()
+                .uri(uri)
+                .headers { it.addAll(headers) }
+                .body(request)
+                .retrieve()
+        } catch (e: Exception) {
+            throw IntegrationAccessException("CharacterSheet don't response on updatePetCurrentHp, cause: ${e.message}")
+        }
+    }
+
+    fun updatePetMaxHp(petId: UUID, request: BonusValueUpdateRequest) {
+        try {
+            val uri = UriComponentsBuilder
+                .fromHttpUrl(characterSheetProperty.baseUrl)
+                .pathSegment(characterSheetProperty.apiUrl)
+                .pathSegment(characterSheetProperty.petsUrl)
+                .pathSegment(petId.toString())
+                .pathSegment(characterSheetProperty.healthUrl)
+                .pathSegment(characterSheetProperty.healthMaxUrl)
+                .toUriString()
+            restClient.patch()
+                .uri(uri)
+                .headers { it.addAll(headers) }
+                .body(request)
+                .retrieve()
+        } catch (e: Exception) {
+            throw IntegrationAccessException("CharacterSheet don't response on updatePetMaxHp, cause: ${e.message}")
+        }
+    }
+
+    fun createPetSkill(petId: UUID, request: PetSkillRequest): PetSkillDto? {
+        try {
+            val uri = UriComponentsBuilder
+                .fromHttpUrl(characterSheetProperty.baseUrl)
+                .pathSegment(characterSheetProperty.apiUrl)
+                .pathSegment(characterSheetProperty.petsUrl)
+                .pathSegment(petId.toString())
+                .pathSegment(characterSheetProperty.skillsUrl)
+                .toUriString()
+            return restClient.post()
+                .uri(uri)
+                .headers { it.addAll(headers) }
+                .body(request)
+                .retrieve()
+                .toEntity(PetSkillDto::class.java)
+                .body
+        } catch (e: Exception) {
+            throw IntegrationAccessException("CharacterSheet don't response on createPetSkill, cause: ${e.message}")
+        }
+    }
+
+    fun updatePetSkill(petId: UUID, skillId: UUID, request: PetSkillRequest): PetSkillDto? {
+        try {
+            val uri = UriComponentsBuilder
+                .fromHttpUrl(characterSheetProperty.baseUrl)
+                .pathSegment(characterSheetProperty.apiUrl)
+                .pathSegment(characterSheetProperty.petsUrl)
+                .pathSegment(petId.toString())
+                .pathSegment(characterSheetProperty.skillsUrl)
+                .pathSegment(skillId.toString())
+                .toUriString()
+            return restClient.patch()
+                .uri(uri)
+                .headers { it.addAll(headers) }
+                .body(request)
+                .retrieve()
+                .toEntity(PetSkillDto::class.java)
+                .body
+        } catch (e: Exception) {
+            throw IntegrationAccessException("CharacterSheet don't response on updatePetSkill, cause: ${e.message}")
+        }
+    }
+
+    fun deletePetSkill(petId: UUID, skillId: UUID) {
+        try {
+            val uri = UriComponentsBuilder
+                .fromHttpUrl(characterSheetProperty.baseUrl)
+                .pathSegment(characterSheetProperty.apiUrl)
+                .pathSegment(characterSheetProperty.petsUrl)
+                .pathSegment(petId.toString())
+                .pathSegment(characterSheetProperty.skillsUrl)
+                .pathSegment(skillId.toString())
+                .toUriString()
+            restClient.delete()
+                .uri(uri)
+                .headers { it.addAll(headers) }
+                .retrieve()
+        } catch (e: Exception) {
+            throw IntegrationAccessException("CharacterSheet don't response on deletePetSkill, cause: ${e.message}")
         }
     }
 
