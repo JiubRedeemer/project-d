@@ -56,6 +56,11 @@ class CharacterApiService(
         return character
     }
 
+    fun deleteCharacterLogicalById(roomId: UUID, characterId: UUID) {
+        roomAccessChecker.hasAccessOrThrow(roomId, accessChecker.getCurrentUser().id!!)
+        characterSheetClient.deleteCharacterLogicalById(characterId)
+    }
+
     fun getHeaderInfoByCharacterId(roomId: UUID, characterId: UUID): CharacterDto? {
         roomAccessChecker.hasAccessOrThrow(roomId, accessChecker.getCurrentUser().id!!)
         val character: CharacterDto? = characterSheetClient.getHeaderInfoByCharacterId(characterId)

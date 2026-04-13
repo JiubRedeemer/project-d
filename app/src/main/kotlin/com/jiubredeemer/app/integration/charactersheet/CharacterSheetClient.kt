@@ -297,6 +297,26 @@ class CharacterSheetClient(
         }
     }
 
+    fun deleteCharacterLogicalById(characterId: UUID) {
+        try {
+            val uri = UriComponentsBuilder
+                .fromHttpUrl(characterSheetProperty.baseUrl)
+                .pathSegment(characterSheetProperty.apiUrl)
+                .pathSegment(characterSheetProperty.charactersUrl)
+                .pathSegment(characterId.toString())
+                .pathSegment(characterSheetProperty.logicalUrl)
+                .toUriString()
+            restClient.delete()
+                .uri(uri)
+                .headers { it.addAll(headers) }
+                .retrieve()
+        } catch (e: Exception) {
+            throw IntegrationAccessException(
+                "CharacterSheet don't response on deleteCharacterLogicalById, cause: ${e.message}"
+            )
+        }
+    }
+
     fun getHeaderInfoByCharacterId(characterId: UUID): CharacterDto? {
         try {
             val uri = UriComponentsBuilder

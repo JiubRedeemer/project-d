@@ -45,6 +45,15 @@ class CharacterApiController(
         return characterApiService.findByCharacterId(roomId, characterId)
     }
 
+    @DeleteMapping("/{characterId}/logical")
+    @HasRoleOrThrow("ADMIN", "USER")
+    fun deleteCharacterLogicalById(
+        @PathVariable roomId: UUID,
+        @PathVariable characterId: UUID,
+    ) {
+        characterApiService.deleteCharacterLogicalById(roomId, characterId)
+    }
+
     @GetMapping("/{characterId}/header")
     @HasRoleOrThrow("ADMIN", "USER")
     fun getHeaderInfoByCharacterId(
