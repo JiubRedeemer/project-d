@@ -13,6 +13,30 @@ class RegistrationVerificationMailService(
     private val props: RegistrationInviteMailProperties,
 ) {
     fun sendRegistrationCode(toAddress: String, plainCode: String) {
+        sendCode(
+            toAddress = toAddress,
+            plainCode = plainCode,
+            subject = "Код подтверждения ProjectD",
+            codePurpose = "регистрации",
+        )
+    }
+
+    fun sendPasswordResetCode(toAddress: String, plainCode: String) {
+        sendCode(
+            toAddress = toAddress,
+            plainCode = plainCode,
+            subject = "Код для сброса пароля ProjectD",
+            codePurpose = "сброса пароля",
+        )
+    }
+
+    private fun sendCode(
+        toAddress: String,
+        plainCode: String,
+        subject: String,
+        codePurpose: String,
+        ignoreHint: String = "Если вы не запрашивали эту операцию, проигнорируйте это письмо.",
+    ) {
         val mailSender = mailSenderProvider.getIfAvailable()
             ?: throw IllegalArgumentException("Почта не настроена: задайте spring.mail.host и учётные данные SMTP")
         val from = props.fromAddress.ifBlank {
@@ -22,12 +46,12 @@ class RegistrationVerificationMailService(
         val helper = MimeMessageHelper(message, StandardCharsets.UTF_8.name())
         helper.setFrom(from)
         helper.setTo(toAddress)
-        helper.setSubject("Код подтверждения ProjectD")
+        helper.setSubject(subject)
         helper.setText(
             """
-            Ваш код подтверждения регистрации: $plainCode
+            Ваш код подтверждения $codePurpose: $plainCode
 
-            Код действителен 15 минут. Если вы не запрашивали регистрацию, проигнорируйте это письмо.
+            Код действителен 15 минут. $ignoreHint
             """.trimIndent(),
             false,
         )

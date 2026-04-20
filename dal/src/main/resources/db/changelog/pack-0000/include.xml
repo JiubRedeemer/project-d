@@ -14,4 +14,6 @@
     <include file="005-PRO-58-file-storage.xml" relativeToChangelogFile="true"/>
     <include file="006-external-room-invite.xml" relativeToChangelogFile="true"/>
     <include file="007-registration-email-code.xml" relativeToChangelogFile="true"/>
+    <include file="008-password-reset-email-code.xml" relativeToChangelogFile="true"/>
+    <include file="009-user-last-activity.xml" relativeToChangelogFile="true"/>
 </databaseChangeLog>

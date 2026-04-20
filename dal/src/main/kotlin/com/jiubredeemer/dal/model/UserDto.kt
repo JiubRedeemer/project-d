@@ -8,6 +8,7 @@ data class UserDto(
     var username: String? = null,
     var email: String? = null,
     var registrationDate: String? = null,
+    var lastActivity: String? = null,
     var password: String? = null,
     var roles: List<User.Role>? = ArrayList()
 )

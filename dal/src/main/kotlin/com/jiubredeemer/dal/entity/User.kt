@@ -27,6 +27,9 @@ open class User {
     @Column(name = "registration_date", nullable = false)
     open var registrationDate: Timestamp? = null
 
+    @Column(name = "last_activity", nullable = false)
+    open var lastActivity: Timestamp? = null
+
     @Enumerated(EnumType.STRING)
     @Column(name = "roles", nullable = false)
     @JdbcTypeCode(SqlTypes.JSON)

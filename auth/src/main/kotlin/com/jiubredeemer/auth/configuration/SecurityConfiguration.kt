@@ -35,6 +35,8 @@ class SecurityConfiguration(
                         "/auth/refresh",
                         "/auth/registration",
                         "/auth/registration/send-verification-code",
+                        "/auth/password/send-reset-code",
+                        "/auth/password/reset",
                         "/error",
                     )
                     .permitAll()

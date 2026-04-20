@@ -13,6 +13,8 @@ class UserConverter {
         entity.email = model.email
         entity.username = model.username
         entity.password = model.password
+        entity.registrationDate = model.registrationDate?.let { java.sql.Timestamp.valueOf(it) }
+        entity.lastActivity = model.lastActivity?.let { java.sql.Timestamp.valueOf(it) }
         entity.roles = model.roles ?: ArrayList()
         return entity
     }
@@ -23,6 +25,8 @@ class UserConverter {
         model.email = entity.email
         model.username = entity.username
         model.password = entity.password
+        model.registrationDate = entity.registrationDate?.toLocalDateTime()?.toString()
+        model.lastActivity = entity.lastActivity?.toLocalDateTime()?.toString()
         model.roles = entity.roles
         return model
     }

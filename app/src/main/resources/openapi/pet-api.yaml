@@ -1,0 +1,472 @@
+openapi: 3.0.3
+info:
+  title: Pet API
+  description: API for character pets in room scope
+  version: 0.0.1-SNAPSHOT
+
+servers:
+  - url: /api
+    description: API base path (prepend your server URL)
+
+paths:
+  /rooms/{roomId}/characters/{characterId}/pets:
+    post:
+      tags:
+        - Pets
+      summary: Create pet for character
+      operationId: createPetForRoom
+      parameters:
+        - $ref: '#/components/parameters/RoomId'
+        - $ref: '#/components/parameters/CharacterId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreatePetRequest'
+      responses:
+        '200':
+          description: Pet created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PetDto'
+    get:
+      tags:
+        - Pets
+      summary: Get pets by character id
+      operationId: getPetsByCharacterIdForRoom
+      parameters:
+        - $ref: '#/components/parameters/RoomId'
+        - $ref: '#/components/parameters/CharacterId'
+      responses:
+        '200':
+          description: List of pets
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PetDto'
+
+  /rooms/{roomId}/characters/{characterId}/pets/{petId}:
+    get:
+      tags:
+        - Pets
+      summary: Get pet by id
+      operationId: getPetByIdForRoom
+      parameters:
+        - $ref: '#/components/parameters/RoomId'
+        - $ref: '#/components/parameters/CharacterId'
+        - $ref: '#/components/parameters/PetId'
+      responses:
+        '200':
+          description: Pet found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PetDto'
+        '404':
+          description: Pet not found
+
+  /rooms/{roomId}/characters/{characterId}/pets/{petId}/logical:
+    delete:
+      tags:
+        - Pets
+      summary: Logical delete pet by id
+      operationId: deletePetLogicalByIdForRoom
+      parameters:
+        - $ref: '#/components/parameters/RoomId'
+        - $ref: '#/components/parameters/CharacterId'
+        - $ref: '#/components/parameters/PetId'
+      responses:
+        '200':
+          description: Pet logically deleted
+
+  /rooms/{roomId}/characters/{characterId}/pets/{petId}/profile:
+    patch:
+      tags:
+        - Pets
+      summary: Update pet profile
+      operationId: updatePetProfileForRoom
+      parameters:
+        - $ref: '#/components/parameters/RoomId'
+        - $ref: '#/components/parameters/CharacterId'
+        - $ref: '#/components/parameters/PetId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PetProfileUpdateRequest'
+      responses:
+        '200':
+          description: Pet profile updated
+
+  /rooms/{roomId}/characters/{characterId}/pets/{petId}/abilities/{abilityCode}/bonus:
+    patch:
+      tags:
+        - Pets
+      summary: Update pet ability bonus
+      operationId: updatePetAbilityBonusForRoom
+      parameters:
+        - $ref: '#/components/parameters/RoomId'
+        - $ref: '#/components/parameters/CharacterId'
+        - $ref: '#/components/parameters/PetId'
+        - name: abilityCode
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BonusValueUpdateRequest'
+      responses:
+        '200':
+          description: Pet ability bonus updated
+
+  /rooms/{roomId}/characters/{characterId}/pets/{petId}/health/current:
+    patch:
+      tags:
+        - Pets
+      summary: Update pet current HP
+      operationId: updatePetCurrentHpForRoom
+      parameters:
+        - $ref: '#/components/parameters/RoomId'
+        - $ref: '#/components/parameters/CharacterId'
+        - $ref: '#/components/parameters/PetId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PetHealthCurrentUpdateRequest'
+      responses:
+        '200':
+          description: Pet current HP updated
+
+  /rooms/{roomId}/characters/{characterId}/pets/{petId}/health/max:
+    patch:
+      tags:
+        - Pets
+      summary: Update pet max HP
+      operationId: updatePetMaxHpForRoom
+      parameters:
+        - $ref: '#/components/parameters/RoomId'
+        - $ref: '#/components/parameters/CharacterId'
+        - $ref: '#/components/parameters/PetId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BonusValueUpdateRequest'
+      responses:
+        '200':
+          description: Pet max HP updated
+
+  /rooms/{roomId}/characters/{characterId}/pets/{petId}/skills:
+    post:
+      tags:
+        - Pets
+      summary: Create pet skill
+      operationId: createPetSkillForRoom
+      parameters:
+        - $ref: '#/components/parameters/RoomId'
+        - $ref: '#/components/parameters/CharacterId'
+        - $ref: '#/components/parameters/PetId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PetSkillRequest'
+      responses:
+        '200':
+          description: Pet skill created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PetSkillDto'
+
+  /rooms/{roomId}/characters/{characterId}/pets/{petId}/skills/{skillId}:
+    patch:
+      tags:
+        - Pets
+      summary: Update pet skill
+      operationId: updatePetSkillForRoom
+      parameters:
+        - $ref: '#/components/parameters/RoomId'
+        - $ref: '#/components/parameters/CharacterId'
+        - $ref: '#/components/parameters/PetId'
+        - name: skillId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PetSkillRequest'
+      responses:
+        '200':
+          description: Pet skill updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PetSkillDto'
+    delete:
+      tags:
+        - Pets
+      summary: Delete pet skill by id
+      operationId: deletePetSkillForRoom
+      parameters:
+        - $ref: '#/components/parameters/RoomId'
+        - $ref: '#/components/parameters/CharacterId'
+        - $ref: '#/components/parameters/PetId'
+        - name: skillId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Pet skill deleted
+
+components:
+  parameters:
+    RoomId:
+      name: roomId
+      in: path
+      required: true
+      description: Room ID
+      schema:
+        type: string
+        format: uuid
+    CharacterId:
+      name: characterId
+      in: path
+      required: true
+      description: Character ID
+      schema:
+        type: string
+        format: uuid
+    PetId:
+      name: petId
+      in: path
+      required: true
+      description: Pet ID
+      schema:
+        type: string
+        format: uuid
+
+  schemas:
+    PetHealthCurrentUpdateType:
+      type: string
+      enum:
+        - ADD
+        - SUBTRACT
+        - SET
+
+    PetAbilityRequest:
+      type: object
+      properties:
+        abilityCode:
+          type: string
+        bonusValue:
+          type: integer
+          format: int64
+
+    CreatePetRequest:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+        age:
+          type: integer
+          format: int64
+        description:
+          type: string
+        avatar:
+          type: string
+        maxHp:
+          type: integer
+          format: int64
+        currentHp:
+          type: integer
+          format: int64
+        armorClass:
+          type: integer
+          format: int32
+        speed:
+          type: integer
+          format: int32
+        size:
+          type: string
+        creatureType:
+          type: string
+        proficiencyBonus:
+          type: integer
+          format: int32
+        senses:
+          type: string
+        languages:
+          type: string
+        isSummoned:
+          type: boolean
+        isActive:
+          type: boolean
+        abilities:
+          type: array
+          items:
+            $ref: '#/components/schemas/PetAbilityRequest'
+
+    PetProfileUpdateRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        age:
+          type: integer
+          format: int64
+        description:
+          type: string
+        avatar:
+          type: string
+        armorClass:
+          type: integer
+          format: int32
+        speed:
+          type: integer
+          format: int32
+        size:
+          type: string
+        creatureType:
+          type: string
+        proficiencyBonus:
+          type: integer
+          format: int32
+        senses:
+          type: string
+        languages:
+          type: string
+        isSummoned:
+          type: boolean
+        isActive:
+          type: boolean
+
+    PetHealthCurrentUpdateRequest:
+      type: object
+      properties:
+        type:
+          $ref: '#/components/schemas/PetHealthCurrentUpdateType'
+        value:
+          type: integer
+          format: int64
+
+    PetSkillRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+
+    BonusValueUpdateRequest:
+      type: object
+      properties:
+        bonusValue:
+          type: integer
+          format: int64
+
+    PetAbilityDto:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        petId:
+          type: string
+          format: uuid
+        abilityCode:
+          type: string
+        bonusValue:
+          type: integer
+          format: int64
+
+    PetSkillDto:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        petId:
+          type: string
+          format: uuid
+        name:
+          type: string
+        description:
+          type: string
+
+    PetDto:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        characterId:
+          type: string
+          format: uuid
+        name:
+          type: string
+        age:
+          type: integer
+          format: int64
+        description:
+          type: string
+        avatar:
+          type: string
+        maxHp:
+          type: integer
+          format: int64
+        currentHp:
+          type: integer
+          format: int64
+        armorClass:
+          type: integer
+          format: int32
+        speed:
+          type: integer
+          format: int32
+        size:
+          type: string
+        creatureType:
+          type: string
+        proficiencyBonus:
+          type: integer
+          format: int32
+        senses:
+          type: string
+        languages:
+          type: string
+        isSummoned:
+          type: boolean
+        isActive:
+          type: boolean
+        abilities:
+          type: array
+          items:
+            $ref: '#/components/schemas/PetAbilityDto'
+        skills:
+          type: array
+          items:
+            $ref: '#/components/schemas/PetSkillDto'

@@ -33,7 +33,9 @@ class RegistrationService(
             registrationVerificationCodeService.verifyAndConsume(registrationRequest.email, code)
         }
         val userModel: User = userRegistrationConverter.convertToUser(registrationRequest)
-        userModel.registrationDate = Timestamp.valueOf(LocalDateTime.now())
+        val now = Timestamp.valueOf(LocalDateTime.now())
+        userModel.registrationDate = now
+        userModel.lastActivity = now
         val saved = userRepository.save(userModel)
         registrationRequest.roomInviteToken?.trim()?.takeIf { it.isNotEmpty() }?.let { token ->
             roomUserInviteService.claimPendingInviteByToken(token, saved.id!!, saved.email!!)

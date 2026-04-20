@@ -1,7 +1,9 @@
 package com.jiubredeemer.auth.controller
 
 import com.jiubredeemer.auth.model.request.AuthenticationRequest
+import com.jiubredeemer.auth.model.request.PasswordResetRequest
 import com.jiubredeemer.auth.model.request.RefreshTokenRequest
+import com.jiubredeemer.auth.model.request.SendPasswordResetCodeRequest
 import com.jiubredeemer.auth.model.request.SendVerificationCodeRequest
 import com.jiubredeemer.auth.model.request.UserRegistration
 import com.jiubredeemer.auth.model.response.AuthenticationResponse
@@ -14,6 +16,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.tags.Tag
 import com.jiubredeemer.auth.service.RegistrationVerificationCodeService
+import com.jiubredeemer.auth.service.PasswordResetService
+import com.jiubredeemer.auth.service.PasswordResetVerificationCodeService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -28,6 +32,8 @@ import org.springframework.web.server.ResponseStatusException
 class AuthController(
     private val authenticationService: AuthenticationService,
     private val registrationVerificationCodeService: RegistrationVerificationCodeService,
+    private val passwordResetVerificationCodeService: PasswordResetVerificationCodeService,
+    private val passwordResetService: PasswordResetService,
 ) {
 
     @Operation(summary = "Аутентификация по учетным данным")
@@ -93,6 +99,36 @@ class AuthController(
         @RequestBody request: SendVerificationCodeRequest,
     ): ResponseEntity<Unit> {
         registrationVerificationCodeService.sendVerificationCode(request.email)
+        return ResponseEntity.ok().build()
+    }
+
+    @Operation(summary = "Отправить код подтверждения на email для сброса пароля")
+    @ApiResponses(
+        value = [
+            ApiResponse(responseCode = "200", description = "Код отправлен"),
+            ApiResponse(responseCode = "406", description = "Ошибка валидации (email не найден, cooldown и т.д.)"),
+        ],
+    )
+    @PostMapping("/password/send-reset-code")
+    fun sendPasswordResetCode(
+        @RequestBody request: SendPasswordResetCodeRequest,
+    ): ResponseEntity<Unit> {
+        passwordResetVerificationCodeService.sendVerificationCode(request.email)
+        return ResponseEntity.ok().build()
+    }
+
+    @Operation(summary = "Сбросить пароль по коду из email")
+    @ApiResponses(
+        value = [
+            ApiResponse(responseCode = "200", description = "Пароль успешно изменен"),
+            ApiResponse(responseCode = "406", description = "Ошибка валидации (код/пароль/email)"),
+        ],
+    )
+    @PostMapping("/password/reset")
+    fun resetPassword(
+        @RequestBody request: PasswordResetRequest,
+    ): ResponseEntity<Unit> {
+        passwordResetService.resetPassword(request)
         return ResponseEntity.ok().build()
     }
 

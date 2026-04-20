@@ -3,6 +3,7 @@ package com.jiubredeemer.auth.configuration
 
 import com.jiubredeemer.auth.service.CustomUserDetailsService
 import com.jiubredeemer.auth.service.TokenService
+import com.jiubredeemer.dal.service.UserService
 import io.jsonwebtoken.ExpiredJwtException
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
@@ -19,6 +20,7 @@ import org.springframework.web.filter.OncePerRequestFilter
 class JwtAuthenticationFilter(
     private val userDetailsService: CustomUserDetailsService,
     private val tokenService: TokenService,
+    private val userService: UserService,
 ) : OncePerRequestFilter() {
     override fun doFilterInternal(
         request: HttpServletRequest,
@@ -35,8 +37,10 @@ class JwtAuthenticationFilter(
             val email = tokenService.extractEmail(jwtToken)
             if (email != null && SecurityContextHolder.getContext().authentication == null) {
                 val foundUser = userDetailsService.loadUserByUsername(email)
-                if (tokenService.isValid(jwtToken, foundUser))
+                if (tokenService.isValid(jwtToken, foundUser)) {
                     updateContext(foundUser, request)
+                    userService.touchLastActivityByEmail(email)
+                }
                 filterChain.doFilter(request, response)
             }
         } catch (ex: ExpiredJwtException) {
