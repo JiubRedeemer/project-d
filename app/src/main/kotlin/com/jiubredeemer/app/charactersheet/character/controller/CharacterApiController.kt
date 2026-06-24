@@ -6,6 +6,7 @@ import com.jiubredeemer.app.integration.charactersheet.dto.character.BonusValueU
 import com.jiubredeemer.app.integration.charactersheet.dto.character.CreateCharacterRequest
 import com.jiubredeemer.app.integration.charactersheet.dto.character.UpdateMasteryRequest
 import com.jiubredeemer.app.integration.dto.RestTypeEnum
+import com.jiubredeemer.app.websocket.PublishCharacterUpdated
 import com.jiubredeemer.auth.annotation.HasRoleOrThrow
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.web.bind.annotation.*
@@ -17,7 +18,6 @@ import java.util.*
 class CharacterApiController(
     private val characterApiService: CharacterApiService
 ) {
-
 
     @PutMapping("")
     @HasRoleOrThrow("ADMIN", "USER")
@@ -47,6 +47,7 @@ class CharacterApiController(
 
     @DeleteMapping("/{characterId}/logical")
     @HasRoleOrThrow("ADMIN", "USER")
+    @PublishCharacterUpdated
     fun deleteCharacterLogicalById(
         @PathVariable roomId: UUID,
         @PathVariable characterId: UUID,
@@ -92,6 +93,7 @@ class CharacterApiController(
 
     @PatchMapping("/{characterId}/bio/{section}")
     @HasRoleOrThrow("ADMIN", "USER")
+    @PublishCharacterUpdated
     fun updateBioByCharacterId(
         @PathVariable roomId: UUID,
         @PathVariable characterId: UUID,
@@ -103,6 +105,7 @@ class CharacterApiController(
 
     @PatchMapping("/{characterId}/abilities/{code}/bonus")
     @HasRoleOrThrow("ADMIN", "USER")
+    @PublishCharacterUpdated
     fun updateAbilityBonusValue(
         @PathVariable roomId: UUID,
         @PathVariable characterId: UUID,
@@ -114,6 +117,7 @@ class CharacterApiController(
 
     @PatchMapping("/{characterId}/health/bonus")
     @HasRoleOrThrow("ADMIN", "USER")
+    @PublishCharacterUpdated
     fun updateHealthBonusValue(
         @PathVariable roomId: UUID,
         @PathVariable characterId: UUID,
@@ -124,6 +128,7 @@ class CharacterApiController(
 
     @PatchMapping("/{characterId}/health/max")
     @HasRoleOrThrow("ADMIN", "USER")
+    @PublishCharacterUpdated
     fun updateHealthMaxValue(
         @PathVariable roomId: UUID,
         @PathVariable characterId: UUID,
@@ -134,6 +139,7 @@ class CharacterApiController(
 
     @PatchMapping("/{characterId}/health/updateCurrent")
     @HasRoleOrThrow("ADMIN", "USER")
+    @PublishCharacterUpdated
     fun updateCurrentHealthById(
         @PathVariable roomId: UUID,
         @PathVariable characterId: UUID,
@@ -144,6 +150,7 @@ class CharacterApiController(
 
     @PatchMapping("/{characterId}/level/updateCurrent")
     @HasRoleOrThrow("ADMIN", "USER")
+    @PublishCharacterUpdated
     fun updateCurrentXpById(
         @PathVariable roomId: UUID,
         @PathVariable characterId: UUID,
@@ -154,6 +161,7 @@ class CharacterApiController(
 
     @PostMapping("/{characterId}/level/up")
     @HasRoleOrThrow("ADMIN", "USER")
+    @PublishCharacterUpdated
     fun levelUp(
         @PathVariable roomId: UUID,
         @PathVariable characterId: UUID,
@@ -164,6 +172,7 @@ class CharacterApiController(
 
     @PostMapping("/{characterId}/level/down")
     @HasRoleOrThrow("ADMIN", "USER")
+    @PublishCharacterUpdated
     fun levelDown(
         @PathVariable roomId: UUID,
         @PathVariable characterId: UUID,
@@ -174,6 +183,7 @@ class CharacterApiController(
 
     @PatchMapping("/{characterId}/armoryClass/bonus")
     @HasRoleOrThrow("ADMIN", "USER")
+    @PublishCharacterUpdated
     fun updateArmoryClassBonusValue(
         @PathVariable roomId: UUID,
         @PathVariable characterId: UUID,
@@ -184,6 +194,7 @@ class CharacterApiController(
 
     @PatchMapping("/{characterId}/speed/bonus")
     @HasRoleOrThrow("ADMIN", "USER")
+    @PublishCharacterUpdated
     fun updateSpeedBonusValue(
         @PathVariable roomId: UUID,
         @PathVariable characterId: UUID,
@@ -194,6 +205,7 @@ class CharacterApiController(
 
     @PatchMapping("/{characterId}/initiative/bonus")
     @HasRoleOrThrow("ADMIN", "USER")
+    @PublishCharacterUpdated
     fun updateInitiativeBonusValue(
         @PathVariable roomId: UUID,
         @PathVariable characterId: UUID,
@@ -204,6 +216,7 @@ class CharacterApiController(
 
     @PatchMapping("/{characterId}/skills/{code}/mastery")
     @HasRoleOrThrow("ADMIN", "USER")
+    @PublishCharacterUpdated
     fun updateSkillMasteryByCode(
         @PathVariable roomId: UUID,
         @PathVariable characterId: UUID,
@@ -222,8 +235,41 @@ class CharacterApiController(
         return characterApiService.getCharacterSkills(roomId, characterId)
     }
 
+    @GetMapping("/{characterId}/character-states")
+    @HasRoleOrThrow("ADMIN", "USER")
+    fun getCharacterStates(
+        @PathVariable roomId: UUID,
+        @PathVariable characterId: UUID
+    ): List<CharacterStateDto>? {
+        return characterApiService.getCharacterStates(roomId, characterId)
+    }
+
+    @PutMapping("/{characterId}/character-states")
+    @HasRoleOrThrow("ADMIN", "USER")
+    @PublishCharacterUpdated
+    fun saveCharacterStates(
+        @PathVariable roomId: UUID,
+        @PathVariable characterId: UUID,
+        @RequestBody characterStateDto: CharacterStateDto
+    ): CharacterStateDto? {
+        characterStateDto.characterId = characterId
+        return characterApiService.saveCharacterState(roomId, characterId, characterStateDto)
+    }
+
+    @DeleteMapping("/{characterId}/character-states/{characterStateId}")
+    @HasRoleOrThrow("ADMIN", "USER")
+    @PublishCharacterUpdated
+    fun deleteCharacterState(
+        @PathVariable roomId: UUID,
+        @PathVariable characterId: UUID,
+        @PathVariable characterStateId: UUID
+    ) {
+        characterApiService.deleteCharacterState(roomId, characterId, characterStateId)
+    }
+
     @PutMapping("/{characterId}/character-skills")
     @HasRoleOrThrow("ADMIN", "USER")
+    @PublishCharacterUpdated
     fun saveCharacterSkill(
         @PathVariable roomId: UUID,
         @PathVariable characterId: UUID,
@@ -235,6 +281,7 @@ class CharacterApiController(
 
     @DeleteMapping("/{characterId}/character-skills/{characterSkillId}")
     @HasRoleOrThrow("ADMIN", "USER")
+    @PublishCharacterUpdated
     fun deleteCharacterSkill(
         @PathVariable roomId: UUID,
         @PathVariable characterId: UUID,
@@ -245,6 +292,7 @@ class CharacterApiController(
 
     @PatchMapping("/{characterId}/character-skills/{characterSkillId}")
     @HasRoleOrThrow("ADMIN", "USER")
+    @PublishCharacterUpdated
     fun updateCharacterSkill(
         @PathVariable roomId: UUID,
         @PathVariable characterId: UUID,
@@ -258,6 +306,7 @@ class CharacterApiController(
 
     @PatchMapping("/{characterId}/character-skills/{characterSkillId}/use")
     @HasRoleOrThrow("ADMIN", "USER")
+    @PublishCharacterUpdated
     fun useCharacterSkill(
         @PathVariable roomId: UUID,
         @PathVariable characterId: UUID,
@@ -268,6 +317,7 @@ class CharacterApiController(
 
     @PostMapping("/{characterId}/rest/{restType}")
     @HasRoleOrThrow("ADMIN", "USER")
+    @PublishCharacterUpdated
     fun characterRest(
         @PathVariable roomId: UUID,
         @PathVariable characterId: UUID,
@@ -278,6 +328,7 @@ class CharacterApiController(
 
     @PutMapping("/{characterId}/traits")
     @HasRoleOrThrow("ADMIN", "USER")
+    @PublishCharacterUpdated
     fun characterAddTrait(
         @PathVariable roomId: UUID,
         @PathVariable characterId: UUID,
@@ -288,6 +339,7 @@ class CharacterApiController(
 
     @DeleteMapping("/{characterId}/traits/{traitId}")
     @HasRoleOrThrow("ADMIN", "USER")
+    @PublishCharacterUpdated
     fun characterDeleteTrait(
         @PathVariable roomId: UUID,
         @PathVariable characterId: UUID,
@@ -295,6 +347,4 @@ class CharacterApiController(
     ) {
         characterApiService.characterDeleteTrait(roomId, characterId, traitId)
     }
-
-
 }

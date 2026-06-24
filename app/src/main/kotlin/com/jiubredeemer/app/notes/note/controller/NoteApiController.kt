@@ -3,6 +3,7 @@ package com.jiubredeemer.app.notes.note.controller
 import com.jiubredeemer.app.integration.notes.dto.NoteDto
 import com.jiubredeemer.app.integration.notes.dto.NotebookDto
 import com.jiubredeemer.app.notes.note.service.NoteApiService
+import com.jiubredeemer.app.websocket.PublishCharacterUpdated
 import com.jiubredeemer.auth.annotation.HasRoleOrThrow
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Content
@@ -88,6 +89,7 @@ class NoteApiController(
     )
     @PutMapping
     @HasRoleOrThrow("ADMIN", "USER")
+    @PublishCharacterUpdated
     fun addNote(
         @PathVariable roomId: UUID,
         @PathVariable characterId: UUID,
@@ -115,6 +117,7 @@ class NoteApiController(
     )
     @PatchMapping("/{id}")
     @HasRoleOrThrow("ADMIN", "USER")
+    @PublishCharacterUpdated
     fun updateNote(
         @PathVariable roomId: UUID,
         @PathVariable characterId: UUID,
@@ -139,6 +142,7 @@ class NoteApiController(
     )
     @DeleteMapping("/{id}")
     @HasRoleOrThrow("ADMIN", "USER")
+    @PublishCharacterUpdated
     fun deleteNote(
         @PathVariable roomId: UUID,
         @PathVariable characterId: UUID,

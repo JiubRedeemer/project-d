@@ -4,6 +4,7 @@ import com.jiubredeemer.app.integration.magic.MagicClient
 import com.jiubredeemer.app.integration.magic.dto.*
 import com.jiubredeemer.app.integration.rulebook.RuleBookClient
 import com.jiubredeemer.app.room.service.RoomAccessChecker
+import com.jiubredeemer.app.websocket.CharacterEventPublisher
 import com.jiubredeemer.auth.service.AccessChecker
 import com.jiubredeemer.common.exception.NotFoundException
 import org.springframework.stereotype.Service
@@ -15,17 +16,37 @@ class MagicApiService(
     private val accessChecker: AccessChecker,
     private val magicClient: MagicClient,
     private val ruleBookClient: RuleBookClient,
+    private val characterEventPublisher: CharacterEventPublisher,
 ) {
 
     private fun ensureAccessToRoom(roomId: UUID) {
         roomAccessChecker.hasAccessOrThrow(roomId, accessChecker.getCurrentUser().id!!)
     }
 
-    private fun ensureAccessToSpellBook(spellBookId: UUID) {
+    private fun ensureAccessToSpellBook(spellBookId: UUID): SpellBookDto {
         val book = magicClient.getSpellBookById(spellBookId)
             ?: throw NotFoundException("Spell book not found by id: $spellBookId")
         val roomId = book.roomId ?: throw NotFoundException("Spell book has no roomId")
         ensureAccessToRoom(roomId)
+        return book
+    }
+
+    private fun publishForBook(book: SpellBookDto) {
+        val roomId = book.roomId ?: return
+        val characterId = book.characterId ?: return
+        characterEventPublisher.publishCharacterUpdated(roomId, characterId)
+    }
+
+    private fun publishForBookId(spellBookId: UUID) {
+        publishForBook(magicClient.getSpellBookById(spellBookId) ?: return)
+    }
+
+    private fun publishForCell(cell: SpellCellDto) {
+        cell.spellBookId?.let { publishForBookId(it) }
+    }
+
+    private fun publishForBookItem(item: SpellBookItemDto) {
+        item.spellBookId?.let { publishForBookId(it) }
     }
 
     // Spells (no room in spec; role-only access)
@@ -68,7 +89,9 @@ class MagicApiService(
 
     fun createSpellBook(spellBookDto: SpellBookDto): SpellBookDto {
         spellBookDto.roomId?.let { ensureAccessToRoom(it) }
-        return magicClient.createSpellBook(spellBookDto) ?: throw NotFoundException("Failed to create spell book")
+        val result = magicClient.createSpellBook(spellBookDto) ?: throw NotFoundException("Failed to create spell book")
+        publishForBook(result)
+        return result
     }
 
     fun getSpellBookByRoomAndCharacter(roomId: UUID, characterId: UUID): SpellBookDto {
@@ -78,56 +101,69 @@ class MagicApiService(
     }
 
     fun getSpellBookById(spellBookId: UUID): SpellBookDto {
-        ensureAccessToSpellBook(spellBookId)
-        return magicClient.getSpellBookById(spellBookId)
-            ?: throw NotFoundException("Spell book not found by id: $spellBookId")
+        return ensureAccessToSpellBook(spellBookId)
     }
 
     fun updateSpellBook(spellBookId: UUID, spellBookDto: SpellBookDto): SpellBookDto {
         ensureAccessToSpellBook(spellBookId)
-        return magicClient.updateSpellBook(spellBookId, spellBookDto)
+        val result = magicClient.updateSpellBook(spellBookId, spellBookDto)
             ?: throw NotFoundException("Spell book not found by id: $spellBookId")
+        publishForBook(result)
+        return result
     }
 
     fun deleteSpellBook(spellBookId: UUID) {
-        ensureAccessToSpellBook(spellBookId)
+        val book = ensureAccessToSpellBook(spellBookId)
         magicClient.deleteSpellBook(spellBookId)
+        publishForBook(book)
     }
 
     fun addSpellToBook(spellBookId: UUID, spellId: UUID): SpellBookDto {
         ensureAccessToSpellBook(spellBookId)
-        return magicClient.addSpellToBook(spellBookId, spellId)
+        val result = magicClient.addSpellToBook(spellBookId, spellId)
             ?: throw NotFoundException("Failed to add spell to spell book")
+        publishForBook(result)
+        return result
     }
 
     fun removeSpellFromBook(spellBookId: UUID, spellId: UUID): SpellBookDto {
         ensureAccessToSpellBook(spellBookId)
-        return magicClient.removeSpellFromBook(spellBookId, spellId)
+        val result = magicClient.removeSpellFromBook(spellBookId, spellId)
             ?: throw NotFoundException("Failed to remove spell from spell book")
+        publishForBook(result)
+        return result
     }
 
     fun setSpellInUse(spellBookId: UUID, spellId: UUID, inUse: Boolean): SpellBookItemDto {
-        ensureAccessToSpellBook(spellBookId)
-        return magicClient.setSpellInUse(spellBookId, spellId, inUse)
+        val book = ensureAccessToSpellBook(spellBookId)
+        val result = magicClient.setSpellInUse(spellBookId, spellId, inUse)
             ?: throw NotFoundException("Failed to set spell in-use")
+        publishForBook(book)
+        return result
     }
 
     fun createSpellCellForBook(spellBookId: UUID, spellCellDto: SpellCellDto): SpellCellDto {
-        ensureAccessToSpellBook(spellBookId)
-        return magicClient.createSpellCellForBook(spellBookId, spellCellDto)
+        val book = ensureAccessToSpellBook(spellBookId)
+        val result = magicClient.createSpellCellForBook(spellBookId, spellCellDto)
             ?: throw NotFoundException("Failed to create spell cell for book")
+        publishForBook(book)
+        return result
     }
 
     fun refillRest(spellBookId: UUID, request: RefillRestRequest): SpellBookDto {
-        ensureAccessToSpellBook(spellBookId)
-        return magicClient.refillRest(spellBookId, request)
+        val book = ensureAccessToSpellBook(spellBookId)
+        val result = magicClient.refillRest(spellBookId, request)
             ?: throw NotFoundException("Failed to refill rest")
+        publishForBook(book)
+        return result
     }
 
     fun refillRestByCharacter(roomId: UUID, characterId: UUID, restType: String): SpellBookDto {
         ensureAccessToRoom(roomId)
-        return magicClient.refillRestByCharacter(roomId, characterId, restType)
+        val result = magicClient.refillRestByCharacter(roomId, characterId, restType)
             ?: throw NotFoundException("Failed to refill rest by character")
+        characterEventPublisher.publishCharacterUpdated(roomId, characterId)
+        return result
     }
 
     // Spell Book Items
@@ -137,8 +173,10 @@ class MagicApiService(
 
     fun createSpellBookItem(spellBookItemDto: SpellBookItemDto): SpellBookItemDto {
         spellBookItemDto.spellBookId?.let { ensureAccessToSpellBook(it) }
-        return magicClient.createSpellBookItem(spellBookItemDto)
+        val result = magicClient.createSpellBookItem(spellBookItemDto)
             ?: throw NotFoundException("Failed to create spell book item")
+        publishForBookItem(result)
+        return result
     }
 
     fun getSpellBookItemById(id: UUID): SpellBookItemDto {
@@ -153,8 +191,10 @@ class MagicApiService(
             ?: throw NotFoundException("Spell book item not found by id: $id")
         existing.spellBookId?.let { ensureAccessToSpellBook(it) }
         spellBookItemDto.spellBookId?.let { ensureAccessToSpellBook(it) }
-        return magicClient.updateSpellBookItem(id, spellBookItemDto)
+        val result = magicClient.updateSpellBookItem(id, spellBookItemDto)
             ?: throw NotFoundException("Spell book item not found by id: $id")
+        publishForBookItem(result)
+        return result
     }
 
     fun deleteSpellBookItem(id: UUID) {
@@ -162,14 +202,17 @@ class MagicApiService(
             ?: throw NotFoundException("Spell book item not found by id: $id")
         item.spellBookId?.let { ensureAccessToSpellBook(it) }
         magicClient.deleteSpellBookItem(id)
+        publishForBookItem(item)
     }
 
     fun setSpellBookItemInUse(id: UUID, inUse: Boolean): SpellBookItemDto {
         val item = magicClient.getSpellBookItemById(id)
             ?: throw NotFoundException("Spell book item not found by id: $id")
         item.spellBookId?.let { ensureAccessToSpellBook(it) }
-        return magicClient.setSpellBookItemInUse(id, inUse)
+        val result = magicClient.setSpellBookItemInUse(id, inUse)
             ?: throw NotFoundException("Spell book item not found by id: $id")
+        publishForBookItem(result)
+        return result
     }
 
     // Spell Cells
@@ -179,8 +222,10 @@ class MagicApiService(
 
     fun createSpellCell(spellCellDto: SpellCellDto): SpellCellDto {
         spellCellDto.spellBookId?.let { ensureAccessToSpellBook(it) }
-        return magicClient.createSpellCell(spellCellDto)
+        val result = magicClient.createSpellCell(spellCellDto)
             ?: throw NotFoundException("Failed to create spell cell")
+        publishForCell(result)
+        return result
     }
 
     fun getSpellCellById(id: UUID): SpellCellDto {
@@ -195,8 +240,10 @@ class MagicApiService(
             ?: throw NotFoundException("Spell cell not found by id: $id")
         existing.spellBookId?.let { ensureAccessToSpellBook(it) }
         spellCellDto.spellBookId?.let { ensureAccessToSpellBook(it) }
-        return magicClient.updateSpellCell(id, spellCellDto)
+        val result = magicClient.updateSpellCell(id, spellCellDto)
             ?: throw NotFoundException("Spell cell not found by id: $id")
+        publishForCell(result)
+        return result
     }
 
     fun deleteSpellCell(id: UUID) {
@@ -204,13 +251,16 @@ class MagicApiService(
             ?: throw NotFoundException("Spell cell not found by id: $id")
         cell.spellBookId?.let { ensureAccessToSpellBook(it) }
         magicClient.deleteSpellCell(id)
+        publishForCell(cell)
     }
 
     fun useSpellCell(id: UUID): SpellCellDto {
         val cell = magicClient.getSpellCellById(id)
             ?: throw NotFoundException("Spell cell not found by id: $id")
         cell.spellBookId?.let { ensureAccessToSpellBook(it) }
-        return magicClient.useSpellCell(id)
+        val result = magicClient.useSpellCell(id)
             ?: throw NotFoundException("Failed to use spell cell")
+        publishForCell(result)
+        return result
     }
 }

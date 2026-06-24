@@ -26,6 +26,7 @@ data class CharacterDto(
     val bonusInitiative: Int?,
     val abilities: List<AbilityShort>?,
     val skills: List<SkillShort>?,
+    val states: List<CharacterStateDto>?,
     val characterBio: CharacterBio?,
     val health: HealhDto?,
     val level: LevelDto?,

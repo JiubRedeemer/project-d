@@ -19,5 +19,6 @@ data class RuleBookProperty(
     var skillsByClassUrl: String = "",
     var backgroundsUrl: String = "",
     var logicalUrl: String = "",
-    var rulesUrl: String = ""
+    var rulesUrl: String = "",
+    var statesUrl: String = ""
 )

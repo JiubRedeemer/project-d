@@ -168,6 +168,32 @@ class CharacterApiService(
         return characterSheetClient.updateBioByCharacterId(characterId, section, characterBioUpdateRequest)
     }
 
+    fun getCharacterStates(
+        roomId: UUID,
+        characterId: UUID,
+    ): List<CharacterStateDto>? {
+        roomAccessChecker.hasAccessOrThrow(roomId, accessChecker.getCurrentUser().id!!)
+        return characterSheetClient.getCharacterStates(characterId)
+    }
+
+    fun saveCharacterState(
+        roomId: UUID,
+        characterId: UUID,
+        characterStateDto: CharacterStateDto,
+    ): CharacterStateDto? {
+        roomAccessChecker.hasAccessOrThrow(roomId, accessChecker.getCurrentUser().id!!)
+        return characterSheetClient.saveCharacterState(characterId, characterStateDto)
+    }
+
+    fun deleteCharacterState(
+        roomId: UUID,
+        characterId: UUID,
+        characterStateId: UUID,
+    ) {
+        roomAccessChecker.hasAccessOrThrow(roomId, accessChecker.getCurrentUser().id!!)
+        characterSheetClient.deleteCharacterState(characterId, characterStateId)
+    }
+
     fun getCharacterSkills(
         roomId: UUID,
         characterId: UUID,

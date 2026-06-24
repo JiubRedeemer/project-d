@@ -7,6 +7,7 @@ import com.jiubredeemer.app.itemstorage.inventory.dto.inventory.InventoryItemDto
 import com.jiubredeemer.app.itemstorage.inventory.dto.item.ItemDto
 import com.jiubredeemer.app.itemstorage.inventory.dto.item.SearchItemParams
 import com.jiubredeemer.app.itemstorage.inventory.service.InventoryApiService
+import com.jiubredeemer.app.websocket.PublishCharacterUpdated
 import com.jiubredeemer.auth.annotation.HasRoleOrThrow
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Content
@@ -138,6 +139,7 @@ class InventoryApiController(
     )
     @PatchMapping("/{roomId}/inventory/{characterId}/equip/{itemId}")
     @HasRoleOrThrow("ADMIN", "USER")
+    @PublishCharacterUpdated
     fun equipItemByCharacterIdAndItemId(
         @PathVariable roomId: UUID,
         @PathVariable characterId: UUID,
@@ -161,6 +163,7 @@ class InventoryApiController(
     )
     @PatchMapping("/{roomId}/inventory/{characterId}/items/{itemId}/attack/bonus")
     @HasRoleOrThrow("ADMIN", "USER")
+    @PublishCharacterUpdated
     fun addBonusAttackToItemById(
         @PathVariable roomId: UUID,
         @PathVariable characterId: UUID,
@@ -185,6 +188,7 @@ class InventoryApiController(
     )
     @PatchMapping("/{roomId}/inventory/{characterId}/items/{itemId}/damage/bonus")
     @HasRoleOrThrow("ADMIN", "USER")
+    @PublishCharacterUpdated
     fun addBonusDamageToItemById(
         @PathVariable roomId: UUID,
         @PathVariable characterId: UUID,
@@ -209,6 +213,7 @@ class InventoryApiController(
     )
     @PatchMapping("/{roomId}/inventory/{characterId}/{itemId}/count/{count}")
     @HasRoleOrThrow("ADMIN", "USER")
+    @PublishCharacterUpdated
     fun changeItemCountByCharacterIdAndItemId(
         @PathVariable roomId: UUID,
         @PathVariable characterId: UUID,
@@ -233,6 +238,7 @@ class InventoryApiController(
     )
     @DeleteMapping("/{roomId}/inventory/{characterId}/{itemId}")
     @HasRoleOrThrow("ADMIN", "USER")
+    @PublishCharacterUpdated
     fun deleteItemFromInventory(
         @PathVariable roomId: UUID,
         @PathVariable characterId: UUID,
@@ -256,6 +262,7 @@ class InventoryApiController(
     )
     @PutMapping("/{roomId}/inventory/{characterId}/{itemId}/{count}")
     @HasRoleOrThrow("ADMIN", "USER")
+    @PublishCharacterUpdated
     fun addItemToInventory(
         @PathVariable roomId: UUID,
         @PathVariable characterId: UUID,
@@ -346,6 +353,7 @@ class InventoryApiController(
     )
     @PostMapping("/{roomId}/inventory/{characterId}/items/{itemId}/skills/{skillId}/use")
     @HasRoleOrThrow("ADMIN", "USER")
+    @PublishCharacterUpdated
     fun useInventoryItemSkill(
         @PathVariable roomId: UUID,
         @PathVariable characterId: UUID,

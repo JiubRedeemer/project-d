@@ -14,6 +14,7 @@ import com.jiubredeemer.app.integration.rulebook.dto.room.RoomDto
 import com.jiubredeemer.app.integration.rulebook.dto.skill.SkillByClassRequest
 import com.jiubredeemer.app.integration.rulebook.dto.skill.SkillByCodeRequest
 import com.jiubredeemer.app.integration.rulebook.dto.skill.SkillDto
+import com.jiubredeemer.app.rulebook.state.model.StateDto
 import com.jiubredeemer.common.exception.IntegrationAccessException
 import org.springframework.core.ParameterizedTypeReference
 import org.springframework.http.HttpHeaders
@@ -538,5 +539,41 @@ class RuleBookClient(
         } catch (e: Exception) {
             throw IntegrationAccessException("Rulebook dont response on getRoom, cause: ${e.message}")
         }
+    }
+
+    fun getStatesForRoom(roomId: UUID): List<StateDto>? {
+        val uri = UriComponentsBuilder
+            .fromHttpUrl(ruleBookProperty.baseUrl)
+            .pathSegment(ruleBookProperty.apiUrl)
+            .pathSegment(ruleBookProperty.statesUrl)
+            .toUriString()
+
+        val response = restClient.post()
+            .uri(uri)
+            .headers { it.addAll(headers) }
+            .body(RequestByRoomId(roomId, null))
+            .retrieve()
+            .toEntity(object :
+                ParameterizedTypeReference<List<StateDto>>() {})
+
+        return response.body
+    }
+
+    fun getStateByCodeForRoom(roomId: UUID, code: String): StateDto? {
+        val uri = UriComponentsBuilder
+            .fromHttpUrl(ruleBookProperty.baseUrl)
+            .pathSegment(ruleBookProperty.apiUrl)
+            .pathSegment(ruleBookProperty.statesUrl)
+            .pathSegment(ruleBookProperty.skillsByCodeUrl)
+            .toUriString()
+
+        val response = restClient.post()
+            .uri(uri)
+            .headers { it.addAll(headers) }
+            .body(SkillByCodeRequest(roomId, code))
+            .retrieve()
+            .toEntity(object :
+                ParameterizedTypeReference<StateDto>() {})
+        return response.body
     }
 }

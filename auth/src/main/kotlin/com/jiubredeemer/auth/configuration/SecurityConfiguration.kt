@@ -45,6 +45,8 @@ class SecurityConfiguration(
                         "/v3/api-docs/**", "/v3/api-docs**", "/swagger-ui/index.html**"
                     )
                     .permitAll()
+                    .requestMatchers("/ws/**")
+                    .permitAll()
                     .requestMatchers("/api/**")
                     .authenticated()
                     .requestMatchers("/users/**")

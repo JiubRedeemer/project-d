@@ -61,6 +61,7 @@ project-d:
       backgrounds-url: backgrounds
       logical-url: logical
       rules-url: rules
+      states-url: states
     character-sheet:
       api-url: api
       base-url: http://localhost:8082
@@ -87,6 +88,7 @@ project-d:
       speed-url: speed
       initiative-url: initiative
       character-skills-url: character-skills
+      character-states-url: character-states
       use-url: use
       rest-url: rest
       logical-url: logical

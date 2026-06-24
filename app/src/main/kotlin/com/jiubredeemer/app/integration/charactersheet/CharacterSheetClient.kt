@@ -892,6 +892,66 @@ class CharacterSheetClient(
         }
     }
 
+    fun getCharacterStates(characterId: UUID): List<CharacterStateDto>? {
+        try {
+            val uri = UriComponentsBuilder
+                .fromHttpUrl(characterSheetProperty.baseUrl)
+                .pathSegment(characterSheetProperty.apiUrl)
+                .pathSegment(characterSheetProperty.charactersUrl)
+                .pathSegment(characterId.toString())
+                .pathSegment(characterSheetProperty.characterStatesUrl)
+                .toUriString()
+            return restClient.get()
+                .uri(uri)
+                .headers { it.addAll(headers) }
+                .retrieve()
+                .toEntity(object : ParameterizedTypeReference<List<CharacterStateDto>>() {})
+                .body
+        } catch (e: Exception) {
+            throw IntegrationAccessException("CharacterSheet don't response on getCharacterStates, cause: ${e.message}")
+        }
+    }
+
+    fun saveCharacterState(characterId: UUID, characterStateDto: CharacterStateDto): CharacterStateDto? {
+        try {
+            val uri = UriComponentsBuilder
+                .fromHttpUrl(characterSheetProperty.baseUrl)
+                .pathSegment(characterSheetProperty.apiUrl)
+                .pathSegment(characterSheetProperty.charactersUrl)
+                .pathSegment(characterId.toString())
+                .pathSegment(characterSheetProperty.characterStatesUrl)
+                .toUriString()
+            return restClient.put()
+                .uri(uri)
+                .headers { it.addAll(headers) }
+                .body(characterStateDto)
+                .retrieve()
+                .toEntity(CharacterStateDto::class.java)
+                .body
+        } catch (e: Exception) {
+            throw IntegrationAccessException("CharacterSheet don't response on saveCharacterState, cause: ${e.message}")
+        }
+    }
+
+    fun deleteCharacterState(characterId: UUID, characterStateId: UUID) {
+        try {
+            val uri = UriComponentsBuilder
+                .fromHttpUrl(characterSheetProperty.baseUrl)
+                .pathSegment(characterSheetProperty.apiUrl)
+                .pathSegment(characterSheetProperty.charactersUrl)
+                .pathSegment(characterId.toString())
+                .pathSegment(characterSheetProperty.characterStatesUrl)
+                .pathSegment(characterStateId.toString())
+                .toUriString()
+            restClient.delete()
+                .uri(uri)
+                .headers { it.addAll(headers) }
+                .retrieve()
+        } catch (e: Exception) {
+            throw IntegrationAccessException("CharacterSheet don't response on deleteCharacterState, cause: ${e.message}")
+        }
+    }
+
     fun getCharacterSkills(characterId: UUID): List<CharacterSkillsDto>? {
         try {
             val uri = UriComponentsBuilder

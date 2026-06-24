@@ -36,5 +36,5 @@ data class CharacterSheetProperty(
     var logicalUrl: String = "",
     var traitsUrl: String = "",
     var profileUrl: String = "",
-    var currentUrl: String = ""
-)
+    var currentUrl: String = "",
+    var characterStatesUrl: String = "")
