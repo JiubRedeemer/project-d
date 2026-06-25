@@ -71,7 +71,7 @@ class NpcApiController(
     }
 
     @GetMapping("/relations")
-    @HasRoleOrThrow("ADMIN")
+    @HasRoleOrThrow("ADMIN", "USER")
     fun getAllRelationsForRoom(
         @PathVariable roomId: UUID,
     ): List<CharacterNpcRelationDto> {
