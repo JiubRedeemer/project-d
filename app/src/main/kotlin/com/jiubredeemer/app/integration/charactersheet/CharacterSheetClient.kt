@@ -3,10 +3,12 @@ package com.jiubredeemer.app.integration.charactersheet
 import com.jiubredeemer.app.charactersheet.character.dto.*
 import com.jiubredeemer.app.charactersheet.npc.dto.CharacterNpcRelationDto
 import com.jiubredeemer.app.charactersheet.npc.dto.NpcDto
+import com.jiubredeemer.app.charactersheet.npc.dto.NpcNpcRelationDto
 import com.jiubredeemer.app.charactersheet.pet.dto.PetDto
 import com.jiubredeemer.app.charactersheet.pet.dto.PetSkillDto
 import com.jiubredeemer.app.integration.charactersheet.dto.character.*
 import com.jiubredeemer.app.integration.charactersheet.dto.npc.SaveCharacterNpcRelationRequest
+import com.jiubredeemer.app.integration.charactersheet.dto.npc.SaveNpcNpcRelationRequest
 import com.jiubredeemer.app.integration.charactersheet.dto.npc.SaveNpcRequest
 import com.jiubredeemer.app.integration.charactersheet.dto.pet.CreatePetRequest
 import com.jiubredeemer.app.integration.charactersheet.dto.pet.PetHealthCurrentUpdateRequest
@@ -170,6 +172,47 @@ class CharacterSheetClient(
         }
     }
 
+    fun getRelationsByCharacterIds(characterIds: List<UUID>): List<CharacterNpcRelationDto>? {
+        if (characterIds.isEmpty()) return emptyList()
+        try {
+            val uri = UriComponentsBuilder
+                .fromHttpUrl(characterSheetProperty.baseUrl)
+                .pathSegment(characterSheetProperty.apiUrl)
+                .pathSegment(characterSheetProperty.characterNpcRelationsUrl)
+                .pathSegment("by-character-ids")
+                .toUriString()
+            return restClient.post()
+                .uri(uri)
+                .headers { it.addAll(headers) }
+                .body(characterIds)
+                .retrieve()
+                .toEntity(object : ParameterizedTypeReference<List<CharacterNpcRelationDto>>() {})
+                .body
+        } catch (e: Exception) {
+            throw IntegrationAccessException("CharacterSheet don't response on getRelationsByCharacterIds, cause: ${e.message}")
+        }
+    }
+
+    fun getRelationsByNpcId(npcId: UUID): List<CharacterNpcRelationDto>? {
+        try {
+            val uri = UriComponentsBuilder
+                .fromHttpUrl(characterSheetProperty.baseUrl)
+                .pathSegment(characterSheetProperty.apiUrl)
+                .pathSegment(characterSheetProperty.characterNpcRelationsUrl)
+                .pathSegment("npc")
+                .pathSegment(npcId.toString())
+                .toUriString()
+            return restClient.get()
+                .uri(uri)
+                .headers { it.addAll(headers) }
+                .retrieve()
+                .toEntity(object : ParameterizedTypeReference<List<CharacterNpcRelationDto>>() {})
+                .body
+        } catch (e: Exception) {
+            throw IntegrationAccessException("CharacterSheet don't response on getRelationsByNpcId, cause: ${e.message}")
+        }
+    }
+
     fun getNpcsByCharacterIdAndRelationType(characterId: UUID, relationType: String): List<NpcDto>? {
         try {
             val uri = UriComponentsBuilder
@@ -191,6 +234,83 @@ class CharacterSheetClient(
             throw IntegrationAccessException(
                 "CharacterSheet don't response on getNpcsByCharacterIdAndRelationType, cause: ${e.message}"
             )
+        }
+    }
+
+    fun saveNpcNpcRelation(request: SaveNpcNpcRelationRequest): NpcNpcRelationDto? {
+        try {
+            val uri = UriComponentsBuilder
+                .fromHttpUrl(characterSheetProperty.baseUrl)
+                .pathSegment(characterSheetProperty.apiUrl)
+                .pathSegment(characterSheetProperty.npcNpcRelationsUrl)
+                .toUriString()
+            return restClient.put()
+                .uri(uri)
+                .headers { it.addAll(headers) }
+                .body(request)
+                .retrieve()
+                .toEntity(NpcNpcRelationDto::class.java)
+                .body
+        } catch (e: Exception) {
+            throw IntegrationAccessException("CharacterSheet don't response on saveNpcNpcRelation, cause: ${e.message}")
+        }
+    }
+
+    fun deleteNpcNpcRelationById(id: UUID) {
+        try {
+            val uri = UriComponentsBuilder
+                .fromHttpUrl(characterSheetProperty.baseUrl)
+                .pathSegment(characterSheetProperty.apiUrl)
+                .pathSegment(characterSheetProperty.npcNpcRelationsUrl)
+                .pathSegment(id.toString())
+                .toUriString()
+            restClient.delete()
+                .uri(uri)
+                .headers { it.addAll(headers) }
+                .retrieve()
+        } catch (e: Exception) {
+            throw IntegrationAccessException("CharacterSheet don't response on deleteNpcNpcRelationById, cause: ${e.message}")
+        }
+    }
+
+    fun getNpcNpcRelationsByNpcIds(npcIds: List<UUID>): List<NpcNpcRelationDto>? {
+        if (npcIds.isEmpty()) return emptyList()
+        try {
+            val uri = UriComponentsBuilder
+                .fromHttpUrl(characterSheetProperty.baseUrl)
+                .pathSegment(characterSheetProperty.apiUrl)
+                .pathSegment(characterSheetProperty.npcNpcRelationsUrl)
+                .pathSegment("by-npc-ids")
+                .toUriString()
+            return restClient.post()
+                .uri(uri)
+                .headers { it.addAll(headers) }
+                .body(npcIds)
+                .retrieve()
+                .toEntity(object : ParameterizedTypeReference<List<NpcNpcRelationDto>>() {})
+                .body
+        } catch (e: Exception) {
+            throw IntegrationAccessException("CharacterSheet don't response on getNpcNpcRelationsByNpcIds, cause: ${e.message}")
+        }
+    }
+
+    fun getNpcNpcRelationsByNpcId(npcId: UUID): List<NpcNpcRelationDto>? {
+        try {
+            val uri = UriComponentsBuilder
+                .fromHttpUrl(characterSheetProperty.baseUrl)
+                .pathSegment(characterSheetProperty.apiUrl)
+                .pathSegment(characterSheetProperty.npcNpcRelationsUrl)
+                .pathSegment("npc")
+                .pathSegment(npcId.toString())
+                .toUriString()
+            return restClient.get()
+                .uri(uri)
+                .headers { it.addAll(headers) }
+                .retrieve()
+                .toEntity(object : ParameterizedTypeReference<List<NpcNpcRelationDto>>() {})
+                .body
+        } catch (e: Exception) {
+            throw IntegrationAccessException("CharacterSheet don't response on getNpcNpcRelationsByNpcId, cause: ${e.message}")
         }
     }
 

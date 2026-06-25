@@ -12,6 +12,7 @@ data class CharacterSheetProperty(
     var charactersUrl: String = "",
     var npcsUrl: String = "",
     var characterNpcRelationsUrl: String = "",
+    var npcNpcRelationsUrl: String = "",
     var petsUrl: String = "",
     var headerUrl: String = "",
     var subheaderUrl: String = "",

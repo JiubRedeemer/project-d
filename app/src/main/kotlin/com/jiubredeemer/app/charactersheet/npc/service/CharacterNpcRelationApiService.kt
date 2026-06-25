@@ -1,5 +1,6 @@
 package com.jiubredeemer.app.charactersheet.npc.service
 
+import com.jiubredeemer.app.charactersheet.character.service.CharacterApiService
 import com.jiubredeemer.app.charactersheet.npc.dto.CharacterNpcRelationDto
 import com.jiubredeemer.app.charactersheet.npc.dto.NpcDto
 import com.jiubredeemer.app.charactersheet.npc.dto.RelationTypeEnum
@@ -7,6 +8,7 @@ import com.jiubredeemer.app.integration.charactersheet.CharacterSheetClient
 import com.jiubredeemer.app.integration.charactersheet.dto.npc.SaveCharacterNpcRelationRequest
 import com.jiubredeemer.app.room.service.RoomAccessChecker
 import com.jiubredeemer.auth.service.AccessChecker
+import org.springframework.context.annotation.Lazy
 import org.springframework.stereotype.Service
 import java.util.*
 
@@ -15,6 +17,7 @@ class CharacterNpcRelationApiService(
     private val roomAccessChecker: RoomAccessChecker,
     private val accessChecker: AccessChecker,
     private val characterSheetClient: CharacterSheetClient,
+    @Lazy private val characterApiService: CharacterApiService,
 ) {
     fun saveCharacterNpcRelationForRoom(
         roomId: UUID,
@@ -38,6 +41,19 @@ class CharacterNpcRelationApiService(
     fun getNpcsByCharacterIdForRoom(roomId: UUID, characterId: UUID): List<NpcDto>? {
         roomAccessChecker.hasAccessOrThrow(roomId, accessChecker.getCurrentUser().id!!)
         return characterSheetClient.getNpcsByCharacterId(characterId)
+    }
+
+    fun getAllRelationsForRoom(roomId: UUID): List<CharacterNpcRelationDto> {
+        roomAccessChecker.hasAccessOrThrow(roomId, accessChecker.getCurrentUser().id!!)
+        val characters = characterApiService.findAllByRoomIdAndUserId(roomId) ?: return emptyList()
+        val characterIds = characters.mapNotNull { it.id }
+        if (characterIds.isEmpty()) return emptyList()
+        return characterSheetClient.getRelationsByCharacterIds(characterIds) ?: emptyList()
+    }
+
+    fun getRelationsByNpcIdForRoom(roomId: UUID, npcId: UUID): List<CharacterNpcRelationDto> {
+        roomAccessChecker.hasAccessOrThrow(roomId, accessChecker.getCurrentUser().id!!)
+        return characterSheetClient.getRelationsByNpcId(npcId) ?: emptyList()
     }
 
     fun getNpcsByCharacterIdAndRelationTypeForRoom(

@@ -23,6 +23,7 @@ data class NpcDto(
     val imgUrl: String? = null,
     val createdBy: UUID? = null,
     val createdAt: LocalDateTime? = null,
+    val tags: List<String>? = null,
 ) {
     data class ClassInfoDto(
         val code: String? = null,

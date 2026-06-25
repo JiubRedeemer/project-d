@@ -18,5 +18,6 @@ data class SaveNpcRequest(
     var initiative: Int? = null,
     var imgUrl: String? = null,
     var createdBy: UUID? = null,
+    var tags: List<String>? = null,
 )
 

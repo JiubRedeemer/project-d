@@ -69,6 +69,7 @@ project-d:
       characters-url: characters
       npcs-url: npcs
       character-npc-relations-url: character-npc-relations
+      npc-npc-relations-url: npc-npc-relations
       pets-url: pets
       header-url: header
       subheader-url: subheader
