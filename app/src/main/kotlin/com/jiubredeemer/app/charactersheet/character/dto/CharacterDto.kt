@@ -68,7 +68,9 @@ data class CharacterDto(
         val currentHp: Long?,
         val maxHp: Long?,
         val tempHp: Long?,
-        val bonusValue: Long?
+        val bonusValue: Long?,
+        val deathSaveSuccesses: Int? = 0,
+        val deathSaveFailures: Int? = 0,
     )
 
     data class LevelDto(

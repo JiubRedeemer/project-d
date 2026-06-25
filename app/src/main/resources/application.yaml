@@ -79,6 +79,7 @@ project-d:
       health-url: health
       health-max-url: max
       update-current-health-url: updateCurrent
+      death-saves-url: death-saves
       level-url: level
       update-current-xp-url: updateCurrent
       level-up-url: up

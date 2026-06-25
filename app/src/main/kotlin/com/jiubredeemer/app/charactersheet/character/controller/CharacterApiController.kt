@@ -4,6 +4,7 @@ import com.jiubredeemer.app.charactersheet.character.dto.*
 import com.jiubredeemer.app.charactersheet.character.service.CharacterApiService
 import com.jiubredeemer.app.integration.charactersheet.dto.character.BonusValueUpdateRequest
 import com.jiubredeemer.app.integration.charactersheet.dto.character.CreateCharacterRequest
+import com.jiubredeemer.app.integration.charactersheet.dto.character.UpdateDeathSaveRequest
 import com.jiubredeemer.app.integration.charactersheet.dto.character.UpdateMasteryRequest
 import com.jiubredeemer.app.integration.dto.RestTypeEnum
 import com.jiubredeemer.app.websocket.PublishCharacterUpdated
@@ -146,6 +147,17 @@ class CharacterApiController(
         @RequestBody updateCurrentHealthRequest: UpdateCurrentHealthRequest
     ) {
         characterApiService.updateCurrentHealthById(roomId, characterId, updateCurrentHealthRequest)
+    }
+
+    @PatchMapping("/{characterId}/health/death-saves")
+    @HasRoleOrThrow("ADMIN", "USER")
+    @PublishCharacterUpdated
+    fun updateDeathSaves(
+        @PathVariable roomId: UUID,
+        @PathVariable characterId: UUID,
+        @RequestBody request: UpdateDeathSaveRequest
+    ) {
+        characterApiService.updateDeathSaves(roomId, characterId, request)
     }
 
     @PatchMapping("/{characterId}/level/updateCurrent")

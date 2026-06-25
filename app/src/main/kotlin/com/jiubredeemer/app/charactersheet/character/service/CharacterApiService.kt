@@ -4,6 +4,7 @@ import com.jiubredeemer.app.charactersheet.character.dto.*
 import com.jiubredeemer.app.integration.charactersheet.CharacterSheetClient
 import com.jiubredeemer.app.integration.charactersheet.dto.character.BonusValueUpdateRequest
 import com.jiubredeemer.app.integration.charactersheet.dto.character.CreateCharacterRequest
+import com.jiubredeemer.app.integration.charactersheet.dto.character.UpdateDeathSaveRequest
 import com.jiubredeemer.app.integration.charactersheet.dto.character.UpdateMasteryRequest
 import com.jiubredeemer.app.integration.dto.RestTypeEnum
 import com.jiubredeemer.app.integration.itemstorage.ItemstorageClient
@@ -127,6 +128,11 @@ class CharacterApiService(
     ) {
         roomAccessChecker.hasAccessOrThrow(roomId, accessChecker.getCurrentUser().id!!)
         characterSheetClient.updateCurrentHealthById(characterId, updateCurrentHealthRequest)
+    }
+
+    fun updateDeathSaves(roomId: UUID, characterId: UUID, request: UpdateDeathSaveRequest) {
+        roomAccessChecker.hasAccessOrThrow(roomId, accessChecker.getCurrentUser().id!!)
+        characterSheetClient.updateDeathSaves(characterId, request)
     }
 
     fun updateCurrentXpById(

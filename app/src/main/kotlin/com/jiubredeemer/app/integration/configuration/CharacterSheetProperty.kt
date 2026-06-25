@@ -22,6 +22,7 @@ data class CharacterSheetProperty(
     var healthUrl: String = "",
     var healthMaxUrl: String = "",
     var updateCurrentHealthUrl: String = "",
+    var deathSavesUrl: String = "",
     var levelUrl: String = "",
     var updateCurrentXpUrl: String = "",
     var levelUpUrl: String = "",

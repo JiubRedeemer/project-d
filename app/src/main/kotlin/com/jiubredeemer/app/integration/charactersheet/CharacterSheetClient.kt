@@ -931,6 +931,26 @@ class CharacterSheetClient(
         }
     }
 
+    fun updateDeathSaves(characterId: UUID, request: UpdateDeathSaveRequest) {
+        try {
+            val uri = UriComponentsBuilder
+                .fromHttpUrl(characterSheetProperty.baseUrl)
+                .pathSegment(characterSheetProperty.apiUrl)
+                .pathSegment(characterSheetProperty.charactersUrl)
+                .pathSegment(characterId.toString())
+                .pathSegment(characterSheetProperty.healthUrl)
+                .pathSegment(characterSheetProperty.deathSavesUrl)
+                .toUriString()
+            restClient.patch()
+                .uri(uri)
+                .headers { it.addAll(headers) }
+                .body(request)
+                .retrieve()
+        } catch (e: Exception) {
+            throw IntegrationAccessException("CharacterSheet don't response on updateDeathSaves, cause: ${e.message}")
+        }
+    }
+
     fun updateCurrentXpById(characterId: UUID, updateCurrentXpRequest: UpdateCurrentXpRequest) {
         try {
             val uri = UriComponentsBuilder
