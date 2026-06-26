@@ -1,12 +1,14 @@
 package com.jiubredeemer.app.integration.charactersheet
 
 import com.jiubredeemer.app.charactersheet.character.dto.*
+import com.jiubredeemer.app.charactersheet.companion.dto.CompanionDto
 import com.jiubredeemer.app.charactersheet.npc.dto.CharacterNpcRelationDto
 import com.jiubredeemer.app.charactersheet.npc.dto.NpcDto
 import com.jiubredeemer.app.charactersheet.npc.dto.NpcNpcRelationDto
 import com.jiubredeemer.app.charactersheet.pet.dto.PetDto
 import com.jiubredeemer.app.charactersheet.pet.dto.PetSkillDto
 import com.jiubredeemer.app.integration.charactersheet.dto.character.*
+import com.jiubredeemer.app.integration.charactersheet.dto.companion.SaveCompanionRequest
 import com.jiubredeemer.app.integration.charactersheet.dto.npc.SaveCharacterNpcRelationRequest
 import com.jiubredeemer.app.integration.charactersheet.dto.npc.SaveNpcNpcRelationRequest
 import com.jiubredeemer.app.integration.charactersheet.dto.npc.SaveNpcRequest
@@ -1258,6 +1260,122 @@ class CharacterSheetClient(
                 .retrieve()
         } catch (e: Exception) {
             throw IntegrationAccessException("CharacterSheet don't response on characterDeleteTrait, cause: ${e.message}")
+        }
+    }
+
+    fun saveCompanion(request: SaveCompanionRequest): CompanionDto? {
+        try {
+            val uri = UriComponentsBuilder
+                .fromHttpUrl(characterSheetProperty.baseUrl)
+                .pathSegment(characterSheetProperty.apiUrl)
+                .pathSegment(characterSheetProperty.companionsUrl)
+                .toUriString()
+            return restClient.put()
+                .uri(uri)
+                .headers { it.addAll(headers) }
+                .body(request)
+                .retrieve()
+                .toEntity(CompanionDto::class.java)
+                .body
+        } catch (e: Exception) {
+            throw IntegrationAccessException("CharacterSheet don't response on saveCompanion, cause: ${e.message}")
+        }
+    }
+
+    fun getCompanionsByCharacterId(characterId: UUID): List<CompanionDto>? {
+        try {
+            val uri = UriComponentsBuilder
+                .fromHttpUrl(characterSheetProperty.baseUrl)
+                .pathSegment(characterSheetProperty.apiUrl)
+                .pathSegment(characterSheetProperty.companionsUrl)
+                .pathSegment("character")
+                .pathSegment(characterId.toString())
+                .toUriString()
+            return restClient.get()
+                .uri(uri)
+                .headers { it.addAll(headers) }
+                .retrieve()
+                .toEntity(object : ParameterizedTypeReference<List<CompanionDto>>() {})
+                .body
+        } catch (e: Exception) {
+            throw IntegrationAccessException("CharacterSheet don't response on getCompanionsByCharacterId, cause: ${e.message}")
+        }
+    }
+
+    fun getCompanionById(id: UUID): CompanionDto? {
+        try {
+            val uri = UriComponentsBuilder
+                .fromHttpUrl(characterSheetProperty.baseUrl)
+                .pathSegment(characterSheetProperty.apiUrl)
+                .pathSegment(characterSheetProperty.companionsUrl)
+                .pathSegment(id.toString())
+                .toUriString()
+            return restClient.get()
+                .uri(uri)
+                .headers { it.addAll(headers) }
+                .retrieve()
+                .toEntity(CompanionDto::class.java)
+                .body
+        } catch (_: HttpClientErrorException.NotFound) {
+            return null
+        } catch (e: Exception) {
+            throw IntegrationAccessException("CharacterSheet don't response on getCompanionById, cause: ${e.message}")
+        }
+    }
+
+    fun updateCompanionCurrentHp(id: UUID, value: Int) {
+        try {
+            val uri = UriComponentsBuilder
+                .fromHttpUrl(characterSheetProperty.baseUrl)
+                .pathSegment(characterSheetProperty.apiUrl)
+                .pathSegment(characterSheetProperty.companionsUrl)
+                .pathSegment(id.toString())
+                .pathSegment("hp")
+                .pathSegment("current")
+                .toUriString()
+            restClient.patch()
+                .uri(uri)
+                .headers { it.addAll(headers) }
+                .body(mapOf("value" to value))
+                .retrieve()
+        } catch (e: Exception) {
+            throw IntegrationAccessException("CharacterSheet don't response on updateCompanionCurrentHp, cause: ${e.message}")
+        }
+    }
+
+    fun restoreCompanionFullHp(id: UUID) {
+        try {
+            val uri = UriComponentsBuilder
+                .fromHttpUrl(characterSheetProperty.baseUrl)
+                .pathSegment(characterSheetProperty.apiUrl)
+                .pathSegment(characterSheetProperty.companionsUrl)
+                .pathSegment(id.toString())
+                .pathSegment("hp")
+                .pathSegment("restore")
+                .toUriString()
+            restClient.post()
+                .uri(uri)
+                .headers { it.addAll(headers) }
+                .retrieve()
+        } catch (e: Exception) {
+            throw IntegrationAccessException("CharacterSheet don't response on restoreCompanionFullHp, cause: ${e.message}")
+        }
+    }
+
+    fun deleteCompanionById(id: UUID) {
+        try {
+            val uri = UriComponentsBuilder
+                .fromHttpUrl(characterSheetProperty.baseUrl)
+                .pathSegment(characterSheetProperty.apiUrl)
+                .pathSegment(characterSheetProperty.companionsUrl)
+                .pathSegment(id.toString())
+                .toUriString()
+            restClient.delete()
+                .uri(uri)
+                .headers { it.addAll(headers) }
+                .retrieve()
+        } catch (e: Exception) {
+            throw IntegrationAccessException("CharacterSheet don't response on deleteCompanionById, cause: ${e.message}")
         }
     }
 

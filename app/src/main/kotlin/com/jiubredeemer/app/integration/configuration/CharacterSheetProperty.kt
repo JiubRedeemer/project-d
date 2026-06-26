@@ -14,6 +14,7 @@ data class CharacterSheetProperty(
     var characterNpcRelationsUrl: String = "",
     var npcNpcRelationsUrl: String = "",
     var petsUrl: String = "",
+    var companionsUrl: String = "",
     var headerUrl: String = "",
     var subheaderUrl: String = "",
     var abilitiesUrl: String = "",

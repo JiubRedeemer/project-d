@@ -71,6 +71,7 @@ project-d:
       character-npc-relations-url: character-npc-relations
       npc-npc-relations-url: npc-npc-relations
       pets-url: pets
+      companions-url: companions
       header-url: header
       subheader-url: subheader
       abilities-url: abilities
