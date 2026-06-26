@@ -16,4 +16,6 @@
     <include file="007-registration-email-code.xml" relativeToChangelogFile="true"/>
     <include file="008-password-reset-email-code.xml" relativeToChangelogFile="true"/>
     <include file="009-user-last-activity.xml" relativeToChangelogFile="true"/>
+    <include file="010-PRO-0-combat.xml" relativeToChangelogFile="true"/>
+    <include file="011-PRO-0-combat-participant-ac.sql" relativeToChangelogFile="true"/>
 </databaseChangeLog>

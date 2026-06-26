@@ -1,5 +1,6 @@
 package com.jiubredeemer.app.charactersheet.npc.dto
 
+import com.jiubredeemer.app.charactersheet.character.dto.CharacterDto
 import com.jiubredeemer.app.integration.rulebook.dto.race.RaceTraitDto
 import java.time.LocalDateTime
 import java.util.*
@@ -20,11 +21,26 @@ data class NpcDto(
     val armoryClass: String? = null,
     val speed: String? = null,
     val initiative: Int? = null,
+    val maxHp: Int? = null,
+    val hpDiceCount: Int? = null,
+    val hpDieSize: Int? = null,
+    val hpDiceBonus: Int? = null,
+    val level: Int? = null,
+    val proficiencyBonus: Int? = null,
+    val challengeRating: String? = null,
+    val skills: List<NpcSkillDto>? = null,
+    val actions: List<NpcActionDto>? = null,
+    val features: List<NpcFeatureDto>? = null,
+    val abilities: List<CharacterDto.AbilityShort>? = null,
     val imgUrl: String? = null,
     val createdBy: UUID? = null,
     val createdAt: LocalDateTime? = null,
     val tags: List<String>? = null,
 ) {
+    data class NpcSkillDto(val name: String? = null, val bonus: Int? = null)
+    data class NpcActionDto(val name: String? = null, val description: String? = null)
+    data class NpcFeatureDto(val name: String? = null, val description: String? = null)
+
     data class ClassInfoDto(
         val code: String? = null,
         val name: String? = null,
