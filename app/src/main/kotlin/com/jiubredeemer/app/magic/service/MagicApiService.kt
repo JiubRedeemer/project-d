@@ -5,6 +5,7 @@ import com.jiubredeemer.app.integration.magic.dto.*
 import com.jiubredeemer.app.integration.rulebook.RuleBookClient
 import com.jiubredeemer.app.room.service.RoomAccessChecker
 import com.jiubredeemer.app.websocket.CharacterEventPublisher
+import com.jiubredeemer.app.websocket.CharacterEventType
 import com.jiubredeemer.auth.service.AccessChecker
 import com.jiubredeemer.common.exception.NotFoundException
 import org.springframework.stereotype.Service
@@ -34,7 +35,7 @@ class MagicApiService(
     private fun publishForBook(book: SpellBookDto) {
         val roomId = book.roomId ?: return
         val characterId = book.characterId ?: return
-        characterEventPublisher.publishCharacterUpdated(roomId, characterId)
+        characterEventPublisher.publishCharacterUpdated(roomId, characterId, CharacterEventType.SPELLBOOK_UPDATED)
     }
 
     private fun publishForBookId(spellBookId: UUID) {
@@ -162,7 +163,7 @@ class MagicApiService(
         ensureAccessToRoom(roomId)
         val result = magicClient.refillRestByCharacter(roomId, characterId, restType)
             ?: throw NotFoundException("Failed to refill rest by character")
-        characterEventPublisher.publishCharacterUpdated(roomId, characterId)
+        characterEventPublisher.publishCharacterUpdated(roomId, characterId, CharacterEventType.SPELLBOOK_UPDATED)
         return result
     }
 

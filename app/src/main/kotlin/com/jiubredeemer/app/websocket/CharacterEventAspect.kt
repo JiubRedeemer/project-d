@@ -18,6 +18,7 @@ class CharacterEventAspect(
     @AfterReturning("@annotation(com.jiubredeemer.app.websocket.PublishCharacterUpdated)")
     fun afterCharacterMutation(joinPoint: JoinPoint) {
         val method = (joinPoint.signature as MethodSignature).method
+        val annotation = method.getAnnotation(PublishCharacterUpdated::class.java) ?: return
         val paramNames = nameDiscoverer.getParameterNames(method) ?: return
         val args = joinPoint.args
 
@@ -33,7 +34,7 @@ class CharacterEventAspect(
         }
 
         if (roomId != null && characterId != null) {
-            characterEventPublisher.publishCharacterUpdated(roomId!!, characterId!!)
+            characterEventPublisher.publishCharacterUpdated(roomId!!, characterId!!, annotation.eventType)
         }
     }
 }

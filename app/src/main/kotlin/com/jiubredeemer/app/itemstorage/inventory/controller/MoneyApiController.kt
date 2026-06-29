@@ -3,6 +3,7 @@ package com.jiubredeemer.app.itemstorage.inventory.controller
 import com.jiubredeemer.app.itemstorage.inventory.dto.inventory.InventoryDto
 import com.jiubredeemer.app.itemstorage.inventory.dto.money.MoneyDto
 import com.jiubredeemer.app.itemstorage.inventory.service.MoneyApiService
+import com.jiubredeemer.app.websocket.CharacterEventType
 import com.jiubredeemer.app.websocket.PublishCharacterUpdated
 import com.jiubredeemer.auth.annotation.HasRoleOrThrow
 import io.swagger.v3.oas.annotations.Operation
@@ -35,7 +36,7 @@ class MoneyApiController(
     )
     @PatchMapping("/{roomId}/inventory/{characterId}/money")
     @HasRoleOrThrow("ADMIN", "USER")
-    @PublishCharacterUpdated
+    @PublishCharacterUpdated(CharacterEventType.INVENTORY_UPDATED)
     fun changeMoneyCount(
         @PathVariable roomId: UUID,
         @PathVariable characterId: UUID,
