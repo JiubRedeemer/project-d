@@ -1,6 +1,7 @@
 package com.jiubredeemer.app.integration.magic
 
 import com.jiubredeemer.app.integration.configuration.MagicProperty
+import com.jiubredeemer.app.integration.magic.dto.CharacterResourceDto
 import com.jiubredeemer.app.integration.magic.dto.ImportResult
 import com.jiubredeemer.app.integration.magic.dto.RefillRestRequest
 import com.jiubredeemer.app.integration.magic.dto.SpellBookDto
@@ -646,6 +647,113 @@ class MagicClient(
                 .body
         } catch (e: Exception) {
             throw IntegrationAccessException("Magic don't response on useSpellCell, cause: ${e.message}")
+        }
+    }
+
+    // Character Resources
+    fun createCharacterResource(spellBookId: UUID, dto: CharacterResourceDto): CharacterResourceDto? {
+        return try {
+            val uri = UriComponentsBuilder
+                .fromHttpUrl(magicProperty.baseUrl)
+                .pathSegment(magicProperty.apiUrl)
+                .pathSegment(magicProperty.spellBooksUrl)
+                .pathSegment(spellBookId.toString())
+                .pathSegment("resources")
+                .toUriString()
+            restClient.post()
+                .uri(uri)
+                .headers { it.addAll(headers) }
+                .body(dto)
+                .retrieve()
+                .toEntity(CharacterResourceDto::class.java)
+                .body
+        } catch (e: Exception) {
+            throw IntegrationAccessException("Magic don't response on createCharacterResource, cause: ${e.message}")
+        }
+    }
+
+    fun updateCharacterResource(spellBookId: UUID, id: UUID, dto: CharacterResourceDto): CharacterResourceDto? {
+        return try {
+            val uri = UriComponentsBuilder
+                .fromHttpUrl(magicProperty.baseUrl)
+                .pathSegment(magicProperty.apiUrl)
+                .pathSegment(magicProperty.spellBooksUrl)
+                .pathSegment(spellBookId.toString())
+                .pathSegment("resources")
+                .pathSegment(id.toString())
+                .toUriString()
+            restClient.put()
+                .uri(uri)
+                .headers { it.addAll(headers) }
+                .body(dto)
+                .retrieve()
+                .toEntity(CharacterResourceDto::class.java)
+                .body
+        } catch (e: Exception) {
+            throw IntegrationAccessException("Magic don't response on updateCharacterResource, cause: ${e.message}")
+        }
+    }
+
+    fun useCharacterResource(spellBookId: UUID, id: UUID): CharacterResourceDto? {
+        return try {
+            val uri = UriComponentsBuilder
+                .fromHttpUrl(magicProperty.baseUrl)
+                .pathSegment(magicProperty.apiUrl)
+                .pathSegment(magicProperty.spellBooksUrl)
+                .pathSegment(spellBookId.toString())
+                .pathSegment("resources")
+                .pathSegment(id.toString())
+                .pathSegment("use")
+                .toUriString()
+            restClient.post()
+                .uri(uri)
+                .headers { it.addAll(headers) }
+                .retrieve()
+                .toEntity(CharacterResourceDto::class.java)
+                .body
+        } catch (e: Exception) {
+            throw IntegrationAccessException("Magic don't response on useCharacterResource, cause: ${e.message}")
+        }
+    }
+
+    fun refillCharacterResource(spellBookId: UUID, id: UUID): CharacterResourceDto? {
+        return try {
+            val uri = UriComponentsBuilder
+                .fromHttpUrl(magicProperty.baseUrl)
+                .pathSegment(magicProperty.apiUrl)
+                .pathSegment(magicProperty.spellBooksUrl)
+                .pathSegment(spellBookId.toString())
+                .pathSegment("resources")
+                .pathSegment(id.toString())
+                .pathSegment("refill")
+                .toUriString()
+            restClient.post()
+                .uri(uri)
+                .headers { it.addAll(headers) }
+                .retrieve()
+                .toEntity(CharacterResourceDto::class.java)
+                .body
+        } catch (e: Exception) {
+            throw IntegrationAccessException("Magic don't response on refillCharacterResource, cause: ${e.message}")
+        }
+    }
+
+    fun deleteCharacterResource(spellBookId: UUID, id: UUID) {
+        try {
+            val uri = UriComponentsBuilder
+                .fromHttpUrl(magicProperty.baseUrl)
+                .pathSegment(magicProperty.apiUrl)
+                .pathSegment(magicProperty.spellBooksUrl)
+                .pathSegment(spellBookId.toString())
+                .pathSegment("resources")
+                .pathSegment(id.toString())
+                .toUriString()
+            restClient.delete()
+                .uri(uri)
+                .headers { it.addAll(headers) }
+                .retrieve()
+        } catch (e: Exception) {
+            throw IntegrationAccessException("Magic don't response on deleteCharacterResource, cause: ${e.message}")
         }
     }
 

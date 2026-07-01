@@ -567,4 +567,53 @@ class MagicApiController(
     fun deleteSpellCell(@PathVariable id: UUID) {
         magicApiService.deleteSpellCell(id)
     }
+
+    // Character Resources
+    @Operation(summary = "Create a character resource for spell book")
+    @PostMapping("/spell-books/{spellBookId}/resources")
+    @HasRoleOrThrow("ADMIN", "USER")
+    fun createCharacterResource(
+        @PathVariable spellBookId: UUID,
+        @RequestBody dto: CharacterResourceDto,
+    ): CharacterResourceDto =
+        magicApiService.createCharacterResource(spellBookId, dto)
+
+    @Operation(summary = "Update a character resource")
+    @PutMapping("/spell-books/{spellBookId}/resources/{id}")
+    @HasRoleOrThrow("ADMIN", "USER")
+    fun updateCharacterResource(
+        @PathVariable spellBookId: UUID,
+        @PathVariable id: UUID,
+        @RequestBody dto: CharacterResourceDto,
+    ): CharacterResourceDto =
+        magicApiService.updateCharacterResource(spellBookId, id, dto)
+
+    @Operation(summary = "Use one charge of a character resource")
+    @PostMapping("/spell-books/{spellBookId}/resources/{id}/use")
+    @HasRoleOrThrow("ADMIN", "USER")
+    fun useCharacterResource(
+        @PathVariable spellBookId: UUID,
+        @PathVariable id: UUID,
+    ): CharacterResourceDto =
+        magicApiService.useCharacterResource(spellBookId, id)
+
+    @Operation(summary = "Refill a character resource to max")
+    @PostMapping("/spell-books/{spellBookId}/resources/{id}/refill")
+    @HasRoleOrThrow("ADMIN", "USER")
+    fun refillCharacterResource(
+        @PathVariable spellBookId: UUID,
+        @PathVariable id: UUID,
+    ): CharacterResourceDto =
+        magicApiService.refillCharacterResource(spellBookId, id)
+
+    @Operation(summary = "Delete a character resource")
+    @DeleteMapping("/spell-books/{spellBookId}/resources/{id}")
+    @HasRoleOrThrow("ADMIN", "USER")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    fun deleteCharacterResource(
+        @PathVariable spellBookId: UUID,
+        @PathVariable id: UUID,
+    ) {
+        magicApiService.deleteCharacterResource(spellBookId, id)
+    }
 }

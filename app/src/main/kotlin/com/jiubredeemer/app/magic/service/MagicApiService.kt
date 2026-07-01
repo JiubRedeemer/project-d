@@ -264,4 +264,43 @@ class MagicApiService(
         publishForCell(result)
         return result
     }
+
+    // Character Resources
+    fun createCharacterResource(spellBookId: UUID, dto: CharacterResourceDto): CharacterResourceDto {
+        val book = ensureAccessToSpellBook(spellBookId)
+        val result = magicClient.createCharacterResource(spellBookId, dto)
+            ?: throw NotFoundException("Failed to create character resource")
+        publishForBook(book)
+        return result
+    }
+
+    fun updateCharacterResource(spellBookId: UUID, id: UUID, dto: CharacterResourceDto): CharacterResourceDto {
+        val book = ensureAccessToSpellBook(spellBookId)
+        val result = magicClient.updateCharacterResource(spellBookId, id, dto)
+            ?: throw NotFoundException("Failed to update character resource: $id")
+        publishForBook(book)
+        return result
+    }
+
+    fun useCharacterResource(spellBookId: UUID, id: UUID): CharacterResourceDto {
+        val book = ensureAccessToSpellBook(spellBookId)
+        val result = magicClient.useCharacterResource(spellBookId, id)
+            ?: throw NotFoundException("Failed to use character resource: $id")
+        publishForBook(book)
+        return result
+    }
+
+    fun refillCharacterResource(spellBookId: UUID, id: UUID): CharacterResourceDto {
+        val book = ensureAccessToSpellBook(spellBookId)
+        val result = magicClient.refillCharacterResource(spellBookId, id)
+            ?: throw NotFoundException("Failed to refill character resource: $id")
+        publishForBook(book)
+        return result
+    }
+
+    fun deleteCharacterResource(spellBookId: UUID, id: UUID) {
+        val book = ensureAccessToSpellBook(spellBookId)
+        magicClient.deleteCharacterResource(spellBookId, id)
+        publishForBook(book)
+    }
 }

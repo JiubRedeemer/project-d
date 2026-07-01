@@ -5,6 +5,7 @@ import com.jiubredeemer.app.itemstorage.inventory.dto.inventory.EquippedItemsSta
 import com.jiubredeemer.app.itemstorage.inventory.dto.inventory.InventoryDto
 import com.jiubredeemer.app.itemstorage.inventory.dto.inventory.InventoryItemDto
 import com.jiubredeemer.app.itemstorage.inventory.dto.item.ItemDto
+import com.jiubredeemer.app.itemstorage.inventory.dto.item.ItemTagDto
 import com.jiubredeemer.app.itemstorage.inventory.dto.item.SearchItemParams
 import com.jiubredeemer.app.itemstorage.inventory.service.InventoryApiService
 import com.jiubredeemer.app.websocket.CharacterEventType
@@ -93,7 +94,13 @@ class InventoryApiController(
             searchItemParams.limit,
             searchItemParams.lastSeenCreatedAt,
             searchItemParams.lastSeenId,
-            searchItemParams.ruleType
+            searchItemParams.ruleType,
+            searchItemParams.type,
+            searchItemParams.subtype,
+            searchItemParams.rarity,
+            searchItemParams.tags,
+            searchItemParams.customization,
+            searchItemParams.hasSkills
         )
     }
 
@@ -121,8 +128,39 @@ class InventoryApiController(
             searchItemParams.searchQuery,
             searchItemParams.limit,
             searchItemParams.lastSeenCreatedAt,
-            searchItemParams.lastSeenId
+            searchItemParams.lastSeenId,
+            searchItemParams.type,
+            searchItemParams.subtype,
+            searchItemParams.rarity,
+            searchItemParams.tags,
+            searchItemParams.customization,
+            searchItemParams.hasSkills
         )
+    }
+
+    @GetMapping("/{roomId}/items/tags")
+    @HasRoleOrThrow("ADMIN", "USER")
+    fun getDistinctItemTags(@PathVariable roomId: UUID): List<ItemTagDto> {
+        return inventoryApiService.getDistinctItemTags(roomId)
+    }
+
+    @PostMapping("/{roomId}/items/tags")
+    @HasRoleOrThrow("ADMIN", "USER")
+    fun createTag(
+        @PathVariable roomId: UUID,
+        @RequestBody body: Map<String, String>
+    ): ItemTagDto {
+        return inventoryApiService.createTagForRoom(roomId, body["name"] ?: error("name is required"))
+    }
+
+    @PatchMapping("/{roomId}/items/tags/{tagId}")
+    @HasRoleOrThrow("ADMIN", "USER")
+    fun updateTagDescription(
+        @PathVariable roomId: UUID,
+        @PathVariable tagId: UUID,
+        @RequestBody body: Map<String, String>
+    ): ItemTagDto {
+        return inventoryApiService.updateTagDescription(roomId, tagId, body["description"] ?: "")
     }
 
     @Operation(summary = "Экипировать/снять предмет с персонажа")

@@ -6,6 +6,7 @@ import com.jiubredeemer.app.itemstorage.inventory.dto.inventory.EquippedItemsSta
 import com.jiubredeemer.app.itemstorage.inventory.dto.inventory.InventoryDto
 import com.jiubredeemer.app.itemstorage.inventory.dto.inventory.InventoryItemDto
 import com.jiubredeemer.app.itemstorage.inventory.dto.item.ItemDto
+import com.jiubredeemer.app.itemstorage.inventory.dto.item.ItemTagDto
 import com.jiubredeemer.app.room.service.RoomAccessChecker
 import com.jiubredeemer.auth.service.AccessChecker
 import com.jiubredeemer.common.exception.NotFoundException
@@ -108,7 +109,13 @@ class InventoryApiService(
         limit: Int,
         lastSeenCreatedAt: LocalDateTime? = null,
         lastSeenId: UUID? = null,
-        ruleType: String? = null
+        ruleType: String? = null,
+        type: String? = null,
+        subtype: String? = null,
+        rarity: String? = null,
+        tags: List<String>? = null,
+        customization: Boolean? = null,
+        hasSkills: Boolean? = null
     ): List<ItemDto> {
         roomAccessChecker.hasAccessOrThrow(roomId, accessChecker.getCurrentUser().id!!)
         validateCursorParams(lastSeenCreatedAt, lastSeenId)
@@ -121,7 +128,13 @@ class InventoryApiService(
             limit,
             lastSeenCreatedAt,
             lastSeenId,
-            ruleType
+            ruleType,
+            type,
+            subtype,
+            rarity,
+            tags,
+            customization,
+            hasSkills
         )
         return items
     }
@@ -179,7 +192,13 @@ class InventoryApiService(
         searchQuery: String,
         limit: Int,
         lastSeenCreatedAt: LocalDateTime?,
-        lastSeenId: UUID?
+        lastSeenId: UUID?,
+        type: String? = null,
+        subtype: String? = null,
+        rarity: String? = null,
+        tags: List<String>? = null,
+        customization: Boolean? = null,
+        hasSkills: Boolean? = null
     ): List<ItemDto> {
         roomAccessChecker.hasAccessOrThrow(roomId, accessChecker.getCurrentUser().id!!)
         validateCursorParams(lastSeenCreatedAt, lastSeenId)
@@ -191,9 +210,30 @@ class InventoryApiService(
             normalizedSearchQuery,
             limit,
             lastSeenCreatedAt,
-            lastSeenId
+            lastSeenId,
+            type,
+            subtype,
+            rarity,
+            tags,
+            customization,
+            hasSkills
         )
         return items
+    }
+
+    fun getDistinctItemTags(roomId: UUID): List<ItemTagDto> {
+        roomAccessChecker.hasAccessOrThrow(roomId, accessChecker.getCurrentUser().id!!)
+        return itemstorageClient.getDistinctItemTags(roomId, accessChecker.getCurrentUser().id!!)
+    }
+
+    fun createTagForRoom(roomId: UUID, name: String): ItemTagDto {
+        roomAccessChecker.hasAccessOrThrow(roomId, accessChecker.getCurrentUser().id!!)
+        return itemstorageClient.createTag(roomId, accessChecker.getCurrentUser().id!!, name)
+    }
+
+    fun updateTagDescription(roomId: UUID, tagId: UUID, description: String): ItemTagDto {
+        roomAccessChecker.hasAccessOrThrow(roomId, accessChecker.getCurrentUser().id!!)
+        return itemstorageClient.updateTagDescription(roomId, accessChecker.getCurrentUser().id!!, tagId, description)
     }
 
     private fun validateCursorParams(lastSeenCreatedAt: LocalDateTime?, lastSeenId: UUID?) {

@@ -9,5 +9,6 @@ data class SpellBookDto(
     val manaMax: Long? = null,
     val manaCurrent: Long? = null,
     val spells: List<SpellBookItemDto>? = null,
-    val spellCells: Map<String, SpellCellDto>? = null
+    val spellCells: Map<String, SpellCellDto>? = null,
+    val customResources: List<CharacterResourceDto>? = null,
 )

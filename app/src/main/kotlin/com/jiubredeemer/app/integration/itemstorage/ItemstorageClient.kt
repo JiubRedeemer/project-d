@@ -7,6 +7,7 @@ import com.jiubredeemer.app.itemstorage.inventory.dto.inventory.EquippedItemsSta
 import com.jiubredeemer.app.itemstorage.inventory.dto.inventory.InventoryDto
 import com.jiubredeemer.app.itemstorage.inventory.dto.inventory.InventoryItemDto
 import com.jiubredeemer.app.itemstorage.inventory.dto.item.ItemDto
+import com.jiubredeemer.app.itemstorage.inventory.dto.item.ItemTagDto
 import com.jiubredeemer.app.itemstorage.inventory.dto.money.MoneyDto
 import com.jiubredeemer.common.exception.IntegrationAccessException
 import org.springframework.core.ParameterizedTypeReference
@@ -16,6 +17,20 @@ import org.springframework.web.client.RestClient
 import org.springframework.web.util.UriComponentsBuilder
 import java.time.LocalDateTime
 import java.util.*
+
+data class ItemSearchRequest(
+    val searchQuery: String,
+    val limit: Int,
+    val lastSeenCreatedAt: LocalDateTime? = null,
+    val lastSeenId: UUID? = null,
+    val ruleType: String? = null,
+    val type: String? = null,
+    val subtype: String? = null,
+    val rarity: String? = null,
+    val tags: List<String>? = null,
+    val customization: Boolean? = null,
+    val hasSkills: Boolean? = null
+)
 
 @Service
 class ItemstorageClient(
@@ -268,31 +283,41 @@ class ItemstorageClient(
         limit: Int,
         lastSeenCreatedAt: LocalDateTime? = null,
         lastSeenId: UUID? = null,
-        ruleType: String? = null
+        ruleType: String? = null,
+        type: String? = null,
+        subtype: String? = null,
+        rarity: String? = null,
+        tags: List<String>? = null,
+        customization: Boolean? = null,
+        hasSkills: Boolean? = null
     ): List<ItemDto> {
         try {
-            val uriBuilder = UriComponentsBuilder
+            val uri = UriComponentsBuilder
                 .fromHttpUrl(itemstorageProperty.baseUrl)
                 .pathSegment(itemstorageProperty.apiUrl)
                 .pathSegment(itemstorageProperty.itemsUrl)
                 .pathSegment(roomId.toString())
                 .pathSegment(userId.toString())
                 .pathSegment(itemstorageProperty.searchUrl)
+                .toUriString()
 
-            val queryParams = mutableMapOf<String, String>()
-            queryParams["searchQuery"] = searchQuery
-            queryParams["limit"] = limit.toString()
-            queryParams["ruleType"] = ruleType ?: "2014"
-            lastSeenCreatedAt?.let { queryParams["lastSeenCreatedAt"] = it.toString() }
-            lastSeenId?.let { queryParams["lastSeenId"] = it.toString() }
-
-//            queryParams.forEach { (key, value) -> uriBuilder.queryParam(key, value) }
-
-            val uri = uriBuilder.toUriString()
+            val requestBody = ItemSearchRequest(
+                searchQuery = searchQuery,
+                limit = limit,
+                lastSeenCreatedAt = lastSeenCreatedAt,
+                lastSeenId = lastSeenId,
+                ruleType = ruleType ?: "2014",
+                type = type,
+                subtype = subtype,
+                rarity = rarity,
+                tags = tags,
+                customization = customization,
+                hasSkills = hasSkills
+            )
 
             val response = restClient.post()
                 .uri(uri)
-                .body(queryParams)
+                .body(requestBody)
                 .headers { it.addAll(headers) }
                 .retrieve()
                 .toEntity(object : ParameterizedTypeReference<List<ItemDto>>() {})
@@ -432,10 +457,16 @@ class ItemstorageClient(
         searchQuery: String,
         limit: Int,
         lastSeenCreatedAt: LocalDateTime?,
-        lastSeenId: UUID?
+        lastSeenId: UUID?,
+        type: String? = null,
+        subtype: String? = null,
+        rarity: String? = null,
+        tags: List<String>? = null,
+        customization: Boolean? = null,
+        hasSkills: Boolean? = null
     ): List<ItemDto> {
         try {
-            val uriBuilder = UriComponentsBuilder
+            val uri = UriComponentsBuilder
                 .fromHttpUrl(itemstorageProperty.baseUrl)
                 .pathSegment(itemstorageProperty.apiUrl)
                 .pathSegment(itemstorageProperty.itemsUrl)
@@ -443,27 +474,97 @@ class ItemstorageClient(
                 .pathSegment(userId.toString())
                 .pathSegment(itemstorageProperty.searchUrl)
                 .pathSegment(itemstorageProperty.ownedUrl)
+                .toUriString()
 
-            val queryParams = mutableMapOf<String, String>()
-            queryParams["searchQuery"] = searchQuery
-            queryParams["limit"] = limit.toString()
-            lastSeenCreatedAt?.let { queryParams["lastSeenCreatedAt"] = it.toString() }
-            lastSeenId?.let { queryParams["lastSeenId"] = it.toString() }
-
-//            queryParams.forEach { (key, value) -> uriBuilder.queryParam(key, value) }
-
-            val uri = uriBuilder.toUriString()
+            val requestBody = ItemSearchRequest(
+                searchQuery = searchQuery,
+                limit = limit,
+                lastSeenCreatedAt = lastSeenCreatedAt,
+                lastSeenId = lastSeenId,
+                type = type,
+                subtype = subtype,
+                rarity = rarity,
+                tags = tags,
+                customization = customization,
+                hasSkills = hasSkills
+            )
 
             val response = restClient.post()
                 .uri(uri)
-                .body(queryParams)
+                .body(requestBody)
                 .headers { it.addAll(headers) }
                 .retrieve()
                 .toEntity(object : ParameterizedTypeReference<List<ItemDto>>() {})
 
             return response.body ?: emptyList()
         } catch (e: Exception) {
-            throw IntegrationAccessException("Itemstorage didn't respond on searchByNameRoomAndCommunityItems, cause: ${e.message}")
+            throw IntegrationAccessException("Itemstorage didn't respond on searchByNameRoomAndCommunityItemsOwnedUsers, cause: ${e.message}")
+        }
+    }
+
+    fun getDistinctItemTags(roomId: UUID, userId: UUID): List<ItemTagDto> {
+        try {
+            val uri = UriComponentsBuilder
+                .fromHttpUrl(itemstorageProperty.baseUrl)
+                .pathSegment(itemstorageProperty.apiUrl)
+                .pathSegment(itemstorageProperty.itemsUrl)
+                .pathSegment(roomId.toString())
+                .pathSegment(userId.toString())
+                .pathSegment("tags")
+                .toUriString()
+            val response = restClient.get()
+                .uri(uri)
+                .headers { it.addAll(headers) }
+                .retrieve()
+                .toEntity(object : ParameterizedTypeReference<List<ItemTagDto>>() {})
+            return response.body ?: emptyList()
+        } catch (e: Exception) {
+            throw IntegrationAccessException("Itemstorage didn't respond on getDistinctItemTags, cause: ${e.message}")
+        }
+    }
+
+    fun createTag(roomId: UUID, userId: UUID, name: String): ItemTagDto {
+        try {
+            val uri = UriComponentsBuilder
+                .fromHttpUrl(itemstorageProperty.baseUrl)
+                .pathSegment(itemstorageProperty.apiUrl)
+                .pathSegment(itemstorageProperty.itemsUrl)
+                .pathSegment(roomId.toString())
+                .pathSegment(userId.toString())
+                .pathSegment("tags")
+                .toUriString()
+            val response = restClient.post()
+                .uri(uri)
+                .headers { it.addAll(headers) }
+                .body(mapOf("name" to name))
+                .retrieve()
+                .toEntity(ItemTagDto::class.java)
+            return response.body!!
+        } catch (e: Exception) {
+            throw IntegrationAccessException("Itemstorage didn't respond on createTag, cause: ${e.message}")
+        }
+    }
+
+    fun updateTagDescription(roomId: UUID, userId: UUID, tagId: UUID, description: String): ItemTagDto {
+        try {
+            val uri = UriComponentsBuilder
+                .fromHttpUrl(itemstorageProperty.baseUrl)
+                .pathSegment(itemstorageProperty.apiUrl)
+                .pathSegment(itemstorageProperty.itemsUrl)
+                .pathSegment(roomId.toString())
+                .pathSegment(userId.toString())
+                .pathSegment("tags")
+                .pathSegment(tagId.toString())
+                .toUriString()
+            val response = restClient.patch()
+                .uri(uri)
+                .headers { it.addAll(headers) }
+                .body(mapOf("description" to description))
+                .retrieve()
+                .toEntity(ItemTagDto::class.java)
+            return response.body!!
+        } catch (e: Exception) {
+            throw IntegrationAccessException("Itemstorage didn't respond on updateTagDescription, cause: ${e.message}")
         }
     }
 
