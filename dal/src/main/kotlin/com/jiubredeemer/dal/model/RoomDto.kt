@@ -16,5 +16,6 @@ data class RoomDto(
     var createDatetime: Timestamp? = null,
     var updateDatetime: Timestamp? = null,
     var deleteDatetime: Timestamp? = null,
-    var lastActivityDatetime: Timestamp? = null
+    var lastActivityDatetime: Timestamp? = null,
+    var isPublic: Boolean = false
 ) : Serializable

@@ -15,4 +15,6 @@ data class CreateRoomRequest(
     var baseRules: RuleTypeEnum? = null,
     @Schema(description = "Ссылка на файл изображения комнаты", example = "Днд Олега")
     val filePath: String? = null,
+    @Schema(description = "Публичная ли комната (видна в каталоге)", example = "false")
+    val isPublic: Boolean = false,
 )

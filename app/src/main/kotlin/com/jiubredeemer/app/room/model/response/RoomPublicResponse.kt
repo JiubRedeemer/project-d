@@ -1,13 +1,11 @@
 package com.jiubredeemer.app.room.model.response
 
-import java.sql.Timestamp
-import java.util.*
+import java.util.UUID
 
-data class RoomShortResponse(
+data class RoomPublicResponse(
     val id: UUID,
     val name: String,
     val description: String?,
     val filePath: String?,
-    val lastActivityDate: Timestamp,
-    val isPublic: Boolean = false
+    val memberCount: Int
 )

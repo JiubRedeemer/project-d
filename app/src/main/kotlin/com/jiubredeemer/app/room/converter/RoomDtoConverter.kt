@@ -13,6 +13,7 @@ class RoomDtoConverter {
         roomDto.name = createRoomRequest.name
         roomDto.description = createRoomRequest.description
         roomDto.filePath = createRoomRequest.filePath
+        roomDto.isPublic = createRoomRequest.isPublic
         return roomDto
     }
 
@@ -22,7 +23,8 @@ class RoomDtoConverter {
             roomDto.name ?: throw BrokenRoomException("Room hasn't name"),
             roomDto.description,
             roomDto.filePath,
-            roomDto.lastActivityDatetime ?: throw BrokenRoomException("Room hasn't lastActivityDatetime")
+            roomDto.lastActivityDatetime ?: throw BrokenRoomException("Room hasn't lastActivityDatetime"),
+            roomDto.isPublic
         )
     }
 }

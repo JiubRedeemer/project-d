@@ -20,6 +20,7 @@ class RoomConverter(private val userConverter: UserConverter) {
         entity.createDatetime = now
         entity.updateDatetime = now
         entity.lastActivityDatetime = now
+        entity.isPublic = model.isPublic
         return entity
     }
 

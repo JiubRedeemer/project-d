@@ -51,6 +51,11 @@ open class Room {
     @Column(name = "last_activity_datetime", nullable = false)
     open var lastActivityDatetime: Timestamp? = null
 
+    @NotNull
+    @ColumnDefault("false")
+    @Column(name = "is_public", nullable = false)
+    open var isPublic: Boolean = false
+
     @OneToMany(mappedBy = "room", cascade = [CascadeType.ALL])
     open var roomUsers: MutableSet<RoomUser> = mutableSetOf()
 }

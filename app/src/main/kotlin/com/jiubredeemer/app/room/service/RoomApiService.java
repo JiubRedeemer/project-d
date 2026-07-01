@@ -130,6 +130,6 @@ public class RoomApiService {
     public RoomMasterResponse getRoomInfo(@NotNull UUID roomId) {
         final RoomDto roomDto = roomService.readById(roomId);
         final com.jiubredeemer.app.integration.rulebook.dto.room.RoomDto roomFromRuleBook = ruleBookClient.getRoom(roomId);
-        return new RoomMasterResponse(roomDto.getId(), roomDto.getName(), roomDto.getDescription(), roomDto.getFilePath(), roomDto.getLastActivityDatetime(), roomFromRuleBook.getRuleType(), roomFromRuleBook.getBaseRuleType());
+        return new RoomMasterResponse(roomDto.getId(), roomDto.getName(), roomDto.getDescription(), roomDto.getFilePath(), roomDto.getLastActivityDatetime(), roomFromRuleBook.getRuleType(), roomFromRuleBook.getBaseRuleType(), roomDto.isPublic());
     }
 }

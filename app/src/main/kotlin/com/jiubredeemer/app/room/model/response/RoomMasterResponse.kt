@@ -11,5 +11,6 @@ data class RoomMasterResponse(
     val filePath: String?,
     val lastActivityDate: Timestamp?,
     val ruleType: RuleTypeEnum?,
-    val baseRuleType: RuleTypeEnum?
+    val baseRuleType: RuleTypeEnum?,
+    val isPublic: Boolean = false
 )

@@ -19,4 +19,18 @@ interface RoomRepository : JpaRepository<Room, UUID> {
 
     @Query("select r from Room r where r.name = :name and r.owner.id = :ownerId")
     fun findByNameAndOwnerId(@Param("name") name: String, @Param("ownerId") ownerId: UUID): Optional<Room>
+
+    @Query("""
+        select r, (select count(ru) from RoomUser ru where ru.room.id = r.id) as memberCount
+        from Room r
+        where r.isPublic = true
+          and r.deleteDatetime is null
+          and (cast(:search as string) is null or lower(r.name) like lower(concat('%', cast(:search as string), '%')))
+          and not exists (select ru from RoomUser ru where ru.room.id = r.id and ru.user.id = :userId)
+        order by r.lastActivityDatetime desc
+    """)
+    fun findPublicRoomsExcludingMember(
+        @Param("userId") userId: UUID,
+        @Param("search") search: String?
+    ): List<Array<Any>>
 }
