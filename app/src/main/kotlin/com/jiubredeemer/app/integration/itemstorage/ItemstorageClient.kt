@@ -328,6 +328,27 @@ class ItemstorageClient(
         }
     }
 
+    fun getItem(roomId: UUID, userId: UUID, itemId: UUID): ItemDto? {
+        try {
+            val uri = UriComponentsBuilder
+                .fromHttpUrl(itemstorageProperty.baseUrl)
+                .pathSegment(itemstorageProperty.apiUrl)
+                .pathSegment(itemstorageProperty.itemsUrl)
+                .pathSegment(roomId.toString())
+                .pathSegment(userId.toString())
+                .pathSegment(itemId.toString())
+                .toUriString()
+            val response = restClient.get()
+                .uri(uri)
+                .headers { it.addAll(headers) }
+                .retrieve()
+                .toEntity(ItemDto::class.java)
+            return response.body
+        } catch (e: Exception) {
+            return null
+        }
+    }
+
     fun addItem(roomId: UUID, userId: UUID, itemDto: ItemDto): ItemDto {
         try {
             val uri = UriComponentsBuilder

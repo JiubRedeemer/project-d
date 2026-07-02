@@ -10,7 +10,11 @@ import com.jiubredeemer.app.itemstorage.inventory.dto.item.ItemTagDto
 import com.jiubredeemer.app.room.service.RoomAccessChecker
 import com.jiubredeemer.auth.service.AccessChecker
 import com.jiubredeemer.common.exception.NotFoundException
+import com.jiubredeemer.dal.entity.RoomUser
+import org.springframework.http.HttpStatus
+import org.springframework.security.access.AccessDeniedException
 import org.springframework.stereotype.Service
+import org.springframework.web.server.ResponseStatusException
 import java.time.LocalDateTime
 import java.util.*
 
@@ -143,26 +147,46 @@ class InventoryApiService(
         roomId: UUID,
         itemDto: ItemDto
     ): ItemDto {
-        roomAccessChecker.hasAccessOrThrow(roomId, accessChecker.getCurrentUser().id!!)
-        itemDto.creator = accessChecker.getCurrentUser().username
-        val createdItem: ItemDto = itemstorageClient.addItem(
-            roomId,
-            accessChecker.getCurrentUser().id!!,
-            itemDto
-        )
-        return createdItem
+        val currentUser = accessChecker.getCurrentUser()
+        val roles = roomAccessChecker.hasAccessOrThrow(roomId, currentUser.id!!)
+        itemDto.creator = currentUser.username
+
+        if (itemDto.id != null) {
+            val existing = itemstorageClient.getItem(roomId, currentUser.id!!, itemDto.id!!)
+            if (existing != null) {
+                if (existing.creatorId == null) {
+                    throw ResponseStatusException(HttpStatus.CONFLICT, "CATALOG_ITEM")
+                }
+                val isMaster = roles.contains(RoomUser.Role.MASTER)
+                val isCreator = existing.creatorId == currentUser.id
+                if (!isMaster && !isCreator) {
+                    throw AccessDeniedException("Not authorized to modify this item")
+                }
+            }
+        }
+
+        return itemstorageClient.addItem(roomId, currentUser.id!!, itemDto)
     }
 
     fun deleteItem(
         roomId: UUID,
         itemId: UUID
     ) {
-        roomAccessChecker.hasAccessOrThrow(roomId, accessChecker.getCurrentUser().id!!)
-        itemstorageClient.deleteItem(
-            roomId,
-            accessChecker.getCurrentUser().id!!,
-            itemId
-        )
+        val currentUser = accessChecker.getCurrentUser()
+        val roles = roomAccessChecker.hasAccessOrThrow(roomId, currentUser.id!!)
+        val item = itemstorageClient.getItem(roomId, currentUser.id!!, itemId)
+            ?: throw NotFoundException("Item not found")
+
+        if (item.creatorId == null) {
+            throw ResponseStatusException(HttpStatus.FORBIDDEN, "Cannot delete catalog items")
+        }
+        val isMaster = roles.contains(RoomUser.Role.MASTER)
+        val isCreator = item.creatorId == currentUser.id
+        if (!isMaster && !isCreator) {
+            throw AccessDeniedException("Not authorized to delete this item")
+        }
+
+        itemstorageClient.deleteItem(roomId, currentUser.id!!, itemId)
     }
 
     fun getEquippedItemStats(
