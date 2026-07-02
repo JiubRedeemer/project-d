@@ -3,9 +3,11 @@ package com.jiubredeemer.app.joinrequest.service
 import com.jiubredeemer.app.joinrequest.model.*
 import com.jiubredeemer.app.room.model.response.RoomPublicResponse
 import com.jiubredeemer.auth.service.AccessChecker
+import com.jiubredeemer.dal.entity.Room
 import com.jiubredeemer.dal.entity.RoomJoinRequest
 import com.jiubredeemer.dal.repository.RoomRepository
 import com.jiubredeemer.dal.service.RoomJoinRequestService
+import com.jiubredeemer.dal.service.RoomScheduleService
 import org.springframework.stereotype.Service
 import java.util.*
 
@@ -14,19 +16,26 @@ class JoinRequestApiService(
     private val roomJoinRequestService: RoomJoinRequestService,
     private val roomRepository: RoomRepository,
     private val accessChecker: AccessChecker,
+    private val roomScheduleService: RoomScheduleService,
 ) {
 
     fun getPublicRooms(search: String?): List<RoomPublicResponse> {
         val userId = accessChecker.getCurrentUser().id!!
-        return roomRepository.findPublicRoomsExcludingMember(userId, search?.takeIf { it.isNotBlank() }).map { row ->
-            val room = row[0] as com.jiubredeemer.dal.entity.Room
+        val rows = roomRepository.findPublicRoomsExcludingMember(userId, search?.takeIf { it.isNotBlank() })
+        val roomIds = rows.map { (it[0] as Room).id!! }
+        val schedules = roomScheduleService.findByRoomIds(roomIds)
+        return rows.map { row ->
+            val room = row[0] as Room
             val memberCount = (row[1] as Long).toInt()
+            val schedule = schedules[room.id!!]
+            val nextSessionAt = schedule?.let { roomScheduleService.computeNextSessionAt(it) }
             RoomPublicResponse(
                 id = room.id!!,
                 name = room.name!!,
                 description = room.description,
                 filePath = room.filePath,
-                memberCount = memberCount
+                memberCount = memberCount,
+                nextSessionAt = nextSessionAt,
             )
         }
     }

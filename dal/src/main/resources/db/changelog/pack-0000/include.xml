@@ -19,4 +19,5 @@
     <include file="010-PRO-0-combat.xml" relativeToChangelogFile="true"/>
     <include file="011-PRO-0-combat-participant-ac.sql" relativeToChangelogFile="true"/>
     <include file="012-PRO-0-public-rooms.xml" relativeToChangelogFile="true"/>
+    <include file="013-PRO-0-room-schedule.xml" relativeToChangelogFile="true"/>
 </databaseChangeLog>

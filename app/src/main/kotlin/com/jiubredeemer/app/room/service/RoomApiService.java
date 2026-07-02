@@ -19,13 +19,16 @@ import com.jiubredeemer.dal.entity.Room;
 import com.jiubredeemer.dal.entity.RoomUser;
 import com.jiubredeemer.dal.model.RoomDto;
 import com.jiubredeemer.dal.model.UserDto;
+import com.jiubredeemer.dal.service.RoomScheduleService;
 import com.jiubredeemer.dal.service.RoomService;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class RoomApiService {
@@ -39,6 +42,7 @@ public class RoomApiService {
     private final ItemstorageClient itemstorageClient;
     private final MagicClient magicClient;
     private final NotesClient notesClient;
+    private final RoomScheduleService roomScheduleService;
 
     public RoomApiService(RoomDtoConverter roomDtoConverter,
                           AccessChecker accessChecker,
@@ -46,7 +50,11 @@ public class RoomApiService {
                           RoomValidator roomValidator,
                           RuleBookClient ruleBookClient,
                           CharacterSheetClient characterSheetClient,
-                          RoomAccessChecker roomAccessChecker, ItemstorageClient itemstorageClient, MagicClient magicClient, NotesClient notesClient) {
+                          RoomAccessChecker roomAccessChecker,
+                          ItemstorageClient itemstorageClient,
+                          MagicClient magicClient,
+                          NotesClient notesClient,
+                          RoomScheduleService roomScheduleService) {
         this.roomDtoConverter = roomDtoConverter;
         this.accessChecker = accessChecker;
         this.roomService = roomService;
@@ -57,6 +65,7 @@ public class RoomApiService {
         this.itemstorageClient = itemstorageClient;
         this.magicClient = magicClient;
         this.notesClient = notesClient;
+        this.roomScheduleService = roomScheduleService;
     }
 
     public CreateRoomResponse create(CreateRoomRequest request) {
@@ -70,10 +79,19 @@ public class RoomApiService {
 
     public List<RoomShortResponse> readAllForCurrentUser() {
         final UserDto currentUser = getCurrentUser();
-        return roomService.readByUserId(Objects.requireNonNull(currentUser.getId()))
+        final List<RoomDto> roomDtos = roomService.readByUserId(Objects.requireNonNull(currentUser.getId()))
                 .stream()
                 .filter(roomDto -> roomDto.getDeleteDatetime() == null)
-                .map(roomDtoConverter::roomDtoToShortRoom)
+                .toList();
+        final List<UUID> roomIds = roomDtos.stream().map(RoomDto::getId).toList();
+        final Map<UUID, com.jiubredeemer.dal.entity.RoomSchedule> schedules =
+                roomScheduleService.findByRoomIds(roomIds);
+        return roomDtos.stream()
+                .map(roomDto -> {
+                    var schedule = schedules.get(roomDto.getId());
+                    var nextSessionAt = schedule != null ? roomScheduleService.computeNextSessionAt(schedule) : null;
+                    return roomDtoConverter.roomDtoToShortRoom(roomDto, nextSessionAt);
+                })
                 .toList();
     }
 
